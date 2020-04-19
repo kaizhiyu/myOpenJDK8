@@ -1,0 +1,4 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/chenchen/Documents/sourceCode/openjdk8/hotspot
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/chenchen/Documents/sourceCode/openjdk8/hotspot/cmake-build-debug
