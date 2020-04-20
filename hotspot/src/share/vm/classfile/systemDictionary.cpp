@@ -1167,16 +1167,16 @@ Klass* SystemDictionary::find_shared_class(Symbol* class_name) {
 }
 
 
-// Load a class from the shared spaces (found through the shared system
-// dictionary).  Force the superclass and all interfaces to be loaded.
-// Update the class definition to include sibling classes and no
-// subclasses (yet).  [Classes in the shared space are not part of the
+// Load a class from the shared spaces (found through the shared system  从共享空间加载类（通过共享系统字典找到）。
+// dictionary).  Force the superclass and all interfaces to be loaded.   强制加载超类和所有接口。
+// Update the class definition to include sibling classes and no         更新类定义以包括同级类和无子类。
+// subclasses (yet).  [Classes in the shared space are not part of the   [在加载之前，共享空间中的类不是对象层次结构的一部分]
 // object hierarchy until loaded.]
 
 instanceKlassHandle SystemDictionary::load_shared_class(
                  Symbol* class_name, Handle class_loader, TRAPS) {
   instanceKlassHandle ik (THREAD, find_shared_class(class_name));
-  // Make sure we only return the boot class for the NULL classloader.
+  // Make sure we only return the boot class for the NULL classloader.  确保我们只返回空类加载器的引导类。
   if (ik.not_null() &&
       SharedClassUtil::is_shared_boot_class(ik()) && class_loader.is_null()) {
     Handle protection_domain;
@@ -1879,7 +1879,7 @@ void SystemDictionary::initialize_preloaded_classes(TRAPS) {
   // first do Object, then String, Class  首先加载Object，然后加载String Class
   if (UseSharedSpaces) {
     initialize_wk_klasses_through(WK_KLASS_ENUM_NAME(Object_klass), scan, CHECK);
-    // Initialize the constant pool for the Object_class
+    // Initialize the constant pool for the Object_class 初始化对象类的常量池
     InstanceKlass* ik = InstanceKlass::cast(Object_klass());
     ik->constants()->restore_unshareable_info(CHECK);
     initialize_wk_klasses_through(WK_KLASS_ENUM_NAME(Class_klass), scan, CHECK);

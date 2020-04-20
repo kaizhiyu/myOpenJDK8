@@ -32,7 +32,7 @@
 #include <sys/stat.h>
 
 
-// Meta-index (optional, to be able to skip opening boot classpath jar files)
+// Meta-index (optional, to be able to skip opening boot classpath jar files) 元索引（可选，可以跳过打开引导类路径jar文件）
 class MetaIndex: public CHeapObj<mtClass> {
  private:
   char** _meta_package_names;
@@ -72,7 +72,7 @@ class ClassPathEntry: public CHeapObj<mtClass> {
 
 class ClassPathDirEntry: public ClassPathEntry {
  private:
-  const char* _dir;           // Name of directory
+  const char* _dir;           // Name of directory 目录名
  public:
   bool is_jar_file()  { return false;  }
   const char* name()  { return _dir; }
@@ -84,24 +84,24 @@ class ClassPathDirEntry: public ClassPathEntry {
 };
 
 
-// Type definitions for zip file and zip file entry
+// Type definitions for zip file and zip file entry  zip文件和zip文件项的类型定义
 typedef void* jzfile;
 typedef struct {
-  char *name;                   /* entry name */
-  jlong time;                   /* modification time */
-  jlong size;                   /* size of uncompressed data */
-  jlong csize;                  /* size of compressed data (zero if uncompressed) */
-  jint crc;                     /* crc of uncompressed data */
-  char *comment;                /* optional zip file comment */
-  jbyte *extra;                 /* optional extra data */
-  jlong pos;                    /* position of LOC header (if negative) or data */
+  char *name;                   /* entry name 条目名*/
+  jlong time;                   /* modification time 修改时间*/
+  jlong size;                   /* size of uncompressed data 未压缩数据的大小*/
+  jlong csize;                  /* size of compressed data (zero if uncompressed) 压缩数据的大小（如果未压缩，则为零）*/
+  jint crc;                     /* crc of uncompressed data 未压缩数据的crc */
+  char *comment;                /* optional zip file comment 可选的zip文件注释 */
+  jbyte *extra;                 /* optional extra data 可选额外数据 */
+  jlong pos;                    /* position of LOC header (if negative) or data LOC报头位置（如果为负）或数据 */
 } jzentry;
 
 
 class ClassPathZipEntry: public ClassPathEntry {
  private:
-  jzfile* _zip;              // The zip archive
-  const char*   _zip_name;   // Name of zip archive
+  jzfile* _zip;              // The zip archive  压缩文件
+  const char*   _zip_name;   // Name of zip archive 压缩文件名
  public:
   bool is_jar_file()  { return true;  }
   const char* name()  { return _zip_name; }
@@ -120,10 +120,10 @@ class ClassPathZipEntry: public ClassPathEntry {
 };
 
 
-// For lazier loading of boot class path entries
+// For lazier loading of boot class path entries  对于延迟加载引导类路径条目
 class LazyClassPathEntry: public ClassPathEntry {
  private:
-  const char* _path; // dir or file
+  const char* _path; // dir or file  目录或文件
   struct stat _st;
   MetaIndex* _meta_index;
   bool _has_error;
@@ -191,9 +191,9 @@ class ClassLoader: AllStatic {
   static PerfCounter* _isUnsyncloadClass;
   static PerfCounter* _load_instance_class_failCounter;
 
-  // First entry in linked list of ClassPathEntry instances
+  // First entry in linked list of ClassPathEntry instances  ClassPathEntry实例链接列表中的第一个条目
   static ClassPathEntry* _first_entry;
-  // Last entry in linked list of ClassPathEntry instances
+  // Last entry in linked list of ClassPathEntry instances   ClassPathEntry实例链接列表中的最后一个条目
   static ClassPathEntry* _last_entry;
   static int _num_entries;
 

@@ -66,8 +66,8 @@ static const char* vm_symbol_enum_name(vmSymbols::SID sid) {
 }
 #endif //ASSERT
 
-// Put all the VM symbol strings in one place.
-// Makes for a more compact libjvm.
+// Put all the VM symbol strings in one place. 将所有VM符号字符串放在一个位置。
+// Makes for a more compact libjvm. 使libjvm更加紧凑。
 #define VM_SYMBOL_BODY(name, string) string "\0"
 static const char* vm_symbol_bodies = VM_SYMBOLS_DO(VM_SYMBOL_BODY, VM_ALIAS_IGNORE);
 

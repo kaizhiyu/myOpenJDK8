@@ -369,7 +369,7 @@ Symbol* SymbolTable::new_permanent_symbol(const char* name, TRAPS) {
   if (result != NULL) {
     return result;
   }
-  // Grab SymbolTable_lock first.
+  // Grab SymbolTable_lock first. 先抓住符号锁
   MutexLocker ml(SymbolTable_lock, THREAD);
 
   SymbolTable* table = the_table();

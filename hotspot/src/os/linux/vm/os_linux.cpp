@@ -92,7 +92,7 @@
 # include <semaphore.h>
 # include <fcntl.h>
 # include <string.h>
-# include <syscall.h>
+# include <sys/syscall.h>
 # include <sys/sysinfo.h>
 # include <gnu/libc-version.h>
 # include <sys/ipc.h>

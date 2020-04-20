@@ -23,8 +23,8 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/classFileStream.hpp"
-#include "classfile/vmSymbols.hpp"
+#include "../classfile/classFileStream.hpp"
+#include "../classfile/vmSymbols.hpp"
 
 void ClassFileStream::truncated_file_error(TRAPS) {
   THROW_MSG(vmSymbols::java_lang_ClassFormatError(), "Truncated class file");

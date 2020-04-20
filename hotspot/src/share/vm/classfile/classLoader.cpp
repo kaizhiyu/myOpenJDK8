@@ -214,12 +214,12 @@ ClassPathDirEntry::ClassPathDirEntry(const char* dir) : ClassPathEntry() {
 
 
 ClassFileStream* ClassPathDirEntry::open_stream(const char* name, TRAPS) {
-  // construct full path name
+  // construct full path name 构造全路径名
   char path[JVM_MAXPATHLEN];
   if (jio_snprintf(path, sizeof(path), "%s%s%s", _dir, os::file_separator(), name) == -1) {
     return NULL;
   }
-  // check if file exists
+  // check if file exists 检查是否存在
   struct stat st;
   if (os::stat(path, &st) == 0) {
 #if INCLUDE_CDS

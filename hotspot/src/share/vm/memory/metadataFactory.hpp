@@ -35,7 +35,7 @@ class MetadataFactory : AllStatic {
   template <typename T>
   static Array<T>* new_array(ClassLoaderData* loader_data, int length, TRAPS) {
     // The "true" argument is because all metadata arrays are read only when
-    // dumped to the shared archive
+    // dumped to the shared archive  “true”参数是因为所有元数据数组在转储到共享存档时都是只读的
     return new (loader_data, length, /*read_only*/true, THREAD) Array<T>(length);
   }
 

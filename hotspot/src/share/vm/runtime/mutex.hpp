@@ -29,7 +29,7 @@
 #include "../runtime/os.hpp"
 #include "../utilities/histogram.hpp"
 
-// The SplitWord construct allows us to colocate the contention queue
+// The SplitWord construct allows us to colocate the contention queue          SplitWord结构允许我们将争用队列（cxq）与锁字节放在一起。
 // (cxq) with the lock-byte.  The queue elements are ParkEvents, which are
 // always aligned on 256-byte addresses - the least significant byte of
 // a ParkEvent is always 0.  Colocating the lock-byte with the queue
@@ -61,7 +61,7 @@
 // to a full-word CAS of the lockword.
 
 
-union SplitWord {   // full-word with separately addressable LSB
+union SplitWord {   // full-word with separately addressable LSB  带可单独寻址LSB的全字
   volatile intptr_t FullWord ;
   volatile void * Address ;
   volatile jbyte Bytes [sizeof(intptr_t)] ;
@@ -117,7 +117,7 @@ class Monitor : public CHeapObj<mtInternal> {
   // type-stable, meaning we can safely unpark() a possibly stale        这意味着我们可以在unlock（）路径中安全地对一个可能过时的列表元素进行unpark（）。
   // list element in the unlock()-path.
 
- protected:                              // Monitor-Mutex metadata
+ protected:                              // Monitor-Mutex metadata 监控元数据
   SplitWord _LockWord ;                  // Contention queue (cxq) colocated with Lock-byte 争用队列（cxq）与锁字节同位
   enum LockWordBits { _LBIT=1 } ;
   Thread * volatile _owner;              // The owner of the lock

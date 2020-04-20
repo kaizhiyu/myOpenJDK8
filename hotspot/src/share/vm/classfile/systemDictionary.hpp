@@ -396,7 +396,7 @@ public:
   // Initialization
   static void initialize(TRAPS);
 
-  // Fast access to commonly used classes (preloaded)
+  // Fast access to commonly used classes (preloaded)   快速访问通用类(预加载)
   static Klass* check_klass(Klass* k) {
     assert(k != NULL, "preloaded klass not initialized");
     return k;
@@ -419,7 +419,7 @@ public:
   static void initialize_wk_klasses_until(WKID limit_id, WKID &start_id, TRAPS);
   static void initialize_wk_klasses_through(WKID end_id, WKID &start_id, TRAPS) {
     int limit = (int)end_id + 1;
-    initialize_wk_klasses_until((WKID) limit, start_id, THREAD);
+    initialize_wk_klasses_until((WKID) limit, start_id, THREAD); //wk -> well-known
   }
 
 public:
@@ -559,44 +559,44 @@ public:
     _loader_constraint_size = 107,                     // number of entries in constraint table
     _resolution_error_size  = 107,                     // number of entries in resolution error table
     _invoke_method_size     = 139,                     // number of entries in invoke method table
-    _nof_buckets            = 1009,                    // number of buckets in hash table for placeholders
+    _nof_buckets            = 1009,                    // number of buckets in hash table for placeholders  占位符哈希表中的存储桶数
     _old_default_sdsize     = 1009,                    // backward compat for system dictionary size
     _prime_array_size       = 8,                       // array of primes for system dictionary size
     _average_depth_goal     = 3                        // goal for lookup length
   };
 
 
-  // Static variables
+  // Static variables  静态变量
 
   // hashtable sizes for system dictionary to allow growth
-  // prime numbers for system dictionary size
+  // prime numbers for system dictionary size  系统字典的哈希表大小，以允许系统字典大小的增长素数
   static int                     _sdgeneration;
   static const int               _primelist[_prime_array_size];
 
-  // Hashtable holding loaded classes.
+  // Hashtable holding loaded classes.         持有已加载类的哈希表
   static Dictionary*            _dictionary;
 
-  // Hashtable holding placeholders for classes being loaded.  包含正在加载的类的占位符的哈希表。
+  // Hashtable holding placeholders for classes being loaded.  包含正在加载的类的占位符的哈希表
   static PlaceholderTable*       _placeholders;
 
-  // Hashtable holding classes from the shared archive.
+  // Hashtable holding classes from the shared archive.        保存共享存档中的类的哈希表
   static Dictionary*             _shared_dictionary;
 
   // Monotonically increasing counter which grows with
   // _number_of_classes as well as hot-swapping and breakpoint setting
-  // and removal.
+  // and removal.  单调递增计数器，随类的个数、热交换、断点设置和删除而增长。
   static int                     _number_of_modifications;
 
   // Lock object for system class loader  系统类加载器的锁对象
   static oop                     _system_loader_lock_obj;
 
-  // Constraints on class loaders
+  // Constraints on class loaders 类加载器的约束
   static LoaderConstraintTable*  _loader_constraints;
 
-  // Resolution errors
+  // Resolution errors            解析错误
   static ResolutionErrorTable*   _resolution_errors;
 
-  // Invoke methods (JSR 292)
+  // Invoke methods (JSR 292)     调用方法
   static SymbolPropertyTable*    _invoke_method_table;
 
 public:
