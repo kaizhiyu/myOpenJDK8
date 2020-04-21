@@ -609,7 +609,7 @@ Klass* SystemDictionary::resolve_instance_class_or_null(Symbol* name,
   Ticks class_load_start_time = Ticks::now();
 
   // UseNewReflection
-  // Fix for 4474172; see evaluation for more details
+  // Fix for 4474172; see evaluation for more details  有关详细信息，请参见评估
   class_loader = Handle(THREAD, java_lang_ClassLoader::non_reflection_class_loader(class_loader()));
   ClassLoaderData *loader_data = register_loader(class_loader, CHECK_NULL);
 
@@ -1849,9 +1849,9 @@ bool SystemDictionary::initialize_wk_klass(WKID id, int init_opt, TRAPS) {
   bool must_load = (init_opt < SystemDictionary::Opt);
   if ((*klassp) == NULL) {
     if (must_load) {
-      (*klassp) = resolve_or_fail(symbol, true, CHECK_0); // load required class
+      (*klassp) = resolve_or_fail(symbol, true, CHECK_0); // load required class 加载需要的类
     } else {
-      (*klassp) = resolve_or_null(symbol,       CHECK_0); // load optional klass
+      (*klassp) = resolve_or_null(symbol,       CHECK_0); // load optional klass 加载可选的类
     }
   }
   return ((*klassp) != NULL);

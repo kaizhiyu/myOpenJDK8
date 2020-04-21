@@ -61,8 +61,8 @@ class ClassPathEntry: public CHeapObj<mtClass> {
   virtual bool is_lazy();
   // Constructor
   ClassPathEntry();
-  // Attempt to locate file_name through this class path entry.
-  // Returns a class file parsing stream if successfull.
+  // Attempt to locate file_name through this class path entry. 试图通过这个类路径项找到文件名。
+  // Returns a class file parsing stream if successfull.  如果成功，则返回类文件分析流。
   virtual ClassFileStream* open_stream(const char* name, TRAPS) = 0;
   // Debugging
   NOT_PRODUCT(virtual void compile_the_world(Handle loader, TRAPS) = 0;)

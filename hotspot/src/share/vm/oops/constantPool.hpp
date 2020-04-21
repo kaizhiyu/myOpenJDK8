@@ -361,7 +361,7 @@ class ConstantPool : public Metadata {
     return CPSlot((Klass*)OrderAccess::load_ptr_acquire(obj_at_addr_raw(which))).get_klass();
   }
 
-  // This method should only be used with a cpool lock or during parsing or gc
+  // This method should only be used with a cpool lock or during parsing or gc 此方法只能与cpool锁一起使用，或者在解析或gc期间使用
   Symbol* unresolved_klass_at(int which) {     // Temporary until actual use
     Symbol* s = CPSlot((Symbol*)OrderAccess::load_ptr_acquire(obj_at_addr_raw(which))).get_symbol();
     // check that the klass is still unresolved.

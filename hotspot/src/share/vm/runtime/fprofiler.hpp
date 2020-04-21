@@ -28,7 +28,7 @@
 #include "../utilities/macros.hpp"
 #include "../runtime/timer.hpp"
 
-// a simple flat profiler for Java
+// a simple flat profiler for Java 一个简单的Java平面分析器
 
 
 // Forward declaration of classes defined in this header file

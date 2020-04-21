@@ -207,8 +207,8 @@ static int find_sid_calls, find_sid_probes;
 #endif
 
 vmSymbols::SID vmSymbols::find_sid(Symbol* symbol) {
-  // Handle the majority of misses by a bounds check.
-  // Then, use a binary search over the index.
+  // Handle the majority of misses by a bounds check.  通过边界检查处理大多数未命中。
+  // Then, use a binary search over the index.         然后，对索引使用二分查找。
   // Expected trip count is less than log2_SID_LIMIT, about eight.
   // This is slow but acceptable, given that calls are not
   // dynamically common.  (Method*::intrinsic_id has a cache.)
@@ -228,7 +228,7 @@ vmSymbols::SID vmSymbols::find_sid(Symbol* symbol) {
     } else {
       // After checking the extremes, do a binary search.
       ++min; --max;             // endpoints are done
-      int mid = mid_hint;       // start at previous success
+      int mid = mid_hint;       // start at previous success 从前一个成功的地方开始
       while (max >= min) {
         assert(mid >= min && mid <= max, "");
         NOT_PRODUCT(find_sid_probes++);
@@ -244,7 +244,7 @@ vmSymbols::SID vmSymbols::find_sid(Symbol* symbol) {
         else
           min = mid + 1;
 
-        // Pick a new probe point:
+        // Pick a new probe point:  选择新的探测点
         mid = (max + min) / 2;
       }
     }

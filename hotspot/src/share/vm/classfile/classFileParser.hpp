@@ -37,9 +37,9 @@ class FieldAllocationCount;
 class FieldLayoutInfo;
 
 
-// Parser for for .class files
+// Parser for for .class files  .class文件解析器
 //
-// The bytes describing the class file structure is read from a Stream object
+// The bytes describing the class file structure is read from a Stream object  从流对象中读取描述类文件结构的字节
 
 class ClassFileParser VALUE_OBJ_CLASS_SPEC {
  private:
@@ -50,9 +50,9 @@ class ClassFileParser VALUE_OBJ_CLASS_SPEC {
   Symbol* _class_name;
   ClassLoaderData* _loader_data;
   KlassHandle _host_klass;
-  GrowableArray<Handle>* _cp_patches; // overrides for CP entries
+  GrowableArray<Handle>* _cp_patches; // overrides for CP entries   CP条目的重写
 
-  // precomputed flags
+    // precomputed flags
   bool _has_finalizer;
   bool _has_empty_finalizer;
   bool _has_vanilla_constructor;

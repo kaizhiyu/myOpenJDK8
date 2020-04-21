@@ -182,7 +182,7 @@ class InstanceKlass: public Klass {
   static volatile int _total_instanceKlass_count;
 
  protected:
-  // Annotations for this class
+  // Annotations for this class 此类的注解
   Annotations*    _annotations;
   // Array classes holding elements of this class.
   Klass*          _array_klasses;
@@ -221,9 +221,10 @@ class InstanceKlass: public Klass {
   u2              _source_file_name_index;
   u2              _static_oop_field_count;// number of static oop fields in this klass
   u2              _java_fields_count;    // The number of declared Java fields
-  int             _nonstatic_oop_map_size;// size in words of nonstatic oop map blocks
+  int             _nonstatic_oop_map_size;// size in words of nonstatic oop map blocks 非静态oop映射块的字大小
 
-  // _is_marked_dependent can be set concurrently, thus cannot be part of the
+
+    // _is_marked_dependent can be set concurrently, thus cannot be part of the
   // _misc_flags.
   bool            _is_marked_dependent;  // used for marking during flushing and deoptimization
   bool            _has_unloaded_dependent;

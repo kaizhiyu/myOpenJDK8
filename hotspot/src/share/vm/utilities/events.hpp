@@ -275,7 +275,7 @@ inline void EventLogBase<StringLogMessage>::print(outputStream* out, StringLogMe
   out->cr();
 }
 
-// Place markers for the beginning and end up of a set of events.
+// Place markers for the beginning and end up of a set of events. 为一组事件的开始和结束放置标记。
 // These end up in the default log.
 class EventMark : public StackObj {
   StringLogMessage _buffer;

@@ -282,7 +282,7 @@ u1* ClassPathZipEntry::open_entry(const char* name, jint* filesize, bool nul_ter
     filename = NEW_RESOURCE_ARRAY(char, name_len + 1);
   }
 
-  // file found, get pointer to the entry in mmapped jar file.
+  // file found, get pointer to the entry in mmapped jar file. 找到文件，获取指向mmaapped jar文件中的项的指针。
   if (ReadMappedEntry == NULL ||
       !(*ReadMappedEntry)(_zip, entry, &buffer, filename)) {
       // mmapped access not available, perhaps due to compression,

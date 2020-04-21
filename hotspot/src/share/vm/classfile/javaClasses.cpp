@@ -74,7 +74,7 @@ InjectedField* JavaClasses::get_injected(Symbol* class_name, int* field_count) {
 
   vmSymbols::SID sid = vmSymbols::find_sid(class_name);
   if (sid == vmSymbols::NO_SID) {
-    // Only well known classes can inject fields
+    // Only well known classes can inject fields  只有知名类才能注入字段
     return NULL;
   }
 
