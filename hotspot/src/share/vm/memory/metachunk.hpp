@@ -79,7 +79,7 @@ class Metabase VALUE_OBJ_CLASS_SPEC {
 
 //  Metachunk - Quantum of allocation from a Virtualspace
 //    Metachunks are reused (when freed are put on a global freelist) and
-//    have no permanent association to a SpaceManager.
+//    have no permanent association to a SpaceManager.   来自Virtualspace元单元的分配量将被重用（当释放时放在全局空闲列表中），并且与SpaceManager没有永久关联。
 
 //            +--------------+ <- end    --+       --+
 //            |              |             |         |
@@ -96,7 +96,7 @@ class Metabase VALUE_OBJ_CLASS_SPEC {
 
 class Metachunk : public Metabase<Metachunk> {
   friend class TestMetachunk;
-  // The VirtualSpaceNode containing this chunk.
+  // The VirtualSpaceNode containing this chunk. 包含此chunk的VirtualSpaceNode
   VirtualSpaceNode* _container;
 
   // Current allocation top.
@@ -108,10 +108,10 @@ class Metachunk : public Metabase<Metachunk> {
   MetaWord* top() const         { return _top; }
 
  public:
-  // Metachunks are allocated out of a MetadataVirtualSpace and
+  // Metachunks are allocated out of a MetadataVirtualSpace and   元块是从MetadataVirtualSpace中分配出来的，并使用它的一些空间来描述它自己（加上对齐注意事项）。
   // and use some of its space to describe itself (plus alignment
-  // considerations).  Metadata is allocated in the rest of the chunk.
-  // This size is the overhead of maintaining the Metachunk within
+  // considerations).  Metadata is allocated in the rest of the chunk.  元数据在块的其余部分中分配。
+  // This size is the overhead of maintaining the Metachunk within      这个大小是在空间中维护元块的开销。
   // the space.
 
   // Alignment of each allocation in the chunks.
@@ -151,7 +151,7 @@ class Metachunk : public Metabase<Metachunk> {
   void verify();
 };
 
-// Metablock is the unit of allocation from a Chunk.
+// Metablock is the unit of allocation from a Chunk.  Metablock是chunk的分配单位。
 //
 // A Metablock may be reused by its SpaceManager but are never moved between
 // SpaceManagers.  There is no explicit link to the Metachunk

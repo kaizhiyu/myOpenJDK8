@@ -285,15 +285,15 @@ class BlockFreelist VALUE_OBJ_CLASS_SPEC {
 class VirtualSpaceNode : public CHeapObj<mtClass> {
   friend class VirtualSpaceList;
 
-  // Link to next VirtualSpaceNode
+  // Link to next VirtualSpaceNode 链接下一个VirtualSpaceNode
   VirtualSpaceNode* _next;
 
-  // total in the VirtualSpace
+  // total in the VirtualSpace  虚拟空间中的总计
   MemRegion _reserved;
   ReservedSpace _rs;
   VirtualSpace _virtual_space;
   MetaWord* _top;
-  // count of chunks contained in this VirtualSpace
+  // count of chunks contained in this VirtualSpace  此虚拟空间中包含的块数
   uintx _container_count;
 
   // Convenience functions to access the _virtual_space
@@ -301,10 +301,10 @@ class VirtualSpaceNode : public CHeapObj<mtClass> {
   char* high() const { return virtual_space()->high(); }
 
   // The first Metachunk will be allocated at the bottom of the
-  // VirtualSpace
+  // VirtualSpace  第一个Metachunk将被分配到VirtualSpace的底部
   Metachunk* first_chunk() { return (Metachunk*) bottom(); }
 
-  // Committed but unused space in the virtual space
+  // Committed but unused space in the virtual space 虚拟空间中已提交但未使用的空间
   size_t free_words_in_vs() const;
  public:
 
@@ -480,7 +480,7 @@ uint VirtualSpaceNode::container_count_slow() {
 }
 #endif
 
-// List of VirtualSpaces for metadata allocation.
+// List of VirtualSpaces for metadata allocation.  用于元数据分配的虚拟空间列表。
 class VirtualSpaceList : public CHeapObj<mtClass> {
   friend class VirtualSpaceNode;
 
@@ -603,17 +603,17 @@ class Metadebug : AllStatic {
 
 int Metadebug::_allocation_fail_alot_count = 0;
 
-//  SpaceManager - used by Metaspace to handle allocations
+//  SpaceManager - used by Metaspace to handle allocations  SpaceManager - 由元空间用于处理分配
 class SpaceManager : public CHeapObj<mtClass> {
   friend class Metaspace;
   friend class Metadebug;
 
  private:
 
-  // protects allocations
+  // protects allocations  保护分配
   Mutex* const _lock;
 
-  // Type of metadata allocated.
+  // Type of metadata allocated.  分配的元数据类型
   Metaspace::MetadataType _mdtype;
 
   // List of chunks in use by this SpaceManager.  Allocations
@@ -3340,7 +3340,7 @@ size_t Metaspace::align_word_size_up(size_t word_size) {
 }
 
 MetaWord* Metaspace::allocate(size_t word_size, MetadataType mdtype) {
-  // DumpSharedSpaces doesn't use class metadata area (yet)
+  // DumpSharedSpaces doesn't use class metadata area (yet)  DumpSharedSpaces不使用类元数据区域
   // Also, don't use class_vsm() unless UseCompressedClassPointers is true.
   if (is_class_space_allocation(mdtype)) {
     return  class_vsm()->allocate(word_size);
@@ -3472,8 +3472,8 @@ MetaWord* Metaspace::allocate(ClassLoaderData* loader_data, size_t word_size,
   assert(loader_data != NULL, "Should never pass around a NULL loader_data. "
         "ClassLoaderData::the_null_class_loader_data() should have been used.");
 
-  // Allocate in metaspaces without taking out a lock, because it deadlocks
-  // with the SymbolTable_lock.  Dumping is single threaded for now.  We'll have
+  // Allocate in metaspaces without taking out a lock, because it deadlocks  在元空间中分配而不取出锁，因为它使用SymbolTable_lock死锁。
+  // with the SymbolTable_lock.  Dumping is single threaded for now.  We'll have  目前，转储是单线程的。为了实现应用程序类的数据共享，我们将不得不重新访问它。
   // to revisit this for application class data sharing.
   if (DumpSharedSpaces) {
     assert(type > MetaspaceObj::UnknownType && type < MetaspaceObj::_number_of_types, "sanity");

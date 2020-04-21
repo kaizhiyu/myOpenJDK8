@@ -336,10 +336,10 @@ constantPoolHandle ClassFileParser::parse_constant_pool(TRAPS) {
   _cp = constant_pool; // save in case of errors
   constantPoolHandle cp (THREAD, constant_pool);
 
-  // parsing constant pool entries
+  // parsing constant pool entries 解析常量池项
   parse_constant_pool_entries(length, CHECK_(nullHandle));
 
-  int index = 1;  // declared outside of loops for portability
+  int index = 1;  // declared outside of loops for portability  为便于移植，在循环外声明
 
   // first verification pass - validate cross references and fixup class and string constants
   for (index = 1; index < length; index++) {          // Index 0 is unused
@@ -3840,7 +3840,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
   // Do not restrict it to jdk1.0 or jdk1.1 to maintain backward compatibility (4982376)
   _relax_verify = Verifier::relax_verify_for(class_loader());
 
-  // Constant pool
+  // Constant pool 常量池
   constantPoolHandle cp = parse_constant_pool(CHECK_(nullHandle));
 
   int cp_size = cp->length();

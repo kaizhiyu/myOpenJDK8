@@ -42,19 +42,19 @@
 //# include "bytes_ppc.hpp"
 //#endif
 
-// Input stream for reading .class file
+// Input stream for reading .class file  用于读取.class文件的输入流
 //
-// The entire input stream is present in a buffer allocated by the caller.
+// The entire input stream is present in a buffer allocated by the caller. 整个输入流都存在于调用者分配的缓冲区中。
 // The caller is responsible for deallocating the buffer and for using
-// ResourceMarks appropriately when constructing streams.
+// ResourceMarks appropriately when constructing streams.  调用方负责释放缓冲区，并在构造流时适当地使用资源标记。
 
 class ClassFileStream: public ResourceObj {
  private:
-  u1*   _buffer_start; // Buffer bottom
-  u1*   _buffer_end;   // Buffer top (one past last element)
-  u1*   _current;      // Current buffer position
-  const char* _source; // Source of stream (directory name, ZIP/JAR archive name)
-  bool  _need_verify;  // True if verification is on for the class file
+  u1*   _buffer_start; // Buffer bottom  缓存底部
+  u1*   _buffer_end;   // Buffer top (one past last element) 缓冲区顶部（一个过去的最后一个元素）
+  u1*   _current;      // Current buffer position  当前缓存位置
+  const char* _source; // Source of stream (directory name, ZIP/JAR archive name) 流源（目录名，ZIP/JAR存档名）
+  bool  _need_verify;  // True if verification is on for the class file  如果对类文件启用验证，则为True
 
   void truncated_file_error(TRAPS);
  public:
@@ -81,13 +81,13 @@ class ClassFileStream: public ResourceObj {
     check_truncated_file(usize > remaining, CHECK);
   }
 
-  // Read u1 from stream
+  // Read u1 from stream 从流中读取u1
   u1 get_u1(TRAPS);
   u1 get_u1_fast() {
     return *_current++;
   }
 
-  // Read u2 from stream
+  // Read u2 from stream 从流中读取u2
   u2 get_u2(TRAPS);
   u2 get_u2_fast() {
     u2 res = Bytes::get_Java_u2(_current);
@@ -111,9 +111,9 @@ class ClassFileStream: public ResourceObj {
     return res;
   }
 
-  // Get direct pointer into stream at current position.
+  // Get direct pointer into stream at current position.  在当前位置获取指向流的直接指针。
   // Returns NULL if length elements are not remaining. The caller is
-  // responsible for calling skip below if buffer contents is used.
+  // responsible for calling skip below if buffer contents is used.  如果长度元素不存在，则返回NULL。如果使用缓冲区内容，则调用方负责调用下面的跳过。
   u1* get_u1_buffer() {
     return _current;
   }

@@ -30,9 +30,9 @@
 #include "../utilities/globalDefinitions.hpp"
 
 // A very simple data structure representing a contigous region
-// region of address space.
+// region of address space.  一种非常简单的数据结构，表示地址空间的连续区域。
 
-// Note that MemRegions are passed by value, not by reference.
+// Note that MemRegions are passed by value, not by reference.  注意，MemRegions是按值传递的，而不是按引用传递的。
 // The intent is that they remain very small and contain no
 // objects. _ValueObj should never be allocated in heap but we do
 // create MemRegions (in CardTableModRefBS) in heap so operator

@@ -45,14 +45,14 @@
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 ConstantPool* ConstantPool::allocate(ClassLoaderData* loader_data, int length, TRAPS) {
-  // Tags are RW but comment below applies to tags also.
+  // Tags are RW but comment below applies to tags also. 标签是RW，但下面的注释也适用于标签。
   Array<u1>* tags = MetadataFactory::new_writeable_array<u1>(loader_data, length, 0, CHECK_NULL);
 
-  int size = ConstantPool::size(length);
+  int size = ConstantPool::size(length); //头大小 + 传入的长度，并完成对其之后的大小
 
-  // CDS considerations:
-  // Allocate read-write but may be able to move to read-only at dumping time
-  // if all the klasses are resolved.  The only other field that is writable is
+  // CDS considerations:  CDS注意事项：
+  // Allocate read-write but may be able to move to read-only at dumping time  分配读写，但如果所有Klass都已解析，则可以在转储时移动到只读。
+  // if all the klasses are resolved.  The only other field that is writable is 唯一可写的另一个字段是resolved_references数组，该数组在启动时重新创建。
   // the resolved_references array, which is recreated at startup time.
   // But that could be moved to InstanceKlass (although a pain to access from
   // assembly code).  Maybe it could be moved to the cpCache which is RW.
@@ -73,7 +73,7 @@ ConstantPool::ConstantPool(Array<u1>* tags) {
   set_version(0);
   set_lock(new Monitor(Monitor::nonleaf + 2, "A constant pool lock"));
 
-  // initialize tag array
+  // initialize tag array  初始化标签数组
   int length = tags->length();
   for (int index = 0; index < length; index++) {
     tags->at_put(index, JVM_CONSTANT_Invalid);

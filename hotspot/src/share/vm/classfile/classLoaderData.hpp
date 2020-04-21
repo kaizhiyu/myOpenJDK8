@@ -178,15 +178,15 @@ class ClassLoaderData : public CHeapObj<mtClass> {
 
   // Metadata to be deallocated when it's safe at class unloading, when
   // this class loader isn't unloaded itself.
-  GrowableArray<Metadata*>*      _deallocate_list;
+  GrowableArray<Metadata*>*      _deallocate_list;  //需要被释放的从Metaspace 中分配的内存
 
   // Support for walking class loader data objects
-  ClassLoaderData* _next; /// Next loader_datas created
+  ClassLoaderData* _next; /// Next loader_datas created 下一个已经创建的loader_data
 
   // ReadOnly and ReadWrite metaspaces (static because only on the null
-  // class loader for now).
-  static Metaspace* _ro_metaspace;
-  static Metaspace* _rw_metaspace;
+  // class loader for now).   只读和读写的元空间（静态的，因为现在只在空类加载程序上）
+  static Metaspace* _ro_metaspace;  //启动类加载器使用的只读的Metaspace，DumpSharedSpaces为true时使用
+  static Metaspace* _rw_metaspace;  //启动类加载器使用的可读写的Metaspace，DumpSharedSpaces为true时使用
 
   void set_next(ClassLoaderData* next) { _next = next; }
   ClassLoaderData* next() const        { return _next; }

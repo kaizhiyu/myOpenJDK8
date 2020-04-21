@@ -32,11 +32,11 @@
 
 // Metaspace
 //
-// Metaspaces are Arenas for the VM's metadata.
+// Metaspaces are Arenas for the VM's metadata.   元空间是虚拟机元数据的Arenas
 // They are allocated one per class loader object, and one for the null
-// bootstrap class loader
+// bootstrap class loader  为每个类装入器对象分配一个，为空引导类装入器分配一个
 // Eventually for bootstrap loader we'll have a read-only section and read-write
-// to write for DumpSharedSpaces and read for UseSharedSpaces
+// to write for DumpSharedSpaces and read for UseSharedSpaces 最后，对于引导加载程序，我们将有一个只读部分，对DumpSharedSpaces和UseSharedSpaces分别进行读写操作
 //
 //    block X ---+       +-------------------+
 //               |       |  Virtualspace     |
@@ -68,16 +68,16 @@ class outputStream;
 class SpaceManager;
 class VirtualSpaceList;
 
-// Metaspaces each have a  SpaceManager and allocations
-// are done by the SpaceManager.  Allocations are done
-// out of the current Metachunk.  When the current Metachunk
+// Metaspaces each have a  SpaceManager and allocations  每个元空间都有一个SpaceManager，分配由SpaceManager完成。
+// are done by the SpaceManager.  Allocations are done   分配是在当前元内存中完成的。
+// out of the current Metachunk.  When the current Metachunk  当前元内存耗尽时，SpaceManager将从当前VirtualSpace获取一个新的
 // is exhausted, the SpaceManager gets a new one from
-// the current VirtualSpace.  When the VirtualSpace is exhausted
+// the current VirtualSpace.  When the VirtualSpace is exhausted 如果virtualSpace耗尽了，SpaceManager获取一个新的。SpaceManager同时管理一个可用Chunks的空闲列表
 // the SpaceManager gets a new one.  The SpaceManager
 // also manages freelists of available Chunks.
 //
-// Currently the space manager maintains the list of
-// virtual spaces and the list of chunks in use.  Its
+// Currently the space manager maintains the list of    当前，空间管理器维护虚拟空间列表和正在使用的块列表。
+// virtual spaces and the list of chunks in use.  Its   它的allocate（）方法返回一个块，用作元数据的数量。
 // allocate() method returns a block for use as a
 // quantum of metadata.
 
@@ -106,7 +106,7 @@ class Metaspace : public CHeapObj<mtClass> {
  private:
   void initialize(Mutex* lock, MetaspaceType type);
 
-  // Get the first chunk for a Metaspace.  Used for
+  // Get the first chunk for a Metaspace.  Used for  获取元数据区的第一个chunk，用于特殊场景，比如boot类加载器，反射加载器以及匿名加载器
   // special cases such as the boot class loader, reflection
   // class loader and anonymous class loader.
   Metachunk* get_initialization_chunk(MetadataType mdtype,
