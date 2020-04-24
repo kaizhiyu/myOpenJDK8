@@ -2438,9 +2438,9 @@ MetaWord* SpaceManager::allocate(size_t word_size) {
   size_t raw_word_size = get_raw_word_size(word_size);
   BlockFreelist* fl =  block_freelists();
   MetaWord* p = NULL;
-  // Allocation from the dictionary is expensive in the sense that
-  // the dictionary has to be searched for a size.  Don't allocate
-  // from the dictionary until it starts to get fat.  Is this
+  // Allocation from the dictionary is expensive in the sense that  从字典中分配是昂贵的，因为字典必须搜索大小。
+  // the dictionary has to be searched for a size.  Don't allocate  在字典发胖之前不要从字典里分配。
+  // from the dictionary until it starts to get fat.  Is this       这是合理的政策吗？也许一本简陋的字典足够快分配
   // a reasonable policy?  Maybe an skinny dictionary is fast enough
   // for allocations.  Do some profiling.  JJJ
   if (fl->total_size() > allocation_from_dictionary_limit) {

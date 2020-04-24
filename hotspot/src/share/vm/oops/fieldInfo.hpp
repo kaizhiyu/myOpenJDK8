@@ -29,8 +29,8 @@
 #include "../oops/typeArrayOop.hpp"
 #include "../classfile/vmSymbols.hpp"
 
-// This class represents the field information contained in the fields
-// array of an InstanceKlass.  Currently it's laid on top an array of
+// This class represents the field information contained in the fields  此类表示InstanceKlass的fields数组中包含的字段信息。
+// array of an InstanceKlass.  Currently it's laid on top an array of   目前，它被放在一个Java短裤数组的顶部，但在未来，它可以简单地用作一个真正的数组类型。
 // Java shorts but in the future it could simply be used as a real
 // array type.  FieldInfo generally shouldn't be used directly.
 // Fields should be queried either through InstanceKlass or through

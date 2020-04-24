@@ -999,7 +999,7 @@ void ClassFileParser::parse_field_attributes(u2 attributes_count,
 }
 
 
-// Field allocation types. Used for computing field offsets.
+// Field allocation types. Used for computing field offsets.  字段分配类型。用于计算字段偏移。
 
 enum FieldAllocationType {
   STATIC_OOP,           // Oops
@@ -1066,7 +1066,7 @@ static FieldAllocationType basic_type_to_atype(bool is_static, BasicType type) {
   return result;
 }
 
-class FieldAllocationCount: public ResourceObj {
+class FieldAllocationCount: public ResourceObj { // FieldAllocationCount主要记录了静态类型变量的数量和非静态类型的变量数量，后面JVM为Java类分配内存空间时，会根据这些变量的数量计算所占内存大小。
  public:
   u2 count[MAX_FIELD_ALLOCATION_TYPE];
 
@@ -1085,12 +1085,23 @@ class FieldAllocationCount: public ResourceObj {
   }
 };
 
+/**
+ * JVM解析Java类变量的逻辑：
+    获取Java类中的变量数量
+    读取变量的访问标识
+    读取变量名称索引
+    读取变量类型索引
+    读取变量属性
+    判断变量类型
+    统计各类型数量
+ */
+
 Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
                                          bool is_interface,
                                          FieldAllocationCount *fac,
                                          u2* java_fields_count_ptr, TRAPS) {
   ClassFileStream* cfs = stream();
-  cfs->guarantee_more(2, CHECK_NULL);  // length
+  cfs->guarantee_more(2, CHECK_NULL);  // length  获取Java类域变量的数量
   u2 length = cfs->get_u2_fast();
   *java_fields_count_ptr = length;
 
@@ -1100,7 +1111,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
 
   // The field array starts with tuples of shorts
   // [access, name index, sig index, initial value index, byte offset].
-  // A generic signature slot only exists for field with generic
+  // A generic signature slot only exists for field with generic      只有具有泛型签名属性的字段才存在泛型签名槽。
   // signature attribute. And the access flag is set with
   // JVM_ACC_FIELD_HAS_GENERIC_SIGNATURE for that field. The generic
   // signature slots are at the end of the field array and after all
@@ -1122,18 +1133,18 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
   u2* fa = NEW_RESOURCE_ARRAY_IN_THREAD(
              THREAD, u2, total_fields * (FieldInfo::field_slots + 1));
 
-  // The generic signature slots start after all other fields' data.
+  // The generic signature slots start after all other fields' data.  通用签名槽在所有其他字段的数据之后开始。
   int generic_signature_slot = total_fields * FieldInfo::field_slots;
   int num_generic_signature = 0;
   for (int n = 0; n < length; n++) {
     cfs->guarantee_more(8, CHECK_NULL);  // access_flags, name_index, descriptor_index, attributes_count
 
-    AccessFlags access_flags;
+    AccessFlags access_flags; // 读取变量访问表示，如private|public等
     jint flags = cfs->get_u2_fast() & JVM_RECOGNIZED_FIELD_MODIFIERS;
     verify_legal_field_modifiers(flags, is_interface, CHECK_NULL);
     access_flags.set_flags(flags);
 
-    u2 name_index = cfs->get_u2_fast();
+    u2 name_index = cfs->get_u2_fast(); // 读取变量名称索引
     int cp_size = _cp->length();
     check_property(valid_symbol_at(name_index),
       "Invalid constant pool index %u for field name in class file %s",
@@ -1142,7 +1153,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
     Symbol*  name = _cp->symbol_at(name_index);
     verify_legal_field_name(name, CHECK_NULL);
 
-    u2 signature_index = cfs->get_u2_fast();
+    u2 signature_index = cfs->get_u2_fast(); // 读取类型索引
     check_property(valid_symbol_at(signature_index),
       "Invalid constant pool index %u for field signature in class file %s",
       signature_index, CHECK_NULL);
@@ -1155,7 +1166,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
     bool is_static = access_flags.is_static();
     FieldAnnotationCollector parsed_annotations(_loader_data);
 
-    u2 attributes_count = cfs->get_u2_fast();
+    u2 attributes_count = cfs->get_u2_fast();  //读取变量属性
     if (attributes_count > 0) {
       parse_field_attributes(attributes_count, is_static, signature_index,
                              &constantvalue_index, &is_synthetic,
@@ -1198,7 +1209,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
                       constantvalue_index);
     BasicType type = _cp->basic_type_for_signature_at(signature_index);
 
-    // Remember how many oops we encountered and compute allocation type
+    // Remember how many oops we encountered and compute allocation type 记住我们遇到了多少个oop并计算分配类型
     FieldAllocationType atype = fac->update(is_static, type);
     field->set_allocation_type(atype);
 
@@ -1230,7 +1241,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
         }
       }
 
-      // Injected field
+      // Injected field 注入字段
       FieldInfo* field = FieldInfo::from_field_array(fa, index);
       field->initialize(JVM_ACC_FIELD_INTERNAL,
                         injected[n].name_index,
@@ -1239,7 +1250,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
 
       BasicType type = FieldType::basic_type(injected[n].signature());
 
-      // Remember how many oops we encountered and compute allocation type
+      // Remember how many oops we encountered and compute allocation type  记住我们遇到了多少个oop并计算分配类型
       FieldAllocationType atype = fac->update(false, type);
       field->set_allocation_type(atype);
       index++;
@@ -1268,7 +1279,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
   }
 
   if (_need_verify && length > 1) {
-    // Check duplicated fields
+    // Check duplicated fields 检查重复字段
     ResourceMark rm(THREAD);
     NameSigHash** names_and_sigs = NEW_RESOURCE_ARRAY_IN_THREAD(
       THREAD, NameSigHash*, HASH_ROW_SIZE);
@@ -1279,7 +1290,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
       for (AllFieldStream fs(fields, _cp); !fs.done(); fs.next()) {
         Symbol* name = fs.name();
         Symbol* sig = fs.signature();
-        // If no duplicates, add name/signature in hashtable names_and_sigs.
+        // If no duplicates, add name/signature in hashtable names_and_sigs.  如果没有重复，请在哈希表names和sigs中添加名称/签名。
         if (!put_after_lookup(name, sig, names_and_sigs)) {
           dup = true;
           break;
@@ -3928,20 +3939,20 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
     instanceKlassHandle super_klass = parse_super_class(super_class_index,
                                                         CHECK_NULL);
 
-    // Interfaces
+    // Interfaces 接口
     u2 itfs_len = cfs->get_u2_fast();
     Array<Klass*>* local_interfaces =
       parse_interfaces(itfs_len, protection_domain, _class_name,
                        &has_default_methods, CHECK_(nullHandle));
 
     u2 java_fields_count = 0;
-    // Fields (offsets are filled in later)
+    // Fields (offsets are filled in later) 字段（偏移量后面填充）
     FieldAllocationCount fac;
     Array<u2>* fields = parse_fields(class_name,
                                      access_flags.is_interface(),
                                      &fac, &java_fields_count,
                                      CHECK_(nullHandle));
-    // Methods
+    // Methods 方法
     bool has_final_method = false;
     AccessFlags promoted_flags;
     promoted_flags.set_flags(0);
@@ -3954,23 +3965,23 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
       has_default_methods = true;
     }
 
-    // Additional attributes
+    // Additional attributes 附加的属性
     ClassAnnotationCollector parsed_annotations;
     parse_classfile_attributes(&parsed_annotations, CHECK_(nullHandle));
 
-    // Finalize the Annotations metadata object,
-    // now that all annotation arrays have been created.
+    // Finalize the Annotations metadata object,  完成注释元数据对象，
+    // now that all annotation arrays have been created.  现在已经创建了所有注释数组。
     create_combined_annotations(CHECK_(nullHandle));
 
-    // Make sure this is the end of class file stream
+    // Make sure this is the end of class file stream 确保这是class file流的结尾
     guarantee_property(cfs->at_eos(), "Extra bytes at the end of class file %s", CHECK_(nullHandle));
 
-    // We check super class after class file is parsed and format is checked
+    // We check super class after class file is parsed and format is checked  我们在分析类文件并检查格式之后检查超级类
     if (super_class_index > 0 && super_klass.is_null()) {
       Symbol*  sk  = cp->klass_name_at(super_class_index);
       if (access_flags.is_interface()) {
         // Before attempting to resolve the superclass, check for class format
-        // errors not checked yet.
+        // errors not checked yet. 在尝试解析superClass之前，请检查尚未检查的类格式错误。
         guarantee_property(sk == vmSymbols::java_lang_Object(),
                            "Interfaces must have java.lang.Object as superclass in class file %s",
                            CHECK_(nullHandle));
@@ -4036,7 +4047,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
     itable_size = access_flags.is_interface() ? 0 : klassItable::compute_itable_size(_transitive_interfaces);
 
     FieldLayoutInfo info;
-    layout_fields(class_loader, &fac, &parsed_annotations, &info, CHECK_NULL);
+    layout_fields(class_loader, &fac, &parsed_annotations, &info, CHECK_NULL);  // 解析完字节码文件中Java类的全部域变量信息后，JVM计算出五种数据类型各自的数量，并据此计算各个变量的偏移量。
 
     int total_oop_map_size2 =
           InstanceKlass::nonstatic_oop_map_size(info.total_oop_map_count);

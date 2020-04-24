@@ -1381,8 +1381,8 @@ class java_util_concurrent_locks_AbstractOwnableSynchronizer : AllStatic {
   static oop  get_owner_threadObj(oop obj);
 };
 
-// Use to declare fields that need to be injected into Java classes
-// for the JVM to use.  The name_index and signature_index are
+// Use to declare fields that need to be injected into Java classes    用于声明需要注入Java类以供JVM使用的字段。
+// for the JVM to use.  The name_index and signature_index are         名称索引和签名索引在vmSymbols中声明。
 // declared in vmSymbols.  The may_be_java flag is used to declare
 // fields that might already exist in Java but should be injected if
 // they don't.  Otherwise the field is unconditionally injected and

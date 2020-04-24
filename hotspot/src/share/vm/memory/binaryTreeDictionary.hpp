@@ -29,12 +29,12 @@
 #include "../memory/freeList.hpp"
 
 /*
- * A binary tree based search structure for free blocks.
- * This is currently used in the Concurrent Mark&Sweep implementation, but
+ * A binary tree based search structure for free blocks.  基于二叉树的自由块搜索结构。
+ * This is currently used in the Concurrent Mark&Sweep implementation, but  这目前在并发标记和扫描实现中使用，但将用于元数据的自由块管理。
  * will be used for free block management for metadata.
  */
 
-// A TreeList is a FreeList which can be used to maintain a
+// A TreeList is a FreeList which can be used to maintain a TreeList是一个自由列表，可以用来维护自由列表的二叉树。
 // binary tree of free lists.
 
 template <class Chunk_t, class FreeList_t> class TreeChunk;
@@ -190,7 +190,7 @@ class BinaryTreeDictionary: public FreeBlockDictionary<Chunk_t> {
 
   // This field is added and can be set to point to the
   // the Mutex used to synchronize access to the
-  // dictionary so that assertion checking can be done.
+  // dictionary so that assertion checking can be done.  此字段已添加，可以设置为指向用于同步对字典的访问的互斥量，以便可以执行断言检查。
   // For example it is set to point to _parDictionaryAllocLock.
   NOT_PRODUCT(Mutex* _lock;)
 

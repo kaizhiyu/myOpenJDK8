@@ -298,7 +298,7 @@ template <MEMFLAGS F>class CHeapArray: public CHeapObj<F> {
 define_array(boolArray, bool)          define_stack(boolStack, boolArray)
 define_array(intArray , int )          define_stack(intStack , intArray )
 
-// Array for metadata allocation
+// Array for metadata allocation  用于元数据分配的数组
 
 template <typename T>
 class Array: public MetaspaceObj {
@@ -307,8 +307,8 @@ class Array: public MetaspaceObj {
   friend class MethodHandleCompiler;           // special case
   friend class WhiteBox;
 protected:
-  int _length;                                 // the number of array elements
-  T   _data[1];                                // the array memory
+  int _length;                                 // the number of array elements  数组元素的数量
+  T   _data[1];                                // the array memory  数组内存
 
   void initialize(int length) {
     _length = length;

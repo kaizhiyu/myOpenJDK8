@@ -40,7 +40,7 @@ typedef Array<u1> AnnotationArray;
 
 // Class to hold the various types of annotations. The only metadata that points
 // to this is InstanceKlass, or another Annotations instance if this is a
-// a type_annotation instance.
+// a type_annotation instance.  类来保存各种类型的注解。指向此实例的唯一元数据是InstanceKlass，如果这是一个类型注释实例，则是另一个注释实例。
 
 class Annotations: public MetaspaceObj {
 
