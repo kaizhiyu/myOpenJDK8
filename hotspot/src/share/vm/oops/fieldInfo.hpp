@@ -58,7 +58,7 @@ class FieldInfo VALUE_OBJ_CLASS_SPEC {
   //    ..........................................00  - blank
   //    [------------------offset----------------]01  - real field offset
   //    ......................[-------type-------]10  - plain field with type
-  //    [--contention_group--][-------type-------]11  - contended field with type and contention group
+  //    [--contention_group--][-------type-------]11  - contended field with type and contention group  具有类型和争用组的争用字段
   enum FieldOffset {
     access_flags_offset      = 0,
     name_index_offset        = 1,

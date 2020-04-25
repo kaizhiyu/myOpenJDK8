@@ -29,13 +29,13 @@
 #include "../oops/fieldInfo.hpp"
 #include "../runtime/fieldDescriptor.hpp"
 
-// The is the base class for iteration over the fields array
-// describing the declared fields in the class.  Several subclasses
-// are provided depending on the kind of iteration required.  The
+// The is the base class for iteration over the fields array          是用于对描述类中声明字段的字段数组进行迭代的基类。
+// describing the declared fields in the class.  Several subclasses   根据所需的迭代类型，提供了几个子类。
+// are provided depending on the kind of iteration required.  The     JavaFieldStream用于在常规Java字段上迭代，它通常是首选的迭代器。
 // JavaFieldStream is for iterating over regular Java fields and it
-// generally the preferred iterator.  InternalFieldStream only
+// generally the preferred iterator.  InternalFieldStream only        InternalFieldStream只对JVM注入的字段进行迭代。
 // iterates over fields that have been injected by the JVM.
-// AllFieldStream exposes all fields and should only be used in rare
+// AllFieldStream exposes all fields and should only be used in rare  AllFieldStream公开所有字段，只应在少数情况下使用。
 // cases.
 class FieldStreamBase : public StackObj {
  protected:

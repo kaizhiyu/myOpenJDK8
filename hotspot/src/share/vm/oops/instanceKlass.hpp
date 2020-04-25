@@ -184,9 +184,9 @@ class InstanceKlass: public Klass {
  protected:
   // Annotations for this class 此类的注解
   Annotations*    _annotations;
-  // Array classes holding elements of this class.
+  // Array classes holding elements of this class. 包含此类元素的数组类
   Klass*          _array_klasses;
-  // Constant pool for this class.
+  // Constant pool for this class.  这个类的常量池。
   ConstantPool* _constants;
   // The InnerClasses attribute and EnclosingMethod attribute. The
   // _inner_classes is an array of shorts. If the class has InnerClasses
@@ -209,10 +209,10 @@ class InstanceKlass: public Klass {
   // if this class is unloaded.
   Symbol*         _array_name;
 
-  // Number of heapOopSize words used by non-static fields in this klass
-  // (including inherited fields but after header_size()).
+  // Number of heapOopSize words used by non-static fields in this klass  此klass中非静态字段使用的heapOopSize字数
+  // (including inherited fields but after header_size()).  包括继承得到的字段
   int             _nonstatic_field_size;
-  int             _static_field_size;    // number words used by static fields (oop and non-oop) in this klass
+  int             _static_field_size;    // number words used by static fields (oop and non-oop) in this klass  klass中静态字段（oop和non-oop）使用的字数
   // Constant pool index to the utf8 entry of the Generic signature,
   // or 0 if none.
   u2              _generic_signature_index;

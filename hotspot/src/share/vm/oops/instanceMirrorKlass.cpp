@@ -156,11 +156,11 @@ void InstanceMirrorKlass::oop_follow_contents(oop obj) {
   // Follow the klass field in the mirror.
   Klass* klass = java_lang_Class::as_Klass(obj);
   if (klass != NULL) {
-    // An anonymous class doesn't have its own class loader, so the call
+    // An anonymous class doesn't have its own class loader, so the call     匿名类没有自己的类加载器，因此对follow_klass的调用将标记并推送其java镜像，而不是类加载器。
     // to follow_klass will mark and push its java mirror instead of the
-    // class loader. When handling the java mirror for an anonymous class
+    // class loader. When handling the java mirror for an anonymous class    在处理匿名类的java镜像时，我们需要确保声明其类加载器数据，这是通过显式调用follow_class_loader来完成的。
     // we need to make sure its class loader data is claimed, this is done
-    // by calling follow_class_loader explicitly. For non-anonymous classes
+    // by calling follow_class_loader explicitly. For non-anonymous classes  对于非匿名类，在处理类加载器本身时调用follow_class_loader。
     // the call to follow_class_loader is made when the class loader itself
     // is handled.
     if (klass->oop_is_instance() && InstanceKlass::cast(klass)->is_anonymous()) {
@@ -169,7 +169,7 @@ void InstanceMirrorKlass::oop_follow_contents(oop obj) {
       MarkSweep::follow_klass(klass);
     }
   } else {
-    // If klass is NULL then this a mirror for a primitive type.
+    // If klass is NULL then this a mirror for a primitive type.        如果klass为空，则这是原始类型的镜像。
     // We don't have to follow them, since they are handled as strong
     // roots in Universe::oops_do.
     assert(java_lang_Class::is_primitive(obj), "Sanity check");

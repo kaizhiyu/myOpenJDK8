@@ -22,6 +22,11 @@
  *
  */
 
+/**
+ * 当字节码文件解析完成之后，JVM便会在内部创建一个与Java类对等的类模版对象，说白了该对象其实是C++类的实例。每一个java类模型，最终在JVM内部都会有一个klass与之对等，Java 类中的字段、方法及常量池等都会保存到klass
+ * 实例对象中，要注意，这个实例对象并非Java 类的实例对象，其仅仅用于表示java类型本身，或者java类的定义，与Java 类实例对象对等的jvm内部对象是instanceOop实例。
+ */
+
 #include "precompiled.hpp"
 #include "../classfile/classFileParser.hpp"
 #include "../classfile/classLoader.hpp"
@@ -65,8 +70,8 @@
 #include "../utilities/globalDefinitions.hpp"
 #include "../utilities/ostream.hpp"
 
-// We generally try to create the oops directly when parsing, rather than
-// allocating temporary data structures and copying the bytes twice. A
+// We generally try to create the oops directly when parsing, rather than    我们通常在解析时直接创建oops，而不是分配临时数据结构和复制两次字节。
+// allocating temporary data structures and copying the bytes twice. A       只有在分析常量池中的utf8条目和分析行号表时，才需要临时区域。
 // temporary area is only needed when parsing utf8 entries in the constant
 // pool and when parsing line number tables.
 
@@ -3186,14 +3191,14 @@ class FieldLayoutInfo : public StackObj {
   bool          has_nonstatic_fields;
 };
 
-// Layout fields and fill in FieldLayoutInfo.  Could use more refactoring!
+// Layout fields and fill in FieldLayoutInfo.  Could use more refactoring!  布局字段并填写FieldLayoutInfo。可能需要更多的重构！
 void ClassFileParser::layout_fields(Handle class_loader,
                                     FieldAllocationCount* fac,
                                     ClassAnnotationCollector* parsed_annotations,
                                     FieldLayoutInfo* info,
                                     TRAPS) {
 
-  // Field size and offset computation
+  // Field size and offset computation  字段大小和偏移计算
   int nonstatic_field_size = _super_klass() == NULL ? 0 : _super_klass()->nonstatic_field_size();
   int next_static_oop_offset;
   int next_static_double_offset;
@@ -3209,7 +3214,7 @@ void ClassFileParser::layout_fields(Handle class_loader,
   int next_nonstatic_field_offset;
   int next_nonstatic_padded_offset;
 
-  // Count the contended fields by type.
+  // Count the contended fields by type. 按照类型计算内容字段
   //
   // We ignore static fields, because @Contended is not supported for them.
   // The layout code below will also ignore the static fields.
@@ -3226,7 +3231,7 @@ void ClassFileParser::layout_fields(Handle class_loader,
   }
 
 
-  // Calculate the starting byte offsets
+  // Calculate the starting byte offsets  计算开始的字节偏移
   next_static_oop_offset      = InstanceMirrorKlass::offset_of_static_fields();
   next_static_double_offset   = next_static_oop_offset +
                                 ((fac->count[STATIC_OOP]) * heapOopSize);
@@ -4012,7 +4017,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
         );
         return nullHandle;
       }
-      // Make sure super class is not final
+      // Make sure super class is not final  确保super class 不是final
       if (super_klass->is_final()) {
         THROW_MSG_(vmSymbols::java_lang_VerifyError(), "Cannot inherit from final class", nullHandle);
       }
@@ -4021,14 +4026,14 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
     // save super klass for error handling.
     _super_klass = super_klass;
 
-    // Compute the transitive list of all unique interfaces implemented by this class
+    // Compute the transitive list of all unique interfaces implemented by this class  计算该类实现的所有唯一接口的传递列表
     _transitive_interfaces =
           compute_transitive_interfaces(super_klass, local_interfaces, CHECK_(nullHandle));
 
     // sort methods
     intArray* method_ordering = sort_methods(methods);
 
-    // promote flags from parse_methods() to the klass' flags
+    // promote flags from parse_methods() to the klass' flags  将标志从parse_methods（）提升到klass的标志
     access_flags.add_promoted_flags(promoted_flags.as_int());
 
     // Size of Java vtable (in words)

@@ -30,10 +30,10 @@
 #include "../runtime/handles.hpp"
 #include "../utilities/macros.hpp"
 
-// An InstanceMirrorKlass is a specialized InstanceKlass for
-// java.lang.Class instances.  These instances are special because
+// An InstanceMirrorKlass is a specialized InstanceKlass for    InstanceMirrorKlass是为了java.lang.Class实例定制的InstanceKlass
+// java.lang.Class instances.  These instances are special because  这些实例是特殊的，因为它们除了包含类的普通字段外，还包含类的静态字段。
 // they contain the static fields of the class in addition to the
-// normal fields of Class.  This means they are variable sized
+// normal fields of Class.  This means they are variable sized      这意味着它们是可变大小的实例，需要特殊的逻辑来计算它们的大小和迭代它们的oop。
 // instances and need special logic for computing their size and for
 // iteration of their oops.
 
@@ -64,13 +64,13 @@ class InstanceMirrorKlass: public InstanceKlass {
   virtual int oop_size(oop obj) const;
 
   // Static field offset is an offset into the Heap, should be converted by
-  // based on UseCompressedOop for traversal
+  // based on UseCompressedOop for traversal  静态字段偏移量是堆中的一个偏移量，应根据UseCompressedOop转换为遍历
   static HeapWord* start_of_static_fields(oop obj) {
     return (HeapWord*)(cast_from_oop<intptr_t>(obj) + offset_of_static_fields());
   }
 
   static void init_offset_of_static_fields() {
-    // Cache the offset of the static fields in the Class instance
+    // Cache the offset of the static fields in the Class instance  缓存类实例中静态字段的偏移量
     assert(_offset_of_static_fields == 0, "once");
     _offset_of_static_fields = InstanceMirrorKlass::cast(SystemDictionary::Class_klass())->size_helper() << LogHeapWordSize;
   }

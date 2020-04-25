@@ -49,13 +49,13 @@ inline InstanceKlass* klassVtable::ik() const {
 
 
 // this function computes the vtable size (including the size needed for miranda
-// methods) and the number of miranda methods in this class.
+// methods) and the number of miranda methods in this class. 此函数计算vtable大小（包括miranda方法所需的大小）和该类中miranda方法的数量。
 // Note on Miranda methods: Let's say there is a class C that implements
-// interface I, and none of C's superclasses implements I.
-// Let's say there is an abstract method m in I that neither C
+// interface I, and none of C's superclasses implements I.   关于Miranda方法的注意：假设有一个类C实现接口I，而C的超类都没有实现I。
+// Let's say there is an abstract method m in I that neither C             假设I中有一个抽象方法m，C或其任何超类都无法实现（即没有任何访问方法，其名称和签名与m相同）
 // nor any of its super classes implement (i.e there is no method of any access,
-// with the same name and signature as m), then m is a Miranda method which is
-// entered as a public abstract method in C's vtable.  From then on it should
+// with the same name and signature as m), then m is a Miranda method which is  然后m是Miranda方法，它作为公共抽象方法输入到C的vtable中。
+// entered as a public abstract method in C's vtable.  From then on it should   从那时起，它应该被视为C中的任何其他公共方法。
 // treated as any other public method in C for method over-ride purposes.
 void klassVtable::compute_vtable_size_and_num_mirandas(
     int* vtable_length_ret, int* num_new_mirandas,
@@ -72,7 +72,7 @@ void klassVtable::compute_vtable_size_and_num_mirandas(
   InstanceKlass* sk = (InstanceKlass*)super;
   vtable_length = super == NULL ? 0 : sk->vtable_length();
 
-  // go thru each method in the methods table to see if it needs a new entry
+  // go thru each method in the methods table to see if it needs a new entry  浏览methods表中的每个方法，看看它是否需要一个新条目
   int len = methods->length();
   for (int i = 0; i < len; i++) {
     assert(methods->at(i)->is_method(), "must be a Method*");

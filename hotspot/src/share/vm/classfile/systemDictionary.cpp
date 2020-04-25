@@ -315,14 +315,14 @@ Klass* SystemDictionary::resolve_super_or_fail(Symbol* child_name,
                                                  Handle protection_domain,
                                                  bool is_superclass,
                                                  TRAPS) {
-  // Double-check, if child class is already loaded, just return super-class,interface
-  // Don't add a placedholder if already loaded, i.e. already in system dictionary
-  // Make sure there's a placeholder for the *child* before resolving.
-  // Used as a claim that this thread is currently loading superclass/classloader
-  // Used here for ClassCircularity checks and also for heap verification
+  // Double-check, if child class is already loaded, just return super-class,interface  再次检查，如果子类已经加载，只返回super-class，interface
+  // Don't add a placedholder if already loaded, i.e. already in system dictionary   如果已加载，即已在系统字典中，则不要添加placedholder
+  // Make sure there's a placeholder for the *child* before resolving.               在解析之前，确保有一个*子*的占位符。
+  // Used as a claim that this thread is currently loading superclass/classloader    用作此线程当前正在加载超类/类加载器的声明
+  // Used here for ClassCircularity checks and also for heap verification            这里用于类循环检查和堆验证（堆中的每个InstanceKlass都需要在系统字典中或有一个占位符）。
   // (every InstanceKlass in the heap needs to be in the system dictionary
   // or have a placeholder).
-  // Must check ClassCircularity before checking if super class is already loaded
+  // Must check ClassCircularity before checking if super class is already loaded    必须在检查是否已加载超级类之前检查类循环性
   //
   // We might not already have a placeholder if this child_name was
   // first seen via resolve_from_stream (jni_DefineClass or JVM_DefineClass);
@@ -336,7 +336,7 @@ Klass* SystemDictionary::resolve_super_or_fail(Symbol* child_name,
   int d_index = dictionary()->hash_to_index(d_hash);
   unsigned int p_hash = placeholders()->compute_hash(child_name, loader_data);
   int p_index = placeholders()->hash_to_index(p_hash);
-  // can't throw error holding a lock
+  // can't throw error holding a lock  持有锁时不能抛出错误
   bool child_already_loaded = false;
   bool throw_circularity_error = false;
   {

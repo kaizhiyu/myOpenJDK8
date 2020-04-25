@@ -461,7 +461,7 @@ protected:
   static bool has_loadClassInternal()       { return _has_loadClassInternal; }
 
   // Returns the class loader data to be used when looking up/updating the
-  // system dictionary.
+  // system dictionary.  返回在查找/更新系统字典时要使用的类加载器数据。
   static ClassLoaderData *class_loader_data(Handle class_loader) {
     return ClassLoaderData::class_loader_data(class_loader());
   }
