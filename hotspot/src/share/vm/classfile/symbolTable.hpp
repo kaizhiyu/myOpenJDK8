@@ -43,10 +43,10 @@ class BoolObjectClosure;
 class outputStream;
 
 
-// Class to hold a newly created or referenced Symbol* temporarily in scope.
-// new_symbol() and lookup() will create a Symbol* if not already in the
+// Class to hold a newly created or referenced Symbol* temporarily in scope.  类在作用域中临时保存新创建或引用的symbol*。
+// new_symbol() and lookup() will create a Symbol* if not already in the      new_symbol（）和lookup（）将创建一个symbol*如果符号表中没有，则添加到符号的引用计数中。
 // symbol table and add to the symbol's reference count.
-// probe() and lookup_only() will increment the refcount if symbol is found.
+// probe() and lookup_only() will increment the refcount if symbol is found.  如果找到符号，probe（）和lookup_only（）将增加refcount。
 class TempNewSymbol : public StackObj {
   Symbol* _temp;
 

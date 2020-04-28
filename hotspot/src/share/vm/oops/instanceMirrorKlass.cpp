@@ -365,7 +365,7 @@ instanceOop InstanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) {
   instanceOop i = (instanceOop)CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);
 
   // Since mirrors can be variable sized because of the static fields, store
-  // the size in the mirror itself.
+  // the size in the mirror itself.  由于静态字段的缘故，镜像的大小可以是可变的，因此请将大小存储在镜像本身中。
   java_lang_Class::set_oop_size(i, size);
 
   return i;

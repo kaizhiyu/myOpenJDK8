@@ -535,12 +535,12 @@ static void initialize_static_field(fieldDescriptor* fd, Handle mirror, TRAPS) {
 void java_lang_Class::fixup_mirror(KlassHandle k, TRAPS) {
   assert(InstanceMirrorKlass::offset_of_static_fields() != 0, "must have been computed already");
 
-  // If the offset was read from the shared archive, it was fixed up already
+  // If the offset was read from the shared archive, it was fixed up already  如果偏移量是从共享存档中读取的，则它已经修复
   if (!k->is_shared()) {
     if (k->oop_is_instance()) {
-      // During bootstrap, java.lang.Class wasn't loaded so static field
+      // During bootstrap, java.lang.Class wasn't loaded so static field  在引导过程中，没有加载java.lang.Class，因此在没有添加大小的情况下计算静态字段偏移量。
       // offsets were computed without the size added it.  Go back and
-      // update all the static field offsets to included the size.
+      // update all the static field offsets to included the size.        返回并更新所有静态字段偏移以包含大小。
         for (JavaFieldStream fs(InstanceKlass::cast(k())); !fs.done(); fs.next()) {
         if (fs.access_flags().is_static()) {
           int real_offset = fs.offset() + InstanceMirrorKlass::offset_of_static_fields();
@@ -579,9 +579,9 @@ void java_lang_Class::create_mirror(KlassHandle k, Handle class_loader,
   int computed_modifiers = k->compute_modifier_flags(CHECK);
   k->set_modifier_flags(computed_modifiers);
   // Class_klass has to be loaded because it is used to allocate
-  // the mirror.
+  // the mirror.  必须加载Class_klass，因为它用于分配镜像。
   if (SystemDictionary::Class_klass_loaded()) {
-    // Allocate mirror (java.lang.Class instance)
+    // Allocate mirror (java.lang.Class instance) 分配镜像(java.lang.Class实例)
     Handle mirror = InstanceMirrorKlass::cast(SystemDictionary::Class_klass())->allocate_instance(k, CHECK);
 
     // Setup indirection from mirror->klass

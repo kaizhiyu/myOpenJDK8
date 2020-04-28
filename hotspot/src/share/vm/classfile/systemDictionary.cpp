@@ -1264,7 +1264,6 @@ instanceKlassHandle SystemDictionary::load_shared_class(instanceKlassHandle ik,
 instanceKlassHandle SystemDictionary::load_instance_class(Symbol* class_name, Handle class_loader, TRAPS) {
   instanceKlassHandle nh = instanceKlassHandle(); // null Handle
   if (class_loader.is_null()) {
-
     // Search the shared system dictionary for classes preloaded into the
     // shared spaces.  在共享系统字典中搜索预加载到共享空间中的类
     instanceKlassHandle k;
@@ -1287,7 +1286,7 @@ instanceKlassHandle SystemDictionary::load_instance_class(Symbol* class_name, Ha
     }
     return k;
   } else {
-    // Use user specified class loader to load class. Call loadClass operation on class_loader.
+    // Use user specified class loader to load class. Call loadClass operation on class_loader. 使用用户定制的类加载器加载类，在class_loader上调用loadClass操作
     ResourceMark rm(THREAD);
 
     assert(THREAD->is_Java_thread(), "must be a JavaThread");

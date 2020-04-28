@@ -461,8 +461,8 @@ PRAGMA_DIAG_POP
 
   // Parse .class file and return new Klass*. The Klass* is not hooked up
   // to the system dictionary or any other structures, so a .class file can
-  // be loaded several times if desired.
-  // The system dictionary hookup is done by the caller.
+  // be loaded several times if desired.  解析.class文件并返回新的Klass*。Klass*没有连接到系统字典或任何其他结构，因此如果需要，可以多次加载.class文件。
+  // The system dictionary hookup is done by the caller.  系统字典连接由调用方完成。
   //
   // "parsed_name" is updated by this method, and is the name found
   // while parsing the stream.

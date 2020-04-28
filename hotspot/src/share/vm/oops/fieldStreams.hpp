@@ -193,7 +193,7 @@ class FieldStreamBase : public StackObj {
   }
 };
 
-// Iterate over only the internal fields
+// Iterate over only the internal fields  仅迭代内部字段
 class JavaFieldStream : public FieldStreamBase {
  public:
   JavaFieldStream(instanceKlassHandle k): FieldStreamBase(k->fields(), k->constants(), 0, k->java_fields_count()) {}

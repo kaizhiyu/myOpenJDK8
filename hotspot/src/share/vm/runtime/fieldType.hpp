@@ -55,7 +55,7 @@ class FieldType: public AllStatic {
   static bool is_valid_array_signature(Symbol* signature);
  public:
 
-  // Return basic type
+  // Return basic type 返回基本类型
   static BasicType basic_type(Symbol* signature);
 
   // Testing

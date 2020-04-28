@@ -876,7 +876,7 @@ void ClassFileParser::verify_constantvalue(int constantvalue_index, int signatur
 }
 
 
-// Parse attributes for a field.
+// Parse attributes for a field. 解析一个字段的属性
 void ClassFileParser::parse_field_attributes(u2 attributes_count,
                                              bool is_static, u2 signature_index,
                                              u2* constantvalue_index_addr,
@@ -1138,7 +1138,7 @@ Array<u2>* ClassFileParser::parse_fields(Symbol* class_name,
   u2* fa = NEW_RESOURCE_ARRAY_IN_THREAD(
              THREAD, u2, total_fields * (FieldInfo::field_slots + 1));
 
-  // The generic signature slots start after all other fields' data.  通用签名槽在所有其他字段的数据之后开始。
+  // The generic signature slots start after all other fields' data.  通用签名槽(也就是范型)在所有其他字段的数据之后开始。
   int generic_signature_slot = total_fields * FieldInfo::field_slots;
   int num_generic_signature = 0;
   for (int n = 0; n < length; n++) {
@@ -3103,7 +3103,7 @@ void ClassFileParser::create_combined_annotations(TRAPS) {
     _fields_type_annotations = NULL;
 }
 
-// Transfer ownership of metadata allocated to the InstanceKlass.
+// Transfer ownership of metadata allocated to the InstanceKlass.  转移分配给InstanceKlass的元数据的所有权。
 void ClassFileParser::apply_parsed_class_metadata(
                                             instanceKlassHandle this_klass,
                                             int java_fields_count, TRAPS) {
@@ -3116,7 +3116,7 @@ void ClassFileParser::apply_parsed_class_metadata(
   this_klass->set_transitive_interfaces(_transitive_interfaces);
   this_klass->set_annotations(_combined_annotations);
 
-  // Clear out these fields so they don't get deallocated by the destructor
+  // Clear out these fields so they don't get deallocated by the destructor  清除这些字段，这样它们就不会被析构函数释放
   clear_class_metadata();
 }
 
@@ -3199,7 +3199,7 @@ void ClassFileParser::layout_fields(Handle class_loader,
                                     TRAPS) {
 
   // Field size and offset computation  字段大小和偏移计算
-  int nonstatic_field_size = _super_klass() == NULL ? 0 : _super_klass()->nonstatic_field_size();
+  int nonstatic_field_size = _super_klass() == NULL ? 0 : _super_klass()->nonstatic_field_size();  //java oop 会首先将父类的非静态变量空间预留出来
   int next_static_oop_offset;
   int next_static_double_offset;
   int next_static_word_offset;
@@ -3718,9 +3718,9 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
                                                     bool verify,
                                                     TRAPS) {
 
-  // When a retransformable agent is attached, JVMTI caches the
+  // When a retransformable agent is attached, JVMTI caches the    附加可重传代理时，JVMTI缓存第一次重传之前存在的类字节。
   // class bytes that existed before the first retransformation.
-  // If RedefineClasses() was used before the retransformable
+  // If RedefineClasses() was used before the retransformable      如果在附加可重传代理之前使用了RedefineClasses（），则缓存的类字节可能不是原始类字节。
   // agent attached, then the cached class bytes may not be the
   // original class bytes.
   JvmtiCachedClassFileData *cached_class_file = NULL;
@@ -3744,7 +3744,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
   init_parsed_class_attributes(loader_data);
 
   if (JvmtiExport::should_post_class_file_load_hook()) {
-    // Get the cached class file bytes (if any) from the class that
+    // Get the cached class file bytes (if any) from the class that      从正在重新定义或重新传输的类中获取缓存的类文件字节（如果有）。
     // is being redefined or retransformed. We use jvmti_thread_state()
     // instead of JvmtiThreadState::state_for(jt) so we don't allocate
     // a JvmtiThreadState any earlier than necessary. This will help
@@ -4083,7 +4083,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
     assert(this_klass->nonstatic_oop_map_count() == info.total_oop_map_count,
            "sanity");
 
-    // Fill in information already parsed
+    // Fill in information already parsed 填充已经解析的信息
     this_klass->set_should_verify_class(verify);
     jint lh = Klass::instance_layout_helper(info.instance_size, false);
     this_klass->set_layout_helper(lh);
@@ -4137,7 +4137,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
       this_klass->set_cached_class_file(cached_class_file);
     }
 
-    // Fill in field values obtained by parse_classfile_attributes
+    // Fill in field values obtained by parse_classfile_attributes 填充字段值，从parse_classfile_attributes获得
     if (parsed_annotations.has_any_annotations())
       parsed_annotations.apply_to(this_klass);
     apply_parsed_class_attributes(this_klass);
@@ -4157,7 +4157,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
     // Initialize itable offset tables
     klassItable::setup_itable_offset_table(this_klass);
 
-    // Compute transitive closure of interfaces this class implements
+    // Compute transitive closure of interfaces this class implements  此类实现的接口的计算传递闭包
     // Do final class setup
     fill_oop_maps(this_klass, info.nonstatic_oop_map_count, info.nonstatic_oop_offsets, info.nonstatic_oop_counts);
 
@@ -4185,7 +4185,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
       }
     }
 
-    // Allocate mirror and initialize static fields
+    // Allocate mirror and initialize static fields  分配镜像并初始化静态字段
     java_lang_Class::create_mirror(this_klass, class_loader, protection_domain,
                                    CHECK_(nullHandle));
 
@@ -4196,7 +4196,7 @@ instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,
           this_klass(), &all_mirandas, CHECK_(nullHandle));
     }
 
-    // Update the loader_data graph.
+    // Update the loader_data graph. 更新 loader_data graph
     record_defined_class_dependencies(this_klass, CHECK_NULL);
 
     ClassLoadingService::notify_class_loaded(InstanceKlass::cast(this_klass()),

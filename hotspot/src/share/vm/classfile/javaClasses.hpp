@@ -228,7 +228,7 @@ class java_lang_Class : AllStatic {
   friend class VMStructs;
 
  private:
-  // The fake offsets are added by the class loader when java.lang.Class is loaded
+  // The fake offsets are added by the class loader when java.lang.Class is loaded  加载java.lang.class时，类加载器会添加假偏移量
 
   static int _klass_offset;
   static int _array_klass_offset;

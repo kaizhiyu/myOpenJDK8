@@ -36,7 +36,11 @@
 // normal fields of Class.  This means they are variable sized      这意味着它们是可变大小的实例，需要特殊的逻辑来计算它们的大小和迭代它们的oop。
 // instances and need special logic for computing their size and for
 // iteration of their oops.
-
+/**
+ * 类加载的最终结果便是在JVM的方法区创建一个与java类对等的instanceKlass实例对象，但是在JVM创建完instanceKlass之后，又创建了与之对等的另一个镜像类--java.lang.Clas。
+ * 所谓的mirror镜像类，其实也是instanceKlass的一个实例对象，SystemDictionary::Class_klass()返回的便是java_lang_Class类型，因此instanceMirrorKlass::cast(SystemDictionary::Class_klass())->allocate_instance(k, CHECK_0)
+ * 这行代码就是用来创建java.lang.Class这个Java 类型在JVM内部对等的instances实例的。
+ */
 
 class InstanceMirrorKlass: public InstanceKlass {
   friend class VMStructs;

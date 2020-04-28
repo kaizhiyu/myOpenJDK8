@@ -96,7 +96,7 @@ class Klass : public Metadata {
   friend class VMStructs;
  protected:
   // note: put frequently-used fields together at start of klass structure
-  // for better cache behavior (may not make much of a difference but sure won't hurt)
+  // for better cache behavior (may not make much of a difference but sure won't hurt)  注意：在klass结构的起始处将常用字段放在一起，以获得更好的缓存行为（虽然可能不会有太大的区别，但可以肯定不会造成伤害）
   enum { _primary_super_limit = 8 };
 
   // The "layout helper" is a combined descriptor of object layout.
@@ -141,9 +141,10 @@ class Klass : public Metadata {
 
   // Cache of last observed secondary supertype
   Klass*      _secondary_super_cache;
-  // Array of all secondary supertypes
+  // Array of all secondary supertypes  对“次要超类型”，则是让每个类型把自己的“次要超类型”混在一起记录在一个数组里，要检查的时候就线性遍历这个数组。留意到这里把接口类型、数组类型之类的子类型关系都直接记录在同一个数组里了，只要在最初初始化secondary_supers数组时就分情况填好了，而不用像Kaffe、JamVM那样每次做instanceof运算时都分开处理这些情况
   Array<Klass*>* _secondary_supers;
-  // Ordered list of all primary supertypes
+  // Ordered list of all primary supertypes  排好序的所有主要超类型  HotSpot VM具体使用了长度为8的缓存数组，记录某个类从继承深度0到7的超类。HotSpot把类继承深度在7以内的超类叫做“主要超类型”（primary super），把所有其它超类型（接口、数组相关以及超过深度7的超类）叫做“次要超类型”（secondary super）。
+  // 对“主要超类型”的子类型判断不需要像Kaffe或JamVM那样沿着super链做遍历，而是直接就能判断子类型关系是否成立。这样，类的继承深度对HotSpot VM做子类型判断的性能影响就变得很小了。
   Klass*      _primary_supers[_primary_super_limit];
   // java/lang/Class instance mirroring this class
   oop       _java_mirror;

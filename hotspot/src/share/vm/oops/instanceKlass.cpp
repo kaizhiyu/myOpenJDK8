@@ -318,7 +318,7 @@ InstanceKlass::InstanceKlass(int vtable_len,
   }
 
   // Set temporary value until parseClassFile updates it with the real instance
-  // size.
+  // size.  设置临时值，直到parseClassFile用实际实例大小更新它。
   set_layout_helper(Klass::instance_layout_helper(0, true));
 }
 
