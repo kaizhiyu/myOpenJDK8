@@ -29,12 +29,12 @@
 #include "../oops/symbol.hpp"
 #include "../utilities/hashtable.hpp"
 
-// The symbol table holds all Symbol*s and corresponding interned strings.
-// Symbol*s and literal strings should be canonicalized.
+// The symbol table holds all Symbol*s and corresponding interned strings.  符号表保存所有符号*和相应的内部字符串。
+// Symbol*s and literal strings should be canonicalized.  符号和文字字符串应该规范化。
 //
-// The interned strings are created lazily.
+// The interned strings are created lazily. 内部字符串是延迟加载（或者是懒加载）
 //
-// It is implemented as an open hash table with a fixed number of buckets.
+// It is implemented as an open hash table with a fixed number of buckets.  它被实现为具有固定数量的桶的开放哈希表。
 //
 // %note:
 //  - symbolTableEntrys are allocated in blocks to reduce the space overhead.
@@ -52,10 +52,10 @@ class TempNewSymbol : public StackObj {
 
  public:
   TempNewSymbol() : _temp(NULL) {}
-  // Creating or looking up a symbol increments the symbol's reference count
+  // Creating or looking up a symbol increments the symbol's reference count 创造或者寻找符号会增加其应用计数
   TempNewSymbol(Symbol *s) : _temp(s) {}
 
-  // Operator= increments reference count.
+  // Operator= increments reference count. 操作符=增加应用计数
   void operator=(const TempNewSymbol &s) {
     //clear();  //FIXME
     _temp = s._temp;
@@ -70,7 +70,7 @@ class TempNewSymbol : public StackObj {
   // Operators so they can be used like Symbols
   Symbol* operator -> () const                   { return _temp; }
   bool    operator == (Symbol* o) const          { return _temp == o; }
-  // Sneaky conversion function
+  // Sneaky conversion function  潜行转换函数
   operator Symbol*()                             { return _temp; }
 };
 
@@ -79,13 +79,13 @@ class SymbolTable : public RehashableHashtable<Symbol*, mtSymbol> {
   friend class ClassFileParser;
 
 private:
-  // The symbol table
+  // The symbol table 符号表
   static SymbolTable* _the_table;
 
-  // Set if one bucket is out of balance due to hash algorithm deficiency
+  // Set if one bucket is out of balance due to hash algorithm deficiency  如果一个bucket由于hash算法不足而失去平衡，则设置
   static bool _needs_rehashing;
 
-  // For statistics
+  // For statistics 用于统计
   static int _symbols_removed;
   static int _symbols_counted;
 
@@ -124,7 +124,7 @@ private:
 
   static volatile int _parallel_claimed_idx;
 
-  // Release any dead symbols
+  // Release any dead symbols 释放已经不使用的符号
   static void buckets_unlink(int start_idx, int end_idx, int* processed, int* removed, size_t* memory_total);
 public:
   enum {
@@ -133,7 +133,7 @@ public:
     symbol_alloc_arena_size = 360*K
   };
 
-  // The symbol table
+  // The symbol table 符号表 应该是链接的下一个
   static SymbolTable* the_table() { return _the_table; }
 
   // Size of one bucket in the string table.  Used when checking for rollover.

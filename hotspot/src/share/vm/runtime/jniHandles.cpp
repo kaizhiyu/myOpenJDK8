@@ -23,12 +23,12 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/systemDictionary.hpp"
-#include "oops/oop.inline.hpp"
-#include "prims/jvmtiExport.hpp"
-#include "runtime/jniHandles.hpp"
-#include "runtime/mutexLocker.hpp"
-#include "runtime/thread.inline.hpp"
+#include "../classfile/systemDictionary.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../prims/jvmtiExport.hpp"
+#include "../runtime/jniHandles.hpp"
+#include "../runtime/mutexLocker.hpp"
+#include "../runtime/thread.inline.hpp"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 

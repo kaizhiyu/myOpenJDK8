@@ -38,9 +38,9 @@ class JNIHandles : AllStatic {
  private:
   static JNIHandleBlock* _global_handles;             // First global handle block
   static JNIHandleBlock* _weak_global_handles;        // First weak global handle block
-  static oop _deleted_handle;                         // Sentinel marking deleted handles
+  static oop _deleted_handle;                         // Sentinel marking deleted handles 哨兵标记删除的句柄
 
- public:
+public:
   // Resolve handle into oop
   inline static oop resolve(jobject handle);
   // Resolve externally provided handle into oop with some guards

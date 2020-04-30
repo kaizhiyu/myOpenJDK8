@@ -44,7 +44,7 @@ class MetaIndex: public CHeapObj<mtClass> {
 };
 
 
-// Class path entry (directory or zip file)
+// Class path entry (directory or zip file)  表示单个classpath路径  所有的ClassPathEntry实例以链表的形式关联起来
 
 class ClassPathEntry: public CHeapObj<mtClass> {
  private:
@@ -195,9 +195,9 @@ class ClassLoader: AllStatic {
   static ClassPathEntry* _first_entry;
   // Last entry in linked list of ClassPathEntry instances   ClassPathEntry实例链接列表中的最后一个条目
   static ClassPathEntry* _last_entry;
-  static int _num_entries;
+  static int _num_entries;  // 表示ClassPathEntry链表中ClassPathEntry实例的个数
 
-  // Hash table used to keep track of loaded packages
+  // Hash table used to keep track of loaded packages  PackageHashtable类指针，用于保存已经加载过的包名
   static PackageHashtable* _package_hash_table;
   static const char* _shared_archive;
 

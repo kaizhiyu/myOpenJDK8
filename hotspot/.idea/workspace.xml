@@ -13,18 +13,13 @@
   <component name="ChangeListManager">
     <list default="true" id="edfb8759-72f7-4d44-b69b-4257a6cdace9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/classFileParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/classFileParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/classFileParser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/classFileParser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/javaClasses.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/javaClasses.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/javaClasses.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/javaClasses.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/oops/fieldStreams.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/oops/fieldStreams.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/oops/instanceKlass.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/oops/instanceKlass.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/oops/instanceMirrorKlass.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/oops/instanceMirrorKlass.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/oops/instanceMirrorKlass.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/oops/instanceMirrorKlass.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/oops/klass.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/oops/klass.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/vm/runtime/fieldType.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/runtime/fieldType.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/vm/runtime/jniHandles.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/runtime/jniHandles.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/vm/runtime/jniHandles.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/runtime/jniHandles.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/vm/utilities/exceptions.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/utilities/exceptions.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/vm/utilities/hashtable.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/share/vm/utilities/hashtable.hpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,94 +35,86 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/javaClasses.cpp">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/init.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1501">
-              <caret line="138" column="72" lean-forward="true" selection-start-line="138" selection-start-column="72" selection-end-line="138" selection-end-column="72" />
+            <state relative-caret-position="282">
+              <caret line="85" column="16" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="16" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classFileParser.cpp">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/exceptions.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="3222" column="32" selection-start-line="3222" selection-start-column="25" selection-end-line="3222" selection-end-column="32" />
+            <state relative-caret-position="153">
+              <caret line="27" column="37" selection-start-line="27" selection-start-column="37" selection-end-line="27" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="284">
+              <caret line="83" lean-forward="true" selection-start-line="83" selection-end-line="83" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/javaClasses.hpp">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/hashtable.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="229" column="9" lean-forward="true" selection-start-line="229" selection-start-column="9" selection-end-line="229" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/oopsHierarchy.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="198" column="10" selection-start-line="198" selection-start-column="10" selection-end-line="198" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/method.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
-              <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
+            <state relative-caret-position="104">
+              <caret line="143" column="7" selection-start-line="143" selection-start-column="7" selection-end-line="143" selection-end-column="7" />
               <folding>
-                <element signature="e#5059#5167#0" expanded="true" />
+                <element signature="e#1580#1592#0" expanded="true" />
+                <element signature="e#3936#3948#0" expanded="true" />
+                <element signature="e#4519#4531#0" expanded="true" />
+                <element signature="e#7085#7106#0" expanded="true" />
+                <element signature="e#8504#8525#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/method.cpp">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="62" column="16" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
+            <state relative-caret-position="285">
+              <caret line="96" column="43" selection-start-line="96" selection-start-column="43" selection-end-line="96" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/constMethod.cpp">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
+            <state relative-caret-position="289">
+              <caret line="199" column="55" selection-start-line="199" selection-start-column="55" selection-end-line="199" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/metadata.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="32" column="6" selection-start-line="32" selection-start-column="6" selection-end-line="32" selection-end-column="6" />
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/java.hpp">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/instanceMirrorKlass.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="44" column="40" selection-start-line="44" selection-start-column="40" selection-end-line="44" selection-end-column="40" />
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/init.hpp">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/share/vm/oops/instanceKlass.hpp">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/compiler/compileBroker.hpp">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="218" column="54" selection-start-line="218" selection-start-column="54" selection-end-line="218" selection-end-column="54" />
+            <state relative-caret-position="245">
+              <caret line="473" column="14" selection-start-line="473" selection-start-column="14" selection-end-line="473" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -136,10 +123,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>unresolved_klass_at</find>
-      <find>java_fields_count</find>
-      <find>offset_of</find>
-      <find>FieldAllocationCount</find>
       <find>nonstatic_field_size</find>
       <find>Field size and offset computation</find>
       <find>layout_fields</find>
@@ -166,6 +149,10 @@
       <find>int ANNOTATION</find>
       <find>initted</find>
       <find>reflectionF</find>
+      <find>vm_init_globals</find>
+      <find>SymbolTable</find>
+      <find>CPSlot</find>
+      <find>TempNewSymbol</find>
     </findStrings>
     <replaceStrings>
       <replace>e &quot;../</replace>
@@ -178,10 +165,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/share/vm/classfile/loaderConstraints.cpp" />
-        <option value="$PROJECT_DIR$/src/share/vm/classfile/loaderConstraints.hpp" />
-        <option value="$PROJECT_DIR$/src/share/vm/classfile/placeholders.hpp" />
-        <option value="$PROJECT_DIR$/src/share/vm/utilities/hashtable.inline.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/memory/oopFactory.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/oops/metadata.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/memory/threadLocalAllocBuffer.cpp" />
@@ -199,9 +182,7 @@
         <option value="$PROJECT_DIR$/src/share/vm/utilities/events.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/runtime/fprofiler.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/oops/symbol.hpp" />
-        <option value="$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/classLoader.cpp" />
-        <option value="$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/vmSymbols.cpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/classFileStream.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/oops/constantPool.cpp" />
@@ -220,7 +201,6 @@
         <option value="$PROJECT_DIR$/src/share/vm/oops/instanceKlass.cpp" />
         <option value="$PROJECT_DIR$/src/share/vm/oops/instanceMirrorKlass.cpp" />
         <option value="$PROJECT_DIR$/src/share/vm/runtime/fieldType.hpp" />
-        <option value="$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/classFileParser.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/javaClasses.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.cpp" />
@@ -229,6 +209,13 @@
         <option value="$PROJECT_DIR$/src/share/vm/oops/fieldStreams.hpp" />
         <option value="$PROJECT_DIR$/src/share/vm/classfile/classFileParser.cpp" />
         <option value="$PROJECT_DIR$/src/share/vm/oops/instanceKlass.hpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/runtime/jniHandles.hpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/utilities/exceptions.cpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/utilities/hashtable.hpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp" />
+        <option value="$PROJECT_DIR$/src/share/vm/runtime/jniHandles.cpp" />
       </list>
     </option>
   </component>
@@ -278,14 +265,6 @@
               <item name="hotspot" type="b2602c69:ProjectViewProjectNode" />
               <item name="hotspot" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="cpu" type="462c0819:PsiDirectoryNode" />
-              <item name="x86" type="462c0819:PsiDirectoryNode" />
-              <item name="vm" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="hotspot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="hotspot" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="share" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -294,14 +273,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="share" type="462c0819:PsiDirectoryNode" />
               <item name="vm" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="hotspot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="hotspot" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-              <item name="vm" type="462c0819:PsiDirectoryNode" />
-              <item name="asm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="hotspot" type="b2602c69:ProjectViewProjectNode" />
@@ -445,12 +416,12 @@
       <workItem from="1586786197987" duration="9448000" />
       <workItem from="1586827006767" duration="78887000" />
       <workItem from="1587386417114" duration="55352000" />
-      <workItem from="1587887822066" duration="21060000" />
+      <workItem from="1587887822066" duration="26715000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="340488000" />
+    <option name="totallyTimeSpent" value="346143000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -463,9 +434,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48917198" weight="0.21888413" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48917198" visible="true" weight="0.21888413" />
       <window_info id="Structure" order="1" sideWeight="0.510828" side_tool="true" weight="0.21888413" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -476,7 +446,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3299363" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32866243" />
+      <window_info anchor="bottom" id="Terminal" order="8" visible="true" weight="0.32866243" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="CMake" order="11" />
@@ -527,137 +497,6 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/annotations.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="54" selection-start-line="54" selection-end-line="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoaderData.inline.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="35" column="42" selection-start-line="35" selection-start-column="33" selection-end-line="35" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/ci/ciTypeFlow.cpp">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/klassVtable.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="59" column="18" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/memory/referenceType.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="32" column="2" selection-start-line="32" selection-start-column="2" selection-end-line="32" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="187" column="7" selection-start-line="187" selection-start-column="7" selection-end-line="187" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/fieldType.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="51" column="6" selection-start-line="51" selection-start-column="6" selection-end-line="51" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/vmSymbols.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="1173" column="17" selection-start-line="1173" selection-start-column="17" selection-end-line="1173" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/symbol.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="115" column="6" selection-start-line="115" selection-start-column="6" selection-end-line="115" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoaderExt.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="49" column="6" selection-start-line="49" selection-start-column="6" selection-end-line="49" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/memory/allocation.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="543" column="6" selection-start-line="543" selection-start-column="6" selection-end-line="543" selection-end-column="6" />
-          <folding>
-            <element signature="e#19351#20308#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/ostream.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="177" column="34" selection-start-line="177" selection-start-column="28" selection-end-line="177" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="394" column="4" selection-start-line="394" selection-start-column="4" selection-end-line="394" selection-end-column="4" />
-          <folding>
-            <element signature="e#1148#1191#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/globalDefinitions_gcc.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="271" column="8" selection-start-line="271" selection-start-column="8" selection-end-line="271" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/constantPool.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="46" column="28" selection-start-line="46" selection-start-column="28" selection-end-line="46" selection-end-column="28" />
-          <folding>
-            <element signature="e#1061#1087#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/constantTag.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="67" column="7" selection-start-line="67" selection-start-column="7" selection-end-line="67" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/instanceClassLoaderKlass.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="41" column="2" selection-start-line="41" selection-start-column="2" selection-end-line="41" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/share/vm/oops/klass.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
@@ -691,20 +530,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/init.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="115" column="12" lean-forward="true" selection-start-line="115" selection-start-column="2" selection-end-line="115" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/memory/universe.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="301" column="40" selection-start-line="301" selection-start-column="40" selection-end-line="301" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="483">
@@ -723,13 +548,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="244">
           <caret line="82" column="19" selection-start-line="82" selection-start-column="19" selection-end-line="82" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="473" column="14" selection-start-line="473" selection-start-column="14" selection-end-line="473" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -876,13 +694,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/javaClasses.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1501">
-          <caret line="138" column="72" lean-forward="true" selection-start-line="138" selection-start-column="72" selection-end-line="138" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/javaClasses.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
@@ -899,8 +710,157 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/share/vm/oops/instanceKlass.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="218" column="54" selection-start-line="218" selection-start-column="54" selection-end-line="218" selection-end-column="54" />
+        <state relative-caret-position="430">
+          <caret line="231" column="8" lean-forward="true" selection-start-line="231" selection-start-column="8" selection-end-line="231" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoaderData.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="227" column="26" selection-start-line="227" selection-start-column="26" selection-end-line="227" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoaderData.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="86" column="22" selection-start-line="86" selection-start-column="22" selection-end-line="86" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/vmStructs.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="33">
+          <caret line="3294" column="5" selection-start-line="3294" selection-start-column="5" selection-end-line="3294" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/memory/universe.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1020" column="5" selection-start-line="1020" selection-start-column="5" selection-end-line="1020" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/reflectionUtils.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="175" column="41" selection-start-line="175" selection-start-column="41" selection-end-line="175" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/reflectionUtils.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="77" column="25" selection-start-line="77" selection-start-column="25" selection-end-line="77" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/javaClasses.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="3590" column="28" selection-start-line="3590" selection-start-column="28" selection-end-line="3590" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/stubRoutines.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="306" column="5" selection-start-line="306" selection-start-column="5" selection-end-line="306" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/jniHandles.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="39" column="87" selection-start-line="39" selection-start-column="87" selection-end-line="39" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/jniHandles.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="130" selection-start-line="130" selection-end-line="130" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/systemDictionary.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="245">
+          <caret line="473" column="14" selection-start-line="473" selection-start-column="14" selection-end-line="473" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/compiler/compileBroker.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/init.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/java.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/runtime/init.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="282">
+          <caret line="85" column="16" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/exceptions.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="27" column="37" selection-start-line="27" selection-start-column="37" selection-end-line="27" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agent/src/share/classes/sun/jvm/hotspot/oops/ConstantPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-579">
+          <caret line="37" column="15" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/hashtable.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="143" column="7" selection-start-line="143" selection-start-column="7" selection-end-line="143" selection-end-column="7" />
+          <folding>
+            <element signature="e#1580#1592#0" expanded="true" />
+            <element signature="e#3936#3948#0" expanded="true" />
+            <element signature="e#4519#4531#0" expanded="true" />
+            <element signature="e#7085#7106#0" expanded="true" />
+            <element signature="e#8504#8525#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/utilities/globalDefinitions_gcc.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="154" column="32" selection-start-line="154" selection-start-column="32" selection-end-line="154" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/oops/constantPool.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="96" column="43" selection-start-line="96" selection-start-column="43" selection-end-line="96" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/classLoader.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="199" column="55" selection-start-line="199" selection-start-column="55" selection-end-line="199" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/share/vm/classfile/symbolTable.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="83" lean-forward="true" selection-start-line="83" selection-end-line="83" />
         </state>
       </provider>
     </entry>

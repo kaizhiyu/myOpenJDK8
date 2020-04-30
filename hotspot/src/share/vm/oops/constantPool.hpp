@@ -49,18 +49,18 @@
 #endif
 
 // A constantPool is an array containing class constants as described in the
-// class file.
+// class file. constantpool是一个包含在class文件中描述的类常量的数组
 //
-// Most of the constant pool entries are written during class parsing, which
-// is safe.  For klass types, the constant pool entry is
+// Most of the constant pool entries are written during class parsing, which 大部分常量池中的条目是在类解析的过程中写入的，比较安全
+// is safe.  For klass types, the constant pool entry is    而对于klass类型，常量池中的条目在其被解析之后修改。
 // modified when the entry is resolved.  If a klass constant pool
 // entry is read without a lock, only the resolved state guarantees that
-// the entry in the constant pool is a klass object and not a Symbol*.
+// the entry in the constant pool is a klass object and not a Symbol*. 如果没锁读的话，只有解析完成的状态能够保证常量池中的条目是个klass对象而不是符号
 
 class SymbolHashMap;
 
 class CPSlot VALUE_OBJ_CLASS_SPEC {
-  intptr_t _ptr;
+  intptr_t _ptr;  // 解析结果Klass或者Symbol的地址，如果未解析则地址是0，可以将该地址转换成Klass或者Symbol类的指针，定义了对应的转换方法（get_symbol和get_klass方法）和判断该数据项是否已经解析的方法（is_resolved和is_unresolved方法）。
  public:
   CPSlot(intptr_t ptr): _ptr(ptr) {}
   CPSlot(Klass* ptr): _ptr((intptr_t)ptr) {}
@@ -86,15 +86,15 @@ class ConstantPool : public Metadata {
   friend class BytecodeInterpreter;  // Directly extracts an oop in the pool for fast instanceof/checkcast
   friend class Universe;             // For null constructor
  private:
-  Array<u1>*           _tags;        // the tag array describing the constant pool's contents
-  ConstantPoolCache*   _cache;       // the cache holding interpreter runtime information
-  InstanceKlass*       _pool_holder; // the corresponding class
-  Array<u2>*           _operands;    // for variable-sized (InvokeDynamic) nodes, usually empty
+  Array<u1>*           _tags;        // the tag array describing the constant pool's contents 单字节数组指针，描述常量池所有数据的类型的tag数组，每个tag用一个单字节表示
+  ConstantPoolCache*   _cache;       // the cache holding interpreter runtime information ConstantPoolCache类指针，保存解释器运行时用到的动态调用相关信息的缓存
+  InstanceKlass*       _pool_holder; // the corresponding class InstanceKlass指针，当前常量池所属的Klass实例
+  Array<u2>*           _operands;    // for variable-sized (InvokeDynamic) nodes, usually empty 两字节的数组指针，为大小可变的常量池数据项使用，通常为空
 
-  // Array of resolved objects from the constant pool and map from resolved
+  // Array of resolved objects from the constant pool and map from resolved  jobject类型，实际是_jobject指针的别名，_jobject等同于C++层面的Java Object对象，表示已经解析的对象数组
   // object index to original constant pool index
   jobject              _resolved_references;
-  Array<u2>*           _reference_map;
+  Array<u2>*           _reference_map;  // 两字节的数组指针，表示已经解析的对象的索引到原始的常量池的索引的映射关系
 
   enum {
     _has_preresolution = 1,           // Flags

@@ -161,7 +161,7 @@ public:
   void reverse();
 
 private:
-  // Instance variables
+  // Instance variables  实例变量
   int               _table_size;
   HashtableBucket<F>*     _buckets;
   BasicHashtableEntry<F>* _free_list;
@@ -259,15 +259,15 @@ protected:
     return this->hash_to_index(compute_hash(name));
   }
 
-  // Table entry management
+  // Table entry management 表实体管理
   HashtableEntry<T, F>* new_entry(unsigned int hashValue, T obj);
 
-  // The following method is MT-safe and may be used with caution.
+  // The following method is MT-safe and may be used with caution.  以下方法是MT安全的，可谨慎使用。
   HashtableEntry<T, F>* bucket(int i) {
     return (HashtableEntry<T, F>*)BasicHashtable<F>::bucket(i);
   }
 
-  // The following method is not MT-safe and must be done under lock.
+  // The following method is not MT-safe and must be done under lock. 以下方法不安全，必须在锁定状态下执行。
   HashtableEntry<T, F>** bucket_addr(int i) {
     return (HashtableEntry<T, F>**)BasicHashtable<F>::bucket_addr(i);
   }
@@ -282,7 +282,7 @@ template <class T, MEMFLAGS F> class RehashableHashtable : public Hashtable<T, F
     rehash_multiple = 60
   };
 
-  // Check that the table is unbalanced
+  // Check that the table is unbalanced 检查表是否不平衡
   bool check_rehash_table(int count);
 
  public:
@@ -294,7 +294,7 @@ template <class T, MEMFLAGS F> class RehashableHashtable : public Hashtable<T, F
     : Hashtable<T, F>(table_size, entry_size, buckets, number_of_entries) { }
 
 
-  // Function to move these elements into the new table.
+  // Function to move these elements into the new table. 将元素转移到新的表中
   void move_to(RehashableHashtable<T, F>* new_table);
   static bool use_alternate_hashcode()  { return _seed != 0; }
   static juint seed()                    { return _seed; }

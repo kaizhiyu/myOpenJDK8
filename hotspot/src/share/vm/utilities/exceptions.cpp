@@ -23,17 +23,17 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/systemDictionary.hpp"
-#include "classfile/vmSymbols.hpp"
-#include "compiler/compileBroker.hpp"
-#include "oops/oop.inline.hpp"
-#include "runtime/init.hpp"
-#include "runtime/java.hpp"
-#include "runtime/javaCalls.hpp"
-#include "runtime/thread.inline.hpp"
-#include "runtime/threadCritical.hpp"
-#include "utilities/events.hpp"
-#include "utilities/exceptions.hpp"
+#include "../classfile/systemDictionary.hpp"
+#include "../classfile/vmSymbols.hpp"
+#include "../compiler/compileBroker.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../runtime/init.hpp"
+#include "../runtime/java.hpp"
+#include "../runtime/javaCalls.hpp"
+#include "../runtime/thread.inline.hpp"
+#include "../runtime/threadCritical.hpp"
+#include "../utilities/events.hpp"
+#include "../utilities/exceptions.hpp"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
