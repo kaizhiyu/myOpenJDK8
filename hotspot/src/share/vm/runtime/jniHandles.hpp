@@ -31,14 +31,14 @@
 class JNIHandleBlock;
 
 
-// Interface for creating and resolving local/global JNI handles
+// Interface for creating and resolving local/global JNI handles 用于创建和解析 本地或全局 JNI句柄的接口
 
 class JNIHandles : AllStatic {
   friend class VMStructs;
  private:
-  static JNIHandleBlock* _global_handles;             // First global handle block
-  static JNIHandleBlock* _weak_global_handles;        // First weak global handle block
-  static oop _deleted_handle;                         // Sentinel marking deleted handles 哨兵标记删除的句柄
+  static JNIHandleBlock* _global_handles;             // First global handle block 保存全局引用的JNIHandleBlock链表的头元素  全局引用实际由JNIHandles的静态属性_global_handle保存，从而可以确保这部分引用不会随着方法调用结束而销毁，只能手动调用DeleteGlobalRef才能释放。
+  static JNIHandleBlock* _weak_global_handles;        // First weak global handle block 保存全局弱引用的JNIHandleBlock链表的头元素
+  static oop _deleted_handle;                         // Sentinel marking deleted handles 表示已删除的Handle，Handle就是引用
 
 public:
   // Resolve handle into oop
@@ -91,8 +91,8 @@ public:
 
 
 // JNI handle blocks holding local/global JNI handles
-
-class JNIHandleBlock : public CHeapObj<mtInternal> {
+//  JNIHandleBlock是实际用于保存JNI本地或者全局引用的地方
+class JNIHandleBlock : public CHeapObj<mtInternal> {  // CHeapObj类表示通过C语言中free & malloc方法管理的对象，JVM中所有此类对象都会继承CHeapObj，该类重载了new和delete运算符。
   friend class VMStructs;
   friend class CppInterpreter;
 
@@ -101,55 +101,55 @@ class JNIHandleBlock : public CHeapObj<mtInternal> {
     block_size_in_oops  = 32                    // Number of handles per handle block
   };
 
-  oop             _handles[block_size_in_oops]; // The handles
-  int             _top;                         // Index of next unused handle
-  JNIHandleBlock* _next;                        // Link to next block
+  oop             _handles[block_size_in_oops]; // The handles  _handles：实际保存oop的数组，初始大小为32
+  int             _top;                         // Index of next unused handle  _handles中下一个未使用的位置的索引
+  JNIHandleBlock* _next;                        // Link to next block     下一个JNIHandleBlock指针
 
   // The following instance variables are only used by the first block in a chain.
-  // Having two types of blocks complicates the code and the space overhead in negligble.
-  JNIHandleBlock* _last;                        // Last block in use
-  JNIHandleBlock* _pop_frame_link;              // Block to restore on PopLocalFrame call
-  oop*            _free_list;                   // Handle free list
-  int             _allocate_before_rebuild;     // Number of blocks to allocate before rebuilding free list
+  // Having two types of blocks complicates the code and the space overhead in negligble.  下列四个实例属性只是JNIHandleBlock链表中第一个JNIHandleBlock（即链表最前面的）使用，这里为了避免另外定义一个类使得代码复杂化
+  JNIHandleBlock* _last;                        // Last block in use  最近使用的JNIHandleBlock实例
+  JNIHandleBlock* _pop_frame_link;              // Block to restore on PopLocalFrame call  调用PopLocalFrame时需要恢复的JNIHandleBlock实例
+  oop*            _free_list;                   // Handle free list _handles中空闲的元素
+  int             _allocate_before_rebuild;     // Number of blocks to allocate before rebuilding free list  在重建前已经分配的JNIHandleBlock的实例个数
 
   #ifndef PRODUCT
   JNIHandleBlock* _block_list_link;             // Link for list below
   static JNIHandleBlock* _block_list;           // List of all allocated blocks (for debugging only)
   #endif
 
-  static JNIHandleBlock* _block_free_list;      // Free list of currently unused blocks
-  static int      _blocks_allocated;            // For debugging/printing
+  static JNIHandleBlock* _block_free_list;      // Free list of currently unused blocks  还有空闲空间的JNIHandleBlock链表
+  static int      _blocks_allocated;            // For debugging/printing 已经分配的JNIHandleBlock实例个数
 
-  // Fill block with bad_handle values
+  // Fill block with bad_handle values  将_handles数组中空闲元素填充为bad_handle
   void zap();
 
  protected:
-  // No more handles in the both the current and following blocks
+  // No more handles in the both the current and following blocks  打标，表明当前Block和后面的任何Block不包含任何oop
   void clear() { _top = 0; }
 
  private:
-  // Free list computation
+  // Free list computation  空闲链表计算
   void rebuild_free_list();
 
  public:
-  // Handle allocation
+  // Handle allocation  分配oop Handle
   jobject allocate_handle(oop obj);
 
   // Block allocation and block free list management
   static JNIHandleBlock* allocate_block(Thread* thread = NULL);
-  static void release_block(JNIHandleBlock* block, Thread* thread = NULL);
+  static void release_block(JNIHandleBlock* block, Thread* thread = NULL);  // 已分配的JNIHandleBlock是可以不断循环利用的，所谓的释放只是将其标记为free而已，并没有释放其占用的堆存。
 
   // JNI PushLocalFrame/PopLocalFrame support
   JNIHandleBlock* pop_frame_link() const          { return _pop_frame_link; }
   void set_pop_frame_link(JNIHandleBlock* block)  { _pop_frame_link = block; }
 
-  // Stub generator support
+  // Stub generator support 桩代码生成支持
   static int top_offset_in_bytes()                { return offset_of(JNIHandleBlock, _top); }
 
   // Garbage collection support
-  // Traversal of regular handles
+  // Traversal of regular handles  垃圾回收使用的方法，以JNIHandleBlock保存的oop为根对象遍历所有引用的对象
   void oops_do(OopClosure* f);
-  // Traversal of weak handles. Unreachable oops are cleared.
+  // Traversal of weak handles. Unreachable oops are cleared.  弱引用的遍历，不可达的对象将被清理
   void weak_oops_do(BoolObjectClosure* is_alive, OopClosure* f);
 
   // Debugging

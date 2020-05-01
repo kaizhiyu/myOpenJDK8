@@ -30,7 +30,7 @@
 #include "../runtime/os.hpp"
 #include "vm_version_x86.hpp"
 
-// Implementation of class OrderAccess.
+// Implementation of class OrderAccess. OrderAccess类的实现  通过内存屏障，以实现内存可见，以及重排序
 
 inline void OrderAccess::loadload()   { acquire(); }
 inline void OrderAccess::storestore() { release(); }
@@ -48,13 +48,13 @@ inline void OrderAccess::acquire() {
 
 inline void OrderAccess::release() {
   // Avoid hitting the same cache-line from
-  // different threads.
+  // different threads.  避免不同线程命中同一cache line
   volatile jint local_dummy = 0;
 }
 
 inline void OrderAccess::fence() {
   if (os::is_MP()) {
-    // always use locked addl since mfence is sometimes expensive
+    // always use locked addl since mfence is sometimes expensive  因为一直使用locked addl 因此，mfence()有时候就会代价偏大
 #ifdef AMD64
     __asm__ volatile ("lock; addl $0,0(%%rsp)" : : : "cc", "memory");
 #else

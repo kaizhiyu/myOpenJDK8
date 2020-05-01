@@ -121,7 +121,7 @@ public:
 template <MEMFLAGS F> class HashtableBucket : public CHeapObj<F> {
   friend class VMStructs;
 private:
-  // Instance variable
+  // Instance variable 实例变量
   BasicHashtableEntry<F>*       _entry;
 
 public:
@@ -129,7 +129,7 @@ public:
   void clear()                        { _entry = NULL; }
 
   // The following methods use order access methods to avoid race
-  // conditions in multiprocessor systems.
+  // conditions in multiprocessor systems. 接下来的方法将使用顺序访问方法，以避免竟态条件在多处理器系统中
   BasicHashtableEntry<F>* get_entry() const;
   void set_entry(BasicHashtableEntry<F>* l);
 
