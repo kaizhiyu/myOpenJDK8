@@ -113,9 +113,9 @@ class JNIHandleBlock : public CHeapObj<mtInternal> {  // CHeapObj类表示通过
   int             _allocate_before_rebuild;     // Number of blocks to allocate before rebuilding free list  在重建前已经分配的JNIHandleBlock的实例个数
 
   #ifndef PRODUCT
-  JNIHandleBlock* _block_list_link;             // Link for list below
-  static JNIHandleBlock* _block_list;           // List of all allocated blocks (for debugging only)
-  #endif
+  JNIHandleBlock* _block_list_link;             // Link for list below  下面列表的链接
+  static JNIHandleBlock* _block_list;           // List of all allocated blocks (for debugging only)  所有已分配块的列表（仅用于调试）
+#endif
 
   static JNIHandleBlock* _block_free_list;      // Free list of currently unused blocks  还有空闲空间的JNIHandleBlock链表
   static int      _blocks_allocated;            // For debugging/printing 已经分配的JNIHandleBlock实例个数
@@ -136,7 +136,7 @@ class JNIHandleBlock : public CHeapObj<mtInternal> {  // CHeapObj类表示通过
   jobject allocate_handle(oop obj);
 
   // Block allocation and block free list management
-  static JNIHandleBlock* allocate_block(Thread* thread = NULL);
+  static JNIHandleBlock* allocate_block(Thread* thread = NULL);   // JNIHandleBlock的创建
   static void release_block(JNIHandleBlock* block, Thread* thread = NULL);  // 已分配的JNIHandleBlock是可以不断循环利用的，所谓的释放只是将其标记为free而已，并没有释放其占用的堆存。
 
   // JNI PushLocalFrame/PopLocalFrame support

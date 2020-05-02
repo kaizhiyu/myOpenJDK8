@@ -263,34 +263,34 @@ JNIHandleBlock* JNIHandleBlock::allocate_block(Thread* thread)  {
   // Check the thread-local free list for a block so we don't
   // have to acquire a mutex.
   if (thread != NULL && thread->free_handle_block() != NULL) {
-    block = thread->free_handle_block();
-    thread->set_free_handle_block(block->_next);
+    block = thread->free_handle_block();  // 直接使用当前线程的空闲的_free_handle_block
+    thread->set_free_handle_block(block->_next); // 将block的下一个block置为_free_handle_block
   }
   else {
-    // locking with safepoint checking introduces a potential deadlock:
+    // locking with safepoint checking introduces a potential deadlock:  创建新的JNIHandleBlock需要加锁
     // - we would hold JNIHandleBlockFreeList_lock and then Threads_lock
     // - another would hold Threads_lock (jni_AttachCurrentThread) and then
     //   JNIHandleBlockFreeList_lock (JNIHandleBlock::allocate_block)
     MutexLockerEx ml(JNIHandleBlockFreeList_lock,
                      Mutex::_no_safepoint_check_flag);
-    if (_block_free_list == NULL) {
-      // Allocate new block
+    if (_block_free_list == NULL) {  //没有空闲的block
+      // Allocate new block 创建新的block
       block = new JNIHandleBlock();
-      _blocks_allocated++;
+      _blocks_allocated++;  // 已分配数量加1
       if (TraceJNIHandleAllocation) {
         tty->print_cr("JNIHandleBlock " INTPTR_FORMAT " allocated (%d total blocks)",
                       block, _blocks_allocated);
       }
-      if (ZapJNIHandleArea) block->zap();
+      if (ZapJNIHandleArea) block->zap();  // 新block初始化
       #ifndef PRODUCT
       // Link new block to list of all allocated blocks
       block->_block_list_link = _block_list;
       _block_list = block;
       #endif
     } else {
-      // Get block from free list
+      // Get block from free list  直接使用空闲block列表中的block
       block = _block_free_list;
-      _block_free_list = _block_free_list->_next;
+      _block_free_list = _block_free_list->_next; // 更新_block_free_list为其下一个block
     }
   }
   block->_top  = 0;
@@ -306,32 +306,32 @@ JNIHandleBlock* JNIHandleBlock::allocate_block(Thread* thread)  {
 
 void JNIHandleBlock::release_block(JNIHandleBlock* block, Thread* thread) {
   assert(thread == NULL || thread == Thread::current(), "sanity check");
-  JNIHandleBlock* pop_frame_link = block->pop_frame_link();
+  JNIHandleBlock* pop_frame_link = block->pop_frame_link();  // 获取该block的上一个block，理论上应该永远为空
   // Put returned block at the beginning of the thread-local free list.
   // Note that if thread == NULL, we use it as an implicit argument that
   // we _don't_ want the block to be kept on the free_handle_block.
   // See for instance JavaThread::exit().
-  if (thread != NULL ) {
-    if (ZapJNIHandleArea) block->zap();
-    JNIHandleBlock* freelist = thread->free_handle_block();
+  if (thread != NULL ) { // 把block归还到当前线程的free_handle_block中，前提是线程未退出
+    if (ZapJNIHandleArea) block->zap();  // 恢复初始状态
+    JNIHandleBlock* freelist = thread->free_handle_block(); // 获取当前线程的free_handle_block，将其置为block
     block->_pop_frame_link = NULL;
     thread->set_free_handle_block(block);
 
-    // Add original freelist to end of chain
+    // Add original freelist to end of chain  如果线程原来的free block非空，则遍历block直到block的next属性为空，将其置为原来的free block
     if ( freelist != NULL ) {
       while ( block->_next != NULL ) block = block->_next;
       block->_next = freelist;
     }
     block = NULL;
   }
-  if (block != NULL) {
+  if (block != NULL) {  // 即线程已退出，将block归还到JNIHandleBlock的_block_free_list
     // Return blocks to free list
     // locking with safepoint checking introduces a potential deadlock:
     // - we would hold JNIHandleBlockFreeList_lock and then Threads_lock
     // - another would hold Threads_lock (jni_AttachCurrentThread) and then
     //   JNIHandleBlockFreeList_lock (JNIHandleBlock::allocate_block)
     MutexLockerEx ml(JNIHandleBlockFreeList_lock,
-                     Mutex::_no_safepoint_check_flag);
+                     Mutex::_no_safepoint_check_flag); // 因为是对全局属性_block_free_list操作，需要加锁
     while (block != NULL) {
       if (ZapJNIHandleArea) block->zap();
       JNIHandleBlock* next = block->_next;
