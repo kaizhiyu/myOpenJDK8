@@ -30,7 +30,12 @@
 
 class JNIHandleBlock;
 
-
+/**
+ * JNI中引入本地引用或者全局引用的目的是为了避免本地代码所引用的对象被垃圾回收器回收掉了，即oop突然变成非法指针了，因为本地代码的执行逻辑同Java代码完全不同，
+ * 不能直接复用Java代码的引用管理。Java代码中有引用的概念，但没有本地引用和全局引用的区分，本地引用相当于局部变量，由方法的局部变量表保存，方法调用结束局部变量引用的对象自动销毁，
+ * 全局引用相当于静态变量。Java代码中的引用实际就是一系列的Handle类，通过Handle类屏蔽因对象复制或者RedefineClasses导致对象本身变更，上层代码无感知。
+ * 同时跟JNIHandle一样，所有分配的Handle都被集中到某个属性中，方便GC时以此为根节点遍历所有引用的对象。
+ */
 // Interface for creating and resolving local/global JNI handles 用于创建和解析 本地或全局 JNI句柄的接口
 
 class JNIHandles : AllStatic {
@@ -133,7 +138,7 @@ class JNIHandleBlock : public CHeapObj<mtInternal> {  // CHeapObj类表示通过
 
  public:
   // Handle allocation  分配oop Handle
-  jobject allocate_handle(oop obj);
+  jobject allocate_handle(oop obj);  // allocate_handle时不仅会从当前的block分配，也会从当前block往后的block分配，如果block不足了会不断的追加新的block。另外已经被释放的handles数组元素会在rebuild的过程中建立一个链表_free_list，分配handle时会尝试从_free_list中分配，从而实现handle的重复利用。`
 
   // Block allocation and block free list management
   static JNIHandleBlock* allocate_block(Thread* thread = NULL);   // JNIHandleBlock的创建

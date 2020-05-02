@@ -3985,15 +3985,15 @@ static Method* find_prefixed_native(KlassHandle k,
 }
 
 static bool register_native(KlassHandle k, Symbol* name, Symbol* signature, address entry, TRAPS) {
-  Method* method = k()->lookup_method(name, signature);
-  if (method == NULL) {
+  Method* method = k()->lookup_method(name, signature); // 根据方法名和方法签名查找对应的Method
+  if (method == NULL) { //查找失败抛出异常
     ResourceMark rm;
     stringStream st;
     st.print("Method %s name or signature does not match",
              Method::name_and_sig_as_C_string(k(), name, signature));
     THROW_MSG_(vmSymbols::java_lang_NoSuchMethodError(), st.as_string(), false);
   }
-  if (!method->is_native()) {
+  if (!method->is_native()) {  //如果不是本地方法抛出异常
     // trying to register to a non-native method, see if a JVM TI agent has added prefix(es)
     method = find_prefixed_native(k, name, signature, THREAD);
     if (method == NULL) {
@@ -4005,10 +4005,10 @@ static bool register_native(KlassHandle k, Symbol* name, Symbol* signature, addr
     }
   }
 
-  if (entry != NULL) {
+  if (entry != NULL) {  // 如果方法调用地址不为空，则设置set_native_function
     method->set_native_function(entry,
       Method::native_bind_event_is_interesting);
-  } else {
+  } else { // 如果为空，则将其重置成初始状态
     method->clear_native_function();
   }
   if (PrintJNIResolving) {
@@ -4049,21 +4049,21 @@ JNI_ENTRY(jint, jni_RegisterNatives(JNIEnv *env, jclass clazz,
 
     // The class should have been loaded (we have an instance of the class
     // passed in) so the method and signature should already be in the symbol
-    // table.  If they're not there, the method doesn't exist.
+    // table.  If they're not there, the method doesn't exist.  获取方法名和方法签名在符号表中对应的符号，因为指定方法已经完成加载所以这两个符号都已经存在
     TempNewSymbol  name = SymbolTable::probe(meth_name, meth_name_len);
     TempNewSymbol  signature = SymbolTable::probe(meth_sig, (int)strlen(meth_sig));
 
-    if (name == NULL || signature == NULL) {
+    if (name == NULL || signature == NULL) { // 这两个符号引用任意一个为空则抛出异常
       ResourceMark rm;
       stringStream st;
       st.print("Method %s.%s%s not found", h_k()->external_name(), meth_name, meth_sig);
       // Must return negative value on failure
       THROW_MSG_(vmSymbols::java_lang_NoSuchMethodError(), st.as_string(), -1);
     }
-
+    // 设置native_function,fnPtr属性就是对应本地方法的入口地址
     bool res = register_native(h_k, name, signature,
                                (address) methods[index].fnPtr, THREAD);
-    if (!res) {
+    if (!res) { // 如果register_native执行失败
       ret = -1;
       break;
     }

@@ -23,14 +23,14 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/symbolTable.hpp"
-#include "interpreter/bytecodeStream.hpp"
-#include "oops/fieldStreams.hpp"
-#include "prims/jvmtiClassFileReconstituter.hpp"
-#include "runtime/signature.hpp"
-#ifdef TARGET_ARCH_x86
+#include "../classfile/symbolTable.hpp"
+#include "../interpreter/bytecodeStream.hpp"
+#include "../oops/fieldStreams.hpp"
+#include "../prims/jvmtiClassFileReconstituter.hpp"
+#include "../runtime/signature.hpp"
+//#ifdef TARGET_ARCH_x86
 # include "bytes_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "bytes_sparc.hpp"
 #endif

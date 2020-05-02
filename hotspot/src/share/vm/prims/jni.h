@@ -178,9 +178,9 @@ typedef enum _jobjectType {
  */
 
 typedef struct {
-    char *name;
-    char *signature;
-    void *fnPtr;
+    char *name;   // java里调用的函数
+    char *signature; // java字段描述符，用来表示java里调用的函数的参数和返回值类型
+    void *fnPtr; // C语言实现的本地方法
 } JNINativeMethod;
 
 /*
@@ -1940,9 +1940,18 @@ JNI_CreateJavaVM(JavaVM **pvm, void **penv, void *args);
 _JNI_IMPORT_OR_EXPORT_ jint JNICALL
 JNI_GetCreatedJavaVMs(JavaVM **, jsize, jsize *);
 
-/* Defined by native libraries. */
+/* Defined by native libraries. */  // Java调用System.loadLibrary()加载一个库的时候，会首先在库中搜索JNI_OnLoad()函数，如果该函数存在，则执行它；  参考文章：https://blog.csdn.net/qq_31865983/article/details/101856630
 JNIEXPORT jint JNICALL
 JNI_OnLoad(JavaVM *vm, void *reserved);
+/**
+ * 实现JNI_OnLoad方法，主要分为下面两步：
+   通过FindClass获取所需的映射的java类
+   通过jint RegisterNatives(jclass clazz, const JNINativeMethod* methods, jint nMethods) 方法动态注册
+
+    　1、告诉JVM，这个库需要要求使用的JNI版本是什么
+    　2、执行初始化操作
+    　3、将JavaVM参数保存为全局对象，方便以后在任何地方获取JNIEnv对象
+ */
 
 JNIEXPORT void JNICALL
 JNI_OnUnload(JavaVM *vm, void *reserved);
