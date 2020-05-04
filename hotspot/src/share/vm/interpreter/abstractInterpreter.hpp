@@ -74,13 +74,13 @@
 
 //------------------------------------------------------------------------------------------------------------------------
 // The C++ interface to the bytecode interpreter(s).
-
+// 是CppInterpreter和TemplateInterpreter共同的基类，用来抽象平台独立的解释器相关的属性和方法。AbstractInterpreter定义的属性都是protected
 class AbstractInterpreter: AllStatic {
   friend class VMStructs;
   friend class Interpreter;
   friend class CppInterpreterGenerator;
  public:
-  enum MethodKind {
+  enum MethodKind {  // 表示方法类型的枚举  每个类型都对应_entry_table中一个数组元素，即一个处理该类型方法的方法调用的入口地址
     zerolocals,                                                 // method needs locals initialization
     zerolocals_synchronized,                                    // method needs locals initialization & is synchronized
     native,                                                     // native method
@@ -122,19 +122,19 @@ class AbstractInterpreter: AllStatic {
   };
 
  protected:
-  static StubQueue* _code;                                      // the interpreter code (codelets)
+  static StubQueue* _code;                                      // the interpreter code (codelets)  用来保存生成的汇编代码的
 
-  static bool       _notice_safepoints;                         // true if safepoints are activated
+  static bool       _notice_safepoints;                         // true if safepoints are activated  是否激活了安全点机制
 
-  static address    _native_entry_begin;                        // Region for native entry code
-  static address    _native_entry_end;
+  static address    _native_entry_begin;                        // Region for native entry code  JIT编译器产生的本地代码在内存中的起始位置
+  static address    _native_entry_end;                          // JIT编译器产生的本地代码在内存中的终止位置
 
   // method entry points
-  static address    _entry_table[number_of_method_entries];     // entry points for a given method
-  static address    _native_abi_to_tosca[number_of_result_handlers];  // for native method result handlers
-  static address    _slow_signature_handler;                              // the native method generic (slow) signature handler
+  static address    _entry_table[number_of_method_entries];     // entry points for a given method  处理不同类型的方法的方法调用的入口地址，数组的长度就是枚举number_of_method_entries的值
+  static address    _native_abi_to_tosca[number_of_result_handlers];  // for native method result handlers  处理不同类型的本地方法调用返回值的入口地址，数组的长度是枚举
+  static address    _slow_signature_handler;                              // the native method generic (slow) signature handler  本地方法生成签名的入口地址
 
-  static address    _rethrow_exception_entry;                   // rethrows an activation in previous frame
+  static address    _rethrow_exception_entry;                   // rethrows an activation in previous frame  重新抛出异常的入口地址
 
   friend class      AbstractInterpreterGenerator;
   friend class              InterpreterGenerator;

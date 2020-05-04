@@ -23,42 +23,42 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/systemDictionary.hpp"
-#include "classfile/vmSymbols.hpp"
-#include "compiler/compileBroker.hpp"
-#include "compiler/disassembler.hpp"
-#include "gc_interface/collectedHeap.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "interpreter/linkResolver.hpp"
-#include "interpreter/templateTable.hpp"
-#include "memory/oopFactory.hpp"
-#include "memory/universe.inline.hpp"
-#include "oops/constantPool.hpp"
-#include "oops/instanceKlass.hpp"
-#include "oops/methodData.hpp"
-#include "oops/objArrayKlass.hpp"
-#include "oops/oop.inline.hpp"
-#include "oops/symbol.hpp"
-#include "prims/jvmtiExport.hpp"
-#include "prims/nativeLookup.hpp"
-#include "runtime/biasedLocking.hpp"
-#include "runtime/compilationPolicy.hpp"
-#include "runtime/deoptimization.hpp"
-#include "runtime/fieldDescriptor.hpp"
-#include "runtime/handles.inline.hpp"
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/java.hpp"
-#include "runtime/jfieldIDWorkaround.hpp"
-#include "runtime/osThread.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/stubRoutines.hpp"
-#include "runtime/synchronizer.hpp"
-#include "runtime/threadCritical.hpp"
-#include "utilities/events.hpp"
-#ifdef TARGET_ARCH_x86
+#include "../classfile/systemDictionary.hpp"
+#include "../classfile/vmSymbols.hpp"
+#include "../compiler/compileBroker.hpp"
+#include "../compiler/disassembler.hpp"
+#include "../gc_interface/collectedHeap.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../interpreter/linkResolver.hpp"
+#include "../interpreter/templateTable.hpp"
+#include "../memory/oopFactory.hpp"
+#include "../memory/universe.inline.hpp"
+#include "../oops/constantPool.hpp"
+#include "../oops/instanceKlass.hpp"
+#include "../oops/methodData.hpp"
+#include "../oops/objArrayKlass.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../oops/symbol.hpp"
+#include "../prims/jvmtiExport.hpp"
+#include "../prims/nativeLookup.hpp"
+#include "../runtime/biasedLocking.hpp"
+#include "../runtime/compilationPolicy.hpp"
+#include "../runtime/deoptimization.hpp"
+#include "../runtime/fieldDescriptor.hpp"
+#include "../runtime/handles.inline.hpp"
+#include "../runtime/interfaceSupport.hpp"
+#include "../runtime/java.hpp"
+#include "../runtime/jfieldIDWorkaround.hpp"
+#include "../runtime/osThread.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/stubRoutines.hpp"
+#include "../runtime/synchronizer.hpp"
+#include "../runtime/threadCritical.hpp"
+#include "../utilities/events.hpp"
+//#ifdef TARGET_ARCH_x86
 # include "vm_version_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "vm_version_sparc.hpp"
 #endif
@@ -72,7 +72,7 @@
 # include "vm_version_ppc.hpp"
 #endif
 #ifdef COMPILER2
-#include "opto/runtime.hpp"
+#include "../opto/runtime.hpp"
 #endif
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
@@ -597,7 +597,8 @@ IRT_END
 // The interpreter's synchronization code is factored out so that it can
 // be shared by method invocation and synchronized blocks.
 //%note synchronization_3
-
+// InterpreterRuntime::monitorenter用于获取轻量级锁或者重量级锁，获取轻量级锁成功后会将目标对象的对象头改成BasicLock指针，
+// 获取重量级锁成功后会将目标对象的对象头改成ObjectMonitor指针，BasicLock和ObjectMonitor本身会保存目标对象原来的无锁状态下的对象头
 //%note monitor_1
 IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, BasicObjectLock* elem))
 #ifdef ASSERT
@@ -606,12 +607,12 @@ IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, Ba
   if (PrintBiasedLockingStatistics) {
     Atomic::inc(BiasedLocking::slow_path_entry_count_addr());
   }
-  Handle h_obj(thread, elem->obj());
+  Handle h_obj(thread, elem->obj()); // 获取关联的对象
   assert(Universe::heap()->is_in_reserved_or_null(h_obj()),
          "must be NULL or an object");
   if (UseBiasedLocking) {
     // Retry fast entry if bias is revoked to avoid unnecessary inflation
-    ObjectSynchronizer::fast_enter(h_obj, elem->lock(), true, CHECK);
+    ObjectSynchronizer::fast_enter(h_obj, elem->lock(), true, CHECK); // 如果使用偏向锁，走快速enter
   } else {
     ObjectSynchronizer::slow_enter(h_obj, elem->lock(), CHECK);
   }

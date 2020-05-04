@@ -41,13 +41,13 @@
 // An InterpreterCodelet is a piece of interpreter code. All
 // interpreter code is generated into little codelets which
 // contain extra information for debugging and printing purposes.
-
+// InterpreterCodelet表示一段解释器代码，所有的解释器代码都放在InterpreterCodelet中，同时还包含了额外的用于打印和调试的信息，其定义也是在interpreter.hpp中。InterpreterCodelet继承自Stub
 class InterpreterCodelet: public Stub {
   friend class VMStructs;
  private:
-  int         _size;                             // the size in bytes
-  const char* _description;                      // a description of the codelet, for debugging & printing
-  Bytecodes::Code _bytecode;                     // associated bytecode if any
+  int         _size;                             // the size in bytes  InterpreterCodelet的内存大小
+  const char* _description;                      // a description of the codelet, for debugging & printing  当前InterpreterCodelet的描述字符串
+  Bytecodes::Code _bytecode;                     // associated bytecode if any  Code是Bytecodes类中定义的一个表示具体字节码指令的枚举，这里表示当前InterpreterCodelet关联的字节码
   DEBUG_ONLY(CodeStrings _strings;)              // Comments for annotating assembler output.
 
  public:
@@ -81,26 +81,26 @@ class InterpreterCodelet: public Stub {
 };
 
 // Define a prototype interface
-DEF_STUB_INTERFACE(InterpreterCodelet);
+DEF_STUB_INTERFACE(InterpreterCodelet);  // InterpreterCodeletInterface是通过宏的方式定义的, 这个类就是将传入的Stub* 将其强转成InterpreterCodelet*，然后调用InterpreterCodelet的方法实现。
 
 
 //------------------------------------------------------------------------------------------------------------------------
 // A CodeletMark serves as an automatic creator/initializer for Codelets
 // (As a subclass of ResourceMark it automatically GC's the allocated
 // code buffer and assemblers).
-
+// CodeletMark继承自ResourceMark，跟ResourceMark的用法一样，通过构造函数完成相关资源的初始化，通过析构函数完成相关资源的销毁和其他收尾工作。
 class CodeletMark: ResourceMark {
  private:
-  InterpreterCodelet*         _clet;
-  InterpreterMacroAssembler** _masm;
-  CodeBuffer                  _cb;
+  InterpreterCodelet*         _clet; // 关联的用来描述一段汇编代码的InterpreterCodelet实例，通过StubQueue分配
+  InterpreterMacroAssembler** _masm; // 生产字节码指令对应汇编代码的Assembler实例指针
+  CodeBuffer                  _cb;   // Assembler实际写入代码的地方，通过InterpreterCodelet来初始化
 
   int codelet_size() {
-    // Request the whole code buffer (minus a little for alignment).
-    // The commit call below trims it back for each codelet.
+    // Request the whole code buffer (minus a little for alignment).  请求整个代码缓冲区
+    // The commit call below trims it back for each codelet.  下面的commit调用为每个codelet修剪它
     int codelet_size = AbstractInterpreter::code()->available_space() - 2*K;
 
-    // Guarantee there's a little bit of code space left.
+    // Guarantee there's a little bit of code space left.  保证还有一点代码空间
     guarantee (codelet_size > 0 && (size_t)codelet_size >  2*K,
                "not enough space for interpreter generation");
 
@@ -140,16 +140,16 @@ class CodeletMark: ResourceMark {
 };
 
 // Wrapper classes to produce Interpreter/InterpreterGenerator from either
-// the c++ interpreter or the template interpreter.
+// the c++ interpreter or the template interpreter.  Interpreter是对外的一个解释器的包装类，通过宏定义的方式决定使用CppInterpreter或者TemplateInterpreter
 
 class Interpreter: public CC_INTERP_ONLY(CppInterpreter) NOT_CC_INTERP(TemplateInterpreter) {
 
   public:
   // Debugging/printing
   static InterpreterCodelet* codelet_containing(address pc)     { return (InterpreterCodelet*)_code->stub_containing(pc); }
-#ifdef TARGET_ARCH_x86
+//#ifdef TARGET_ARCH_x86
 # include "interpreter_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "interpreter_sparc.hpp"
 #endif

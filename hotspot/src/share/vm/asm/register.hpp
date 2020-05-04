@@ -93,9 +93,9 @@ enum { name##_##type##EnumValue = value##_##type##EnumValue }
 #define REGISTER_DEFINITION(type, name) \
 const type name = ((type)name##_##type##EnumValue)
 
-#ifdef TARGET_ARCH_x86
+//#ifdef TARGET_ARCH_x86
 # include "register_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "register_sparc.hpp"
 #endif

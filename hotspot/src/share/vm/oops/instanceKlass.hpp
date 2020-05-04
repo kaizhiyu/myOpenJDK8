@@ -270,11 +270,11 @@ class InstanceKlass: public Klass {
 
   NOT_PRODUCT(int _verify_count;)  // to avoid redundant verifies
 
-  // Method array.
+  // Method array. 方法数组
   Array<Method*>* _methods;
-  // Default Method Array, concrete methods inherited from interfaces
+  // Default Method Array, concrete methods inherited from interfaces  默认方法数组，从接口继承的具体方法
   Array<Method*>* _default_methods;
-  // Interface (Klass*s) this class declares locally to implement.
+  // Interface (Klass*s) this class declares locally to implement.  接口 此类在本地声明以实现
   Array<Klass*>* _local_interfaces;
   // Interface (Klass*s) this class implements transitively.
   Array<Klass*>* _transitive_interfaces;

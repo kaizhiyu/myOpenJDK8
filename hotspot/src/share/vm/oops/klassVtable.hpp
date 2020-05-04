@@ -42,11 +42,11 @@
 class vtableEntry;
 
 class klassVtable : public ResourceObj {
-  KlassHandle  _klass;            // my klass
-  int          _tableOffset;      // offset of start of vtable data within klass
-  int          _length;           // length of vtable (number of entries)
+  KlassHandle  _klass;            // my klass  该vtable所属的klass
+  int          _tableOffset;      // offset of start of vtable data within klass  vtable在klass实例内存中的偏移量
+  int          _length;           // length of vtable (number of entries)  vtable的长度，即vtableEntry的条数，因为一个vtableEntry实例只包含一个Method*，其大小等于字段，所以vtable的长度跟vtable以字宽为单位的内存大小相同
 #ifndef PRODUCT
-  int          _verify_count;     // to make verify faster
+  int          _verify_count;     // to make verify faster  用于记录vtable是否已经校验并初始化完成
 #endif
 
   // Ordering important, so greater_than (>) can be used as an merge operator.
@@ -200,8 +200,8 @@ class itableMethodEntry;
 
 class itableOffsetEntry VALUE_OBJ_CLASS_SPEC {
  private:
-  Klass* _interface;
-  int      _offset;
+  Klass* _interface;  // 该方法所属的接口
+  int      _offset;   // 该接口下的第一个方法itableMethodEntry相对于所属Klass的偏移量
  public:
   Klass* interface_klass() const { return _interface; }
   int      offset() const          { return _offset; }
@@ -222,7 +222,7 @@ class itableOffsetEntry VALUE_OBJ_CLASS_SPEC {
 
 class itableMethodEntry VALUE_OBJ_CLASS_SPEC {
  private:
-  Method* _method;
+  Method* _method;  // 方法
 
  public:
   Method* method() const { return _method; }
@@ -239,13 +239,13 @@ class itableMethodEntry VALUE_OBJ_CLASS_SPEC {
 };
 
 //
-// Format of an itable
+// Format of an itable  itable的格式
 //
 //    ---- offset table ---
-//    Klass* of interface 1             \
+//    Klass* of interface 1               \
 //    offset to vtable from start of oop  / offset table entry
 //    ...
-//    Klass* of interface n             \
+//    Klass* of interface n               \
 //    offset to vtable from start of oop  / offset table entry
 //    --- vtable for interface 1 ---
 //    Method*                             \
@@ -258,10 +258,10 @@ class itableMethodEntry VALUE_OBJ_CLASS_SPEC {
 //
 class klassItable : public ResourceObj {
  private:
-  instanceKlassHandle  _klass;             // my klass
-  int                  _table_offset;      // offset of start of itable data within klass (in words)
-  int                  _size_offset_table; // size of offset table (in itableOffset entries)
-  int                  _size_method_table; // size of methodtable (in itableMethodEntry entries)
+  instanceKlassHandle  _klass;             // my klass  itable所属的Klass
+  int                  _table_offset;      // offset of start of itable data within klass (in words)  itable在所属Klass中的内存偏移量
+  int                  _size_offset_table; // size of offset table (in itableOffset entries)  itable中itableOffsetEntry的条数
+  int                  _size_method_table; // size of methodtable (in itableMethodEntry entries)  itable中itableMethodEntry的条数
 
   void initialize_itable_for_interface(int method_table_offset, KlassHandle interf_h, bool checkconstraints, TRAPS);
  public:

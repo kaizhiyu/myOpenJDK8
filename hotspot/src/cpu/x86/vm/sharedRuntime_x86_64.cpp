@@ -23,20 +23,20 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/macroAssembler.hpp"
-#include "asm/macroAssembler.inline.hpp"
-#include "code/debugInfoRec.hpp"
-#include "code/icBuffer.hpp"
-#include "code/vtableStubs.hpp"
-#include "interpreter/interpreter.hpp"
-#include "oops/compiledICHolder.hpp"
-#include "prims/jvmtiRedefineClassesTrace.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/vframeArray.hpp"
+#include "../asm/macroAssembler.hpp"
+#include "../asm/macroAssembler.inline.hpp"
+#include "../code/debugInfoRec.hpp"
+#include "../code/icBuffer.hpp"
+#include "../code/vtableStubs.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../oops/compiledICHolder.hpp"
+#include "../prims/jvmtiRedefineClassesTrace.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/vframeArray.hpp"
 #include "vmreg_x86.inline.hpp"
-#ifdef COMPILER1
-#include "c1/c1_Runtime1.hpp"
-#endif
+//#ifdef COMPILER1
+#include "../c1/c1_Runtime1.hpp"
+//#endif
 #ifdef COMPILER2
 #include "opto/runtime.hpp"
 #endif

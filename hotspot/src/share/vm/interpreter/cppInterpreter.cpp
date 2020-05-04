@@ -23,10 +23,10 @@
  */
 
 #include "precompiled.hpp"
-#include "interpreter/bytecodeInterpreter.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterGenerator.hpp"
-#include "interpreter/interpreterRuntime.hpp"
+#include "../interpreter/bytecodeInterpreter.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterGenerator.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
 
 #ifdef CC_INTERP
 # define __ _masm->

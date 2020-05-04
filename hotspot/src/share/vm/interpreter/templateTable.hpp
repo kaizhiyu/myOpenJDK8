@@ -25,12 +25,12 @@
 #ifndef SHARE_VM_INTERPRETER_TEMPLATETABLE_HPP
 #define SHARE_VM_INTERPRETER_TEMPLATETABLE_HPP
 
-#include "interpreter/bytecodes.hpp"
-#include "memory/allocation.hpp"
-#include "runtime/frame.hpp"
-#ifdef TARGET_ARCH_x86
+#include "../interpreter/bytecodes.hpp"
+#include "../memory/allocation.hpp"
+#include "../runtime/frame.hpp"
+//#ifdef TARGET_ARCH_x86
 # include "interp_masm_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_MODEL_sparc
 # include "interp_masm_sparc.hpp"
 #endif
@@ -56,7 +56,7 @@
 
 // A Template describes the properties of a code template for a given bytecode
 // and provides a generator to generate the code template.
-
+// 用来描述一个字节码模板的属性，并提供一个用来生成字节码模板的函数
 class Template VALUE_OBJ_CLASS_SPEC {
  private:
   enum Flags {
@@ -68,11 +68,11 @@ class Template VALUE_OBJ_CLASS_SPEC {
 
   typedef void (*generator)(int arg);
 
-  int       _flags;                              // describes interpreter template properties (bcp unknown)
-  TosState  _tos_in;                             // tos cache state before template execution
-  TosState  _tos_out;                            // tos cache state after  template execution
-  generator _gen;                                // template code generator
-  int       _arg;                                // argument for template code generator
+  int       _flags;                              // describes interpreter template properties (bcp unknown)  用来描述字节码模板的属性，相关属性通过枚举Flags指定。
+  TosState  _tos_in;                             // tos cache state before template execution  执行字节码指令前的栈顶值类型
+  TosState  _tos_out;                            // tos cache state after  template execution  执行字节码指令后的栈顶值类型
+  generator _gen;                                // template code generator  generator是用来生成字节码模板的函数的别名，其函数定义是typedef void (*generator)(int arg);
+  int       _arg;                                // argument for template code generator  用来生成字节码模板的参数
 
   void      initialize(int flags, TosState tos_in, TosState tos_out, generator gen, int arg);
 
@@ -93,7 +93,7 @@ class Template VALUE_OBJ_CLASS_SPEC {
 
 // The TemplateTable defines all Templates and provides accessor functions
 // to get the template for a given bytecode.
-
+// 表示字节码指令的模板类，定义了所有指令的指令模板，并提供了获取给定字节码指令的模板的方法
 class TemplateTable: AllStatic {
  public:
   enum Operation { add, sub, mul, div, rem, _and, _or, _xor, shl, shr, ushr };
@@ -101,17 +101,17 @@ class TemplateTable: AllStatic {
   enum CacheByte { f1_byte = 1, f2_byte = 2 };  // byte_no codes
 
  private:
-  static bool            _is_initialized;        // true if TemplateTable has been initialized
-  static Template        _template_table     [Bytecodes::number_of_codes];
-  static Template        _template_table_wide[Bytecodes::number_of_codes];
+  static bool            _is_initialized;        // true if TemplateTable has been initialized  是否完成初始化
+  static Template        _template_table     [Bytecodes::number_of_codes];  // Template数组，表示各字节码指令对应的Template
+  static Template        _template_table_wide[Bytecodes::number_of_codes];  // Template数组，宽字节下的各字节码指令对应的Template
 
-  static Template*       _desc;                  // the current template to be generated
+  static Template*       _desc;                  // the current template to be generated  当前正在生成的Template模板
   static Bytecodes::Code bytecode()              { return _desc->bytecode(); }
 
-  static BarrierSet*     _bs;                    // Cache the barrier set.
+  static BarrierSet*     _bs;                    // Cache the barrier set. 关联的BarrierSet实例
  public:
   //%note templates_1
-  static InterpreterMacroAssembler* _masm;       // the assembler used when generating templates
+  static InterpreterMacroAssembler* _masm;       // the assembler used when generating templates  用来生成字节码模板的Assembler实例
 
  private:
 

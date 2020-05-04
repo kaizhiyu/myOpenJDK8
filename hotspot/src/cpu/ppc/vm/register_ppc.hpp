@@ -26,7 +26,7 @@
 #ifndef CPU_PPC_VM_REGISTER_PPC_HPP
 #define CPU_PPC_VM_REGISTER_PPC_HPP
 
-#include "asm/register.hpp"
+#include "../asm/register.hpp"
 #include "vm_version_ppc.hpp"
 
 // forward declaration

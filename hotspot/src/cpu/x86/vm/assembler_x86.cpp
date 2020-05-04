@@ -37,11 +37,11 @@
 #include "../runtime/sharedRuntime.hpp"
 #include "../runtime/stubRoutines.hpp"
 #include "../utilities/macros.hpp"
-#if INCLUDE_ALL_GCS
+//#if INCLUDE_ALL_GCS
 #include "../gc_implementation/g1/g1CollectedHeap.inline.hpp"
 #include "../gc_implementation/g1/g1SATBCardTableModRefBS.hpp"
 #include "../gc_implementation/g1/heapRegion.hpp"
-#endif // INCLUDE_ALL_GCS
+//#endif // INCLUDE_ALL_GCS
 
 #ifdef PRODUCT
 #define BLOCK_COMMENT(str) /* nothing */
@@ -103,7 +103,7 @@ Address Address::make_array(ArrayAddress adr) {
   return Address();
 }
 
-// exceedingly dangerous constructor
+// exceedingly dangerous constructor 极其危险的构造器
 Address::Address(int disp, address loc, relocInfo::relocType rtype) {
   _base  = noreg;
   _index = noreg;

@@ -24,14 +24,14 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/assembler.hpp"
-#include "assembler_zero.inline.hpp"
-#include "code/vtableStubs.hpp"
-#include "interp_masm_zero.hpp"
-#include "memory/resourceArea.hpp"
-#include "oops/instanceKlass.hpp"
-#include "oops/klassVtable.hpp"
-#include "runtime/sharedRuntime.hpp"
+#include "../asm/assembler.hpp"
+#include "../assembler_zero.inline.hpp"
+#include "../code/vtableStubs.hpp"
+#include "../interp_masm_zero.hpp"
+#include "../memory/resourceArea.hpp"
+#include "../oops/instanceKlass.hpp"
+#include "../oops/klassVtable.hpp"
+#include "../runtime/sharedRuntime.hpp"
 #include "vmreg_zero.inline.hpp"
 #ifdef COMPILER2
 #include "opto/runtime.hpp"

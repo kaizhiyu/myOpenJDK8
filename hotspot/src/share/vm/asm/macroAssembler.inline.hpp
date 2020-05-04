@@ -27,9 +27,9 @@
 
 #include "../asm/macroAssembler.hpp"
 
-//#ifdef TARGET_ARCH_x86
+#ifdef TARGET_ARCH_x86
 // no macroAssembler_x86.inline.hpp
-//#endif
+#endif
 #ifdef TARGET_ARCH_sparc
 # include "macroAssembler_sparc.inline.hpp"
 #endif

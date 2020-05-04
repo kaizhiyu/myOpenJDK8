@@ -36,10 +36,10 @@
 //------------------------------------------------------------------------------------------------------------------------
 // A little wrapper class to group tosca-specific entry points into a unit.
 // (tosca = Top-Of-Stack CAche)
-
+// EntryPoint就是一个address的数组的包装类
 class EntryPoint VALUE_OBJ_CLASS_SPEC {
  private:
-  address _entry[number_of_states];
+  address _entry[number_of_states]; // number_of_states是枚举TosState中表示state个数的枚举值
 
  public:
   // Construction
@@ -58,7 +58,7 @@ class EntryPoint VALUE_OBJ_CLASS_SPEC {
 
 //------------------------------------------------------------------------------------------------------------------------
 // A little wrapper class to group tosca-specific dispatch tables into a unit.
-
+// DispatchTable是一个address二维数组的包装类
 class DispatchTable VALUE_OBJ_CLASS_SPEC {
  public:
   enum { length = 1 << BitsPerByte };                 // an entry point for each byte value (also for undefined bytecodes)
@@ -78,7 +78,7 @@ class DispatchTable VALUE_OBJ_CLASS_SPEC {
   // Comparison
   bool operator == (DispatchTable& y);                // for debugging only
 };
-
+// TemplateInterpreter继承自AbstractInterpreter，其定义在同目录下的templateInterpreter.hpp中。TemplateInterpreter在此基础上增加了很多的完成特定功能的函数的调用入口
 class TemplateInterpreter: public AbstractInterpreter {
   friend class VMStructs;
   friend class InterpreterMacroAssembler;
@@ -187,9 +187,9 @@ class TemplateInterpreter: public AbstractInterpreter {
   // Compute the address for reexecution
   static address deopt_reexecute_entry(Method* method, address bcp);
 
-#ifdef TARGET_ARCH_x86
+//#ifdef TARGET_ARCH_x86
 # include "templateInterpreter_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "templateInterpreter_sparc.hpp"
 #endif

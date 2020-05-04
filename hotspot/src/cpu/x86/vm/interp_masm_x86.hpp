@@ -32,15 +32,14 @@
 
 // This file specializes the assember with interpreter-specific macros
 
-
 class InterpreterMacroAssembler: public MacroAssembler {
 
 #ifdef TARGET_ARCH_MODEL_x86_32
 # include "interp_masm_x86_32.hpp"
 #endif
-#ifdef TARGET_ARCH_MODEL_x86_64
+//#ifdef TARGET_ARCH_MODEL_x86_64
 # include "interp_masm_x86_64.hpp"
-#endif
+//#endif
 
  private:
 

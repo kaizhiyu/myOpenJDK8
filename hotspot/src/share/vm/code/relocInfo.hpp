@@ -466,7 +466,7 @@ inline relocInfo prefix_relocInfo(int datalen = 0) {
 }
 
 
-// Holder for flyweight relocation objects.
+// Holder for flyweight relocation objects. flyweight重新定位对象的保持架。
 // Although the flyweight subclasses are of varying sizes,
 // the holder is "one size fits all".
 class RelocationHolder VALUE_OBJ_CLASS_SPEC {

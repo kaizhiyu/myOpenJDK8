@@ -212,18 +212,18 @@ private:
   int               _constMethod_size;
   u2                _flags;
 
-  // Size of Java bytecodes allocated immediately after Method*.
+  // Size of Java bytecodes allocated immediately after Method*. 紧跟在method*后面的字节码的数量
   u2                _code_size;
-  u2                _name_index;                 // Method name (index in constant pool)
-  u2                _signature_index;            // Method signature (index in constant pool)
+  u2                _name_index;                 // Method name (index in constant pool) 常量池中的方法名索引
+  u2                _signature_index;            // Method signature (index in constant pool) 常量池中方法签名索引
   u2                _method_idnum;               // unique identification number for the method within the class
                                                  // initially corresponds to the index into the methods array.
                                                  // but this may change with redefinition
   u2                _max_stack;                  // Maximum number of entries on the expression stack
   u2                _max_locals;                 // Number of local variables used by this method
-  u2                _size_of_parameters;         // size of the parameter block (receiver + arguments) in words
+  u2                _size_of_parameters;         // size of the parameter block (receiver + arguments) in words  接收（this）加上实际参数的总数量
 
-  // Constructor
+  // Constructor 构造器
   ConstMethod(int byte_code_size,
               InlineTableSizes* sizes,
               MethodType is_overpass,

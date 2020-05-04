@@ -27,8 +27,8 @@
 #define DONT_USE_REGISTER_DEFINES
 
 #include "precompiled.hpp"
-#include "asm/macroAssembler.hpp"
-#include "asm/register.hpp"
+#include "../asm/macroAssembler.hpp"
+#include "../asm/register.hpp"
 #include "register_ppc.hpp"
 #ifdef TARGET_ARCH_MODEL_ppc_32
 # include "interp_masm_ppc_32.hpp"

@@ -22,6 +22,8 @@
  *
  */
 
+#include "register_x86.hpp"
+
 #ifndef CC_INTERP
  protected:
   // Interpreter specific version of call_VM_base

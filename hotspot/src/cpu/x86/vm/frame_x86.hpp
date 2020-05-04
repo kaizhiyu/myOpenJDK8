@@ -25,8 +25,8 @@
 #ifndef CPU_X86_VM_FRAME_X86_HPP
 #define CPU_X86_VM_FRAME_X86_HPP
 
-#include "runtime/synchronizer.hpp"
-#include "utilities/top.hpp"
+#include "../runtime/synchronizer.hpp"
+#include "../utilities/top.hpp"
 
 // A frame represents a physical stack frame (an activation).  Frames can be
 // C or Java frames, and the Java frames can be interpreted or compiled.

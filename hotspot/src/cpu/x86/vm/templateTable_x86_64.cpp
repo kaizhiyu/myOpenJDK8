@@ -23,19 +23,19 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/macroAssembler.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "interpreter/templateTable.hpp"
-#include "memory/universe.inline.hpp"
-#include "oops/methodData.hpp"
-#include "oops/objArrayKlass.hpp"
-#include "oops/oop.inline.hpp"
-#include "prims/methodHandles.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/stubRoutines.hpp"
-#include "runtime/synchronizer.hpp"
-#include "utilities/macros.hpp"
+#include "../asm/macroAssembler.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../interpreter/templateTable.hpp"
+#include "../memory/universe.inline.hpp"
+#include "../oops/methodData.hpp"
+#include "../oops/objArrayKlass.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../prims/methodHandles.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/stubRoutines.hpp"
+#include "../runtime/synchronizer.hpp"
+#include "../utilities/macros.hpp"
 
 #ifndef CC_INTERP
 
@@ -3580,7 +3580,7 @@ void TemplateTable::athrow() {
 // Synchronization
 //
 // Note: monitorenter & exit are symmetric routines; which is reflected
-//       in the assembly code structure as well
+//       in the assembly code structure as well  monitorenter&exit是对称的例程；它也反映在程序集代码结构中
 //
 // Stack layout:
 //
@@ -3594,10 +3594,10 @@ void TemplateTable::athrow() {
 // ...
 // [saved rbp    ] <--- rbp
 void TemplateTable::monitorenter() {
-  transition(atos, vtos);
+  transition(atos, vtos); // 校验当前指令的栈顶缓存类型是否正确
 
-  // check for NULL object
-  __ null_check(rax);
+  // check for NULL object  校验rax中值是否为空，栈顶缓存就保存在rax寄存器中，如果为NULL会触发底层操作系统的NULL异常
+  __ null_check(rax); // 此时rax中保存的是用于获取锁的实例oop
 
   const Address monitor_block_top(
         rbp, frame::interpreter_frame_monitor_block_top_offset * wordSize);
@@ -3607,59 +3607,59 @@ void TemplateTable::monitorenter() {
 
   Label allocated;
 
-  // initialize entry pointer
+  // initialize entry pointer xorl用于按位异或，相同的位置为0，不同的位置为1，此处是将c_rarg1置为NULL
   __ xorl(c_rarg1, c_rarg1); // points to free slot or NULL
 
-  // find a free slot in the monitor block (result in c_rarg1)
+  // find a free slot in the monitor block (result in c_rarg1) 找到一个空闲的monitor_block，结果保存在c_rarg1中
   {
     Label entry, loop, exit;
     __ movptr(c_rarg3, monitor_block_top); // points to current entry,
-                                     // starting with top-most entry
+                                     // starting with top-most entry   将monitor_block_top拷贝到c_rarg3中
     __ lea(c_rarg2, monitor_block_bot); // points to word before bottom
-                                     // of monitor block
-    __ jmpb(entry);
+                                     // of monitor block  将monitor_block_bot拷贝到c_rarg2
+    __ jmpb(entry); // 跳转到entry标签处执行
 
     __ bind(loop);
-    // check if current entry is used
+    // check if current entry is used  判断c_rarg3指向的BasicObjectLock的obj属性是否为空，如果为空表示未使用
     __ cmpptr(Address(c_rarg3, BasicObjectLock::obj_offset_in_bytes()), (int32_t) NULL_WORD);
-    // if not used then remember entry in c_rarg1
+    // if not used then remember entry in c_rarg1  如果相等，即BasicObjectLock的obj属性为空，则将c_rarg3的值拷贝到c_rarg1
     __ cmov(Assembler::equal, c_rarg1, c_rarg3);
-    // check if current entry is for same object
+    // check if current entry is for same object  判断c_rarg3指向的BasicObjectLock的obj属性与rax中实例是否一致
     __ cmpptr(rax, Address(c_rarg3, BasicObjectLock::obj_offset_in_bytes()));
-    // if same object then stop searching
+    // if same object then stop searching 如果一致则退出，一致说明BasicObjectLock的obj属性不为空，此时c_rarg1为空，就是重新分配一个新的
     __ jccb(Assembler::equal, exit);
-    // otherwise advance to next entry
-    __ addptr(c_rarg3, entry_size);
+    // otherwise advance to next entry 如果不一致则把c_rarg3地址加上entry_size，即开始遍历前面一个monitor_block，即存在空闲的，但是没有obj属性相同的时候会把所有的
+    __ addptr(c_rarg3, entry_size);  // BasicObjectLock都遍历一遍，找到最上面的地址最大一个空闲的BasicObjectLock
     __ bind(entry);
     // check if bottom reached
-    __ cmpptr(c_rarg3, c_rarg2);
+    __ cmpptr(c_rarg3, c_rarg2);  // 判断两个寄存器的值是否相等
     // if not at bottom then check this entry
-    __ jcc(Assembler::notEqual, loop);
+    __ jcc(Assembler::notEqual, loop); //如果不等于则跳转到loop标签，否则跳转到exit
     __ bind(exit);
   }
 
-  __ testptr(c_rarg1, c_rarg1); // check if a slot has been found
+  __ testptr(c_rarg1, c_rarg1); // check if a slot has been found 判断c_rarg1是否为空，如果不为空则跳转到allocated处
   __ jcc(Assembler::notZero, allocated); // if found, continue with that one
 
-  // allocate one if there's no free slot
+  // allocate one if there's no free slot  如果没有找到空闲的monitor_block则分配一个
   {
     Label entry, loop;
     // 1. compute new pointers             // rsp: old expression stack top
-    __ movptr(c_rarg1, monitor_block_bot); // c_rarg1: old expression stack bottom
-    __ subptr(rsp, entry_size);            // move expression stack top
-    __ subptr(c_rarg1, entry_size);        // move expression stack bottom
-    __ mov(c_rarg3, rsp);                  // set start value for copy loop
-    __ movptr(monitor_block_bot, c_rarg1); // set new monitor block bottom
-    __ jmp(entry);
-    // 2. move expression stack contents
+    __ movptr(c_rarg1, monitor_block_bot); // c_rarg1: old expression stack bottom   将monitor_block_bot拷贝到c_rarg1
+    __ subptr(rsp, entry_size);            // move expression stack top     向下（低地址端）移动rsp指针entry_size字节
+    __ subptr(c_rarg1, entry_size);        // move expression stack bottom  将c_rarg1减去entry_size
+    __ mov(c_rarg3, rsp);                  // set start value for copy loop 将rsp拷贝到c_rarg3
+    __ movptr(monitor_block_bot, c_rarg1); // set new monitor block bottom  将c_rarg1中的值写入到monitor_block_bot
+    __ jmp(entry);  // 跳转到entry处开始循环
+    // 2. move expression stack contents  移动monitor_block_bot到栈顶的数据，将从栈顶分配的一个monitor_block插入到原来的monitor_block_bot下面
     __ bind(loop);
-    __ movptr(c_rarg2, Address(c_rarg3, entry_size)); // load expression stack
+    __ movptr(c_rarg2, Address(c_rarg3, entry_size)); // load expression stack  将c_rarg3之后的entry_size处的地址拷贝到c_rarg2，即原来的rsp地址
                                                       // word from old location
-    __ movptr(Address(c_rarg3, 0), c_rarg2);          // and store it at new location
-    __ addptr(c_rarg3, wordSize);                     // advance to next word
+    __ movptr(Address(c_rarg3, 0), c_rarg2);          // and store it at new location  将c_rarg2中的数据拷贝到c_rarg3处，即新的rsp地址
+    __ addptr(c_rarg3, wordSize);                     // advance to next word  c_rarg3加上一个字宽，即准备复制下一个字宽的数据
     __ bind(entry);
-    __ cmpptr(c_rarg3, c_rarg1);            // check if bottom reached
-    __ jcc(Assembler::notEqual, loop);      // if not at bottom then
+    __ cmpptr(c_rarg3, c_rarg1);            // check if bottom reached  比较两个寄存器的值
+    __ jcc(Assembler::notEqual, loop);      // if not at bottom then    如果不等于则跳转到loop
                                             // copy next word
   }
 
@@ -3671,18 +3671,18 @@ void TemplateTable::monitorenter() {
   // handling for async. exceptions work correctly.
   // The object has already been poped from the stack, so the
   // expression stack looks correct.
-  __ increment(r13);
+  __ increment(r13);  // 增加r13，使其指向下一个字节码指令
 
   // store object
-  __ movptr(Address(c_rarg1, BasicObjectLock::obj_offset_in_bytes()), rax);
-  __ lock_object(c_rarg1);
+  __ movptr(Address(c_rarg1, BasicObjectLock::obj_offset_in_bytes()), rax); // 将rax中保存的获取锁的oop保存到c_rarg1指向的BasicObjectLock的obj属性中
+  __ lock_object(c_rarg1); // 获取锁
 
   // check to make sure this monitor doesn't cause stack overflow after locking
-  __ save_bcp();  // in case of exception
+  __ save_bcp();  // in case of exception  保存bcp，为了出现异常时能够返回到原来的执行位置
   __ generate_stack_overflow_check(0);
 
-  // The bcp has already been incremented. Just need to dispatch to
-  // next instruction.
+  // The bcp has already been incremented. Just need to dispatch to  恢复字节码指令的正常执行
+  // next instruction.  因为上面已经增加r13了，所以此处dispatch_next的第二个参数使用默认值0，即执行r13指向的字节码指令即可，不用跳转到下一个指令
   __ dispatch_next(vtos);
 }
 

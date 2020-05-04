@@ -24,19 +24,19 @@
 
 #include "precompiled.hpp"
 #include "interp_masm_x86.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "oops/arrayOop.hpp"
-#include "oops/markOop.hpp"
-#include "oops/methodData.hpp"
-#include "oops/method.hpp"
-#include "prims/jvmtiExport.hpp"
-#include "prims/jvmtiRedefineClassesTrace.hpp"
-#include "prims/jvmtiThreadState.hpp"
-#include "runtime/basicLock.hpp"
-#include "runtime/biasedLocking.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/thread.inline.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../oops/arrayOop.hpp"
+#include "../oops/markOop.hpp"
+#include "../oops/methodData.hpp"
+#include "../oops/method.hpp"
+#include "../prims/jvmtiExport.hpp"
+#include "../prims/jvmtiRedefineClassesTrace.hpp"
+#include "../prims/jvmtiThreadState.hpp"
+#include "../runtime/basicLock.hpp"
+#include "../runtime/biasedLocking.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/thread.inline.hpp"
 
 
 // Implementation of InterpreterMacroAssembler
@@ -688,7 +688,7 @@ void InterpreterMacroAssembler::remove_activation(
 void InterpreterMacroAssembler::lock_object(Register lock_reg) {
   assert(lock_reg == c_rarg1, "The argument is only for looks. It must be c_rarg1");
 
-  if (UseHeavyMonitors) {
+  if (UseHeavyMonitors) {  // UseHeavyMonitors表示是否只使用重量级锁，默认为false，如果为true则调用InterpreterRuntime::monitorenter方法获取重量级锁
     call_VM(noreg,
             CAST_FROM_FN_PTR(address, InterpreterRuntime::monitorenter),
             lock_reg);
@@ -705,27 +705,27 @@ void InterpreterMacroAssembler::lock_object(Register lock_reg) {
 
     Label slow_case;
 
-    // Load object pointer into obj_reg %c_rarg3
-    movptr(obj_reg, Address(lock_reg, obj_offset));
+    // Load object pointer into obj_reg %c_rarg3  进入此方法目标obj要么是无锁状态，要么是对同一个对象的synchronized嵌套情形下的有锁状态
+    movptr(obj_reg, Address(lock_reg, obj_offset));  // 将用于获取锁的实例oop拷贝到obj_reg中
 
-    if (UseBiasedLocking) {
+    if (UseBiasedLocking) { // 首先尝试获取偏向锁，获取成功会跳转到done，否则走到slow_case
       biased_locking_enter(lock_reg, obj_reg, swap_reg, rscratch1, false, done, &slow_case);
     }
 
-    // Load immediate 1 into swap_reg %rax
+    // Load immediate 1 into swap_reg %rax  如果UseBiasedLocking为false或者目标对象的锁不是偏向锁了会走此逻辑
     movl(swap_reg, 1);
 
-    // Load (object->mark() | 1) into swap_reg %rax
+    // Load (object->mark() | 1) into swap_reg %rax  计算 object->mark() | 1，结果保存到swap_reg，跟1做或运算将其标记为无锁状态
     orptr(swap_reg, Address(obj_reg, 0));
 
-    // Save (object->mark() | 1) into BasicLock's displaced header
+    // Save (object->mark() | 1) into BasicLock's displaced header  将(object->mark() | 1)的结果保存到BasicLock的displaced_header中，保存原来的对象头
     movptr(Address(lock_reg, mark_offset), swap_reg);
-
+    // lock_reg即是里面的lock属性的地址
     assert(lock_offset == 0,
            "displached header must be first word in BasicObjectLock");
 
-    if (os::is_MP()) lock();
-    cmpxchgptr(lock_reg, Address(obj_reg, 0));
+    if (os::is_MP()) lock(); // 如果是多核系统，通过lock指令保证cmpxchgp的操作是原子的，即只可能有一个线程操作obj对象头
+    cmpxchgptr(lock_reg, Address(obj_reg, 0)); // 将obj的对象头同rax即swap_reg比较，如果相等将lock_reg写入obj对象头，即lock属性写入obj对象头，如果不等于则将obj对象头放入rax中
     if (PrintBiasedLockingStatistics) {
       cond_inc32(Assembler::zero,
                  ExternalAddress((address) BiasedLocking::fast_path_entry_count_addr()));

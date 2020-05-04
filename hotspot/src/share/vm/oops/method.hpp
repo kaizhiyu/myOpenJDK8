@@ -99,16 +99,17 @@ class KlassSizeStats;
 class Method : public Metadata {
  friend class VMStructs;
  private:
-  ConstMethod*      _constMethod;                // Method read-only data.
-  MethodData*       _method_data;
-  MethodCounters*   _method_counters;
-  AccessFlags       _access_flags;               // Access flags
-  int               _vtable_index;               // vtable index of this method (see VtableIndexFlag)
+  ConstMethod*      _constMethod;                // Method read-only data.  ConstMethod指针，该类定义constMethod.hpp中，用于表示方法的不可变的部分，如方法ID，方法的字节码大小，方法名在常量池中的索引等，注意其中_constMethod_size的单位为字宽，_code_size的单位是字节
+                                                 // 方法的各属性 字节码 压缩的代码行号表 本地变量表 异常表 异常检查表 方法参数 方法签名 方法注解
+  MethodData*       _method_data;                // MethodData指针，该类在methodData.hpp中定义，用于表示一个方法在执行期间收集的相关信息，如方法的调用次数，在C1编译期间代码循环和阻塞的次数，Profile收集的方法性能相关的数据等。
+  MethodCounters*   _method_counters;            // MethodCounters指针，该类在methodCounters.hpp中定义，用于记录方法调用次数，方法抛出异常的次数，方法断点的个数，主要用于基于调用频率的热点方法的跟踪统计。
+  AccessFlags       _access_flags;               // Access flags  AccessFlags类，表示方法的访问控制标识
+  int               _vtable_index;               // vtable index of this method (see VtableIndexFlag)  该方法在vtable表中的索引
                                                  // note: can have vtables with >2**16 elements (because of inheritance)
 #ifdef CC_INTERP
   int               _result_index;               // C++ interpreter needs for converting results to/from stack
 #endif
-  u2                _method_size;                // size of this object
+  u2                _method_size;                // size of this object  这个Method对象的大小，以字宽为单位
   u1                _intrinsic_id;               // vmSymbols::intrinsic_id (0 == _none)
   u1                _jfr_towrite      : 1,       // Flags
                     _caller_sensitive : 1,
@@ -118,22 +119,22 @@ class Method : public Metadata {
                                       : 3;
 
 #ifndef PRODUCT
-  int               _compiled_invocation_count;  // Number of nmethod invocations so far (for perf. debugging)
+  int               _compiled_invocation_count;  // Number of nmethod invocations so far (for perf. debugging)   被编译成本地方法后调用的次数
 #endif
   // Entry point for calling both from and to the interpreter.
-  address _i2i_entry;           // All-args-on-stack calling convention
+  address _i2i_entry;           // All-args-on-stack calling convention  解释器的入口地址
   // Adapter blob (i2c/c2i) for this Method*. Set once when method is linked.
-  AdapterHandlerEntry* _adapter;
+  AdapterHandlerEntry* _adapter;  // 此方法在解释器和编译器执行的适配器
   // Entry point for calling from compiled code, to compiled code if it exists
   // or else the interpreter.
-  volatile address _from_compiled_entry;        // Cache of: _code ? _code->entry_point() : _adapter->c2i_entry()
+  volatile address _from_compiled_entry;        // Cache of: _code ? _code->entry_point() : _adapter->c2i_entry()  执行编译后的代码的入口地址
   // The entry point for calling both from and to compiled code is
   // "_code->entry_point()".  Because of tiered compilation and de-opt, this
   // field can come and go.  It can transition from NULL to not-null at any
   // time (whenever a compile completes).  It can transition from not-null to
   // NULL only at safepoints (because of a de-opt).
-  nmethod* volatile _code;                       // Points to the corresponding piece of native code
-  volatile address           _from_interpreted_entry; // Cache of _code ? _adapter->i2c_entry() : _i2i_entry
+  nmethod* volatile _code;                       // Points to the corresponding piece of native code   nmethod类指针，表示该方法编译后的本地代码
+  volatile address           _from_interpreted_entry; // Cache of _code ? _adapter->i2c_entry() : _i2i_entry   code ? _adapter->i2c_entry() : _i2i_entry的缓存
 
   // Constructor
   Method(ConstMethod* xconst, AccessFlags access_flags, int size);

@@ -24,11 +24,11 @@
  */
 
 #include "precompiled.hpp"
-#include "runtime/biasedLocking.hpp"
-#include "runtime/deoptimization.hpp"
-#include "runtime/thread.hpp"
-#include "shark/llvmHeaders.hpp"
-#include "shark/sharkRuntime.hpp"
+#include "../runtime/biasedLocking.hpp"
+#include "../runtime/deoptimization.hpp"
+#include "../runtime/thread.hpp"
+#include "../shark/llvmHeaders.hpp"
+#include "../shark/sharkRuntime.hpp"
 #ifdef TARGET_ARCH_zero
 # include "stack_zero.inline.hpp"
 #endif

@@ -23,11 +23,11 @@
  */
 
 #include "precompiled.hpp"
-#include "code/codeBlob.hpp"
-#include "code/stubs.hpp"
-#include "memory/allocation.inline.hpp"
-#include "oops/oop.inline.hpp"
-#include "runtime/mutexLocker.hpp"
+#include "../code/codeBlob.hpp"
+#include "../code/stubs.hpp"
+#include "../memory/allocation.inline.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../runtime/mutexLocker.hpp"
 
 
 // Implementation of StubQueue
@@ -60,8 +60,8 @@
 //
 // CAUTION: DO NOT MESS WITH THIS CODE IF YOU CANNOT PROVE
 // ITS CORRECTNESS! THIS CODE IS MORE SUBTLE THAN IT LOOKS!
-
-
+// StubQueue通过_queue_begin和_queue_end来标识队列的范围，依据队列状态的不同在内存中的先后顺序不同。队列有两种状态，一种是连续状态，即begin和end之间的部分都已经分配了，end大于begin，此时所有的Stub在内存上是连续的，
+// 另一种是非连续状态，即begin和end之间的部分是未分配的，end小于begin，此时Stub在内存上是不连续的，被end和begin之间的空白部分分隔开了。
 StubQueue::StubQueue(StubInterface* stub_interface, int buffer_size,
                      Mutex* lock, const char* name) : _mutex(lock) {
   intptr_t size = round_to(buffer_size, 2*BytesPerWord);

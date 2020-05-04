@@ -23,13 +23,13 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/macroAssembler.inline.hpp"
-#include "code/vtableStubs.hpp"
-#include "interp_masm_sparc.hpp"
-#include "memory/resourceArea.hpp"
-#include "oops/instanceKlass.hpp"
-#include "oops/klassVtable.hpp"
-#include "runtime/sharedRuntime.hpp"
+#include "../asm/macroAssembler.inline.hpp"
+#include "../code/vtableStubs.hpp"
+#include "../interp_masm_sparc.hpp"
+#include "../memory/resourceArea.hpp"
+#include "../oops/instanceKlass.hpp"
+#include "../oops/klassVtable.hpp"
+#include "../runtime/sharedRuntime.hpp"
 #include "vmreg_sparc.inline.hpp"
 #ifdef COMPILER2
 #include "opto/runtime.hpp"

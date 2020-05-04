@@ -23,8 +23,8 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/assembler.hpp"
-#include "asm/register.hpp"
+#include "../asm/assembler.hpp"
+#include "../asm/register.hpp"
 #include "register_x86.hpp"
 #ifdef TARGET_ARCH_x86
 # include "interp_masm_x86.hpp"

@@ -43,16 +43,16 @@
 # include "os_bsd.inline.hpp"
 #endif
 
-// The classes in this file provide a simple framework for the
+// The classes in this file provide a simple framework for the   这个文件中的类提供了一个简单的框架，用于管理少量的机器代码
 // management of little pieces of machine code - or stubs -
-// created on the fly and frequently discarded. In this frame-
+// created on the fly and frequently discarded. In this frame-   桩代码经常快速创建和丢弃。在这个框架中，桩代码存储在队列中。
 // work stubs are stored in a queue.
 
 
 // Stub serves as abstract base class. A concrete stub
 // implementation is a subclass of Stub, implementing
 // all (non-virtual!) functions required sketched out
-// in the Stub class.
+// in the Stub class.  存根用作抽象基类。具体的存根实现是存根的一个子类，实现所有（非虚拟！）函数需要在存根类中勾画出来。
 //
 // A concrete stub layout may look like this (both data
 // and code sections could be empty as well):
@@ -70,8 +70,8 @@
 //               |  data  |    |
 //               |________|    |
 //                          <--+
-
-
+// Stub用来表示一段代码，是一个抽象基类
+// Stub只定义了基础方法，没有任何属性，且所有方法的实现都是ShouldNotCallThis()，即要求子类实现所有的方法
 class Stub VALUE_OBJ_CLASS_SPEC {
  public:
   // Initialization/finalization
@@ -105,8 +105,8 @@ class Stub VALUE_OBJ_CLASS_SPEC {
 // forwarding its virtual function calls to non-virtual calls
 // of the concrete stub (see also macro below). There's exactly
 // one stub interface instance required per stub queue.
-
-class StubInterface: public CHeapObj<mtCode> {
+// StubInterface定义了stub和保存stub的StubQueue之间调用接口，为了避免在Stub中使用虚函数表，每个StubQueue都保存了一个关联的StubInterface的实例，通过这个StubInterface的实例来调用Stub的对应方法。
+class StubInterface: public CHeapObj<mtCode> { // StubInterface定义的都是虚方法，且不提供空实现
  public:
   // Initialization/finalization
   virtual void    initialize(Stub* self, int size,
@@ -156,20 +156,20 @@ class StubInterface: public CHeapObj<mtCode> {
   };
 
 
-// A StubQueue maintains a queue of stubs.
+// A StubQueue maintains a queue of stubs.     StubQueue维护stubs队列
 // Note: All sizes (spaces) are given in bytes.
-
+//  StubQueue表示一个用来保存Stub的队列，StubQueue的属性都是私有属性
 class StubQueue: public CHeapObj<mtCode> {
   friend class VMStructs;
  private:
-  StubInterface* _stub_interface;                // the interface prototype
-  address        _stub_buffer;                   // where all stubs are stored
-  int            _buffer_size;                   // the buffer size in bytes
-  int            _buffer_limit;                  // the (byte) index of the actual buffer limit (_buffer_limit <= _buffer_size)
-  int            _queue_begin;                   // the (byte) index of the first queue entry (word-aligned)
-  int            _queue_end;                     // the (byte) index of the first entry after the queue (word-aligned)
-  int            _number_of_stubs;               // the number of buffered stubs
-  Mutex* const   _mutex;                         // the lock used for a (request, commit) transaction
+  StubInterface* _stub_interface;                // the interface prototype  该队列关联的StubInterface实例
+  address        _stub_buffer;                   // where all stubs are stored  存储Stub的buffer的起始地址
+  int            _buffer_size;                   // the buffer size in bytes  存储Stub的buffer的内存大小
+  int            _buffer_limit;                  // the (byte) index of the actual buffer limit (_buffer_limit <= _buffer_size)  存储Stub的buffer的limit的位置，能够分配Stub的上限
+  int            _queue_begin;                   // the (byte) index of the first queue entry (word-aligned)  队列中第一个Stub相对于_stub_buffer的偏移量
+  int            _queue_end;                     // the (byte) index of the first entry after the queue (word-aligned)  队列后第一个Stub相对于_stub_buffer的偏移量，即下一个可分配Stub的地址
+  int            _number_of_stubs;               // the number of buffered stubs  队列中保存的stub的个数
+  Mutex* const   _mutex;                         // the lock used for a (request, commit) transaction  执行队列操作用到的锁
 
   void  check_index(int i) const                 { assert(0 <= i && i < _buffer_limit && i % CodeEntryAlignment == 0, "illegal index"); }
   bool  is_contiguous() const                    { return _queue_begin <= _queue_end; }

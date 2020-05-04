@@ -40,7 +40,7 @@
 //    instruction_address --> 01 set xxx_oop, Ginline_cache_klass
 //                            23 jump_to Gtemp, yyyy
 //                            4  nop
-
+// ICStub用来表示一段编译中间体代码
 class ICStub: public Stub {
  private:
   int                 _size;       // total size of the stub incl. code

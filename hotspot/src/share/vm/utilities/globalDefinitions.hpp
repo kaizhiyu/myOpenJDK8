@@ -793,7 +793,8 @@ class JavaValue {
 // of stack (in memory) and thus not cached. The atos state corresponds to the itos
 // state when it comes to machine representation but is used separately for (oop)
 // type specific operations (e.g. verification code).
-
+// TosState枚举用来表示字节码指令执行前后栈顶的值的类型，栈顶的值可能保存在一个或者多个CPU寄存器中，
+// 需要通过值类型正确的读取值，将栈顶的值保存到一个或者多个寄存器中的技术就称为栈顶缓存技术，默认情况下栈顶的值保存在rax寄存器中。如果TosState为vtos则表示未使用栈顶缓存。
 enum TosState {         // describes the tos cache contents
   btos = 0,             // byte, bool tos cached
   ctos = 1,             // char tos cached
