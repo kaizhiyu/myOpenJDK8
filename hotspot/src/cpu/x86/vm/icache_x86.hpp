@@ -26,7 +26,7 @@
 #define CPU_X86_VM_ICACHE_X86_HPP
 
 // Interface for updating the instruction cache.  Whenever the VM modifies
-// code, part of the processor instruction cache potentially has to be flushed.
+// code, part of the processor instruction cache potentially has to be flushed. 用于更新指令缓存的接口。每当VM修改代码时，可能必须刷新处理器指令缓存的一部分。
 
 // On the x86, this is a no-op -- the I-cache is guaranteed to be consistent
 // after the next jump, and the VM never modifies instructions directly ahead

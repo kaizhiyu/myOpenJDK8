@@ -68,9 +68,9 @@ class AbstractICache : AllStatic {
 // Must be included before the definition of ICacheStubGenerator
 // because ICacheStubGenerator uses ICache definitions.
 
-#ifdef TARGET_ARCH_x86
+//#ifdef TARGET_ARCH_x86
 # include "icache_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "icache_sparc.hpp"
 #endif
@@ -90,7 +90,7 @@ class ICacheStubGenerator : public StubCodeGenerator {
  public:
   ICacheStubGenerator(CodeBuffer *c) : StubCodeGenerator(c) {}
 
-  // Generate the icache flush stub.
+  // Generate the icache flush stub. 生成icache flush存根。
   //
   // Since we cannot flush the cache when this stub is generated,
   // it must be generated first, and just to be sure, we do extra

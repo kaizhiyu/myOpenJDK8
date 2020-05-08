@@ -24,20 +24,20 @@
 
 #include "precompiled.hpp"
 #include "interp_masm_sparc.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "oops/arrayOop.hpp"
-#include "oops/markOop.hpp"
-#include "oops/methodData.hpp"
-#include "oops/method.hpp"
-#include "oops/methodCounters.hpp"
-#include "prims/jvmtiExport.hpp"
-#include "prims/jvmtiRedefineClassesTrace.hpp"
-#include "prims/jvmtiThreadState.hpp"
-#include "runtime/basicLock.hpp"
-#include "runtime/biasedLocking.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/thread.inline.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../oops/arrayOop.hpp"
+#include "../oops/markOop.hpp"
+#include "../oops/methodData.hpp"
+#include "../oops/method.hpp"
+#include "../oops/methodCounters.hpp"
+#include "../prims/jvmtiExport.hpp"
+#include "../prims/jvmtiRedefineClassesTrace.hpp"
+#include "../prims/jvmtiThreadState.hpp"
+#include "../runtime/basicLock.hpp"
+#include "../runtime/biasedLocking.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/thread.inline.hpp"
 
 #ifndef CC_INTERP
 #ifndef FAST_DISPATCH
@@ -471,7 +471,7 @@ void InterpreterMacroAssembler::push(TosState state) {
   }
 }
 
-
+// 根据不同的栈顶值类型从栈帧中pop一个对应类型的变量放到rax中
 void InterpreterMacroAssembler::pop(TosState state) {
   switch (state) {
     case atos: pop_ptr();            break;

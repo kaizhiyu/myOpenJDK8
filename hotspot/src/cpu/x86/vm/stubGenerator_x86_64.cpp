@@ -219,11 +219,11 @@ class StubGenerator: public StubCodeGenerator {
            (int)frame::entry_frame_call_wrapper_offset == (int)call_wrapper_off,
            "adjust this code");
     StubCodeMark mark(this, "StubRoutines", "call_stub");
-    address start = __ pc();
+    address start = __ pc(); // 汇编器会将生成的例程在内存中线性排列。所以取当前汇编器生成的上个例程最后一行汇编指令的地址，用来作为即将生成的新例程的首地址
 
     // same as in generate_catch_exception()!
     const Address rsp_after_call(rbp, rsp_after_call_off * wordSize);
-
+    // 定义一些变量，用于保存一些调用方的信息,这四个参数放在被调用者堆栈中，即call_stub例程堆栈中，所以相对于call_stub例程的栈基址（rbp）为负数。（栈是向下增长），后面会用到这四个变量。
     const Address call_wrapper  (rbp, call_wrapper_off   * wordSize);
     const Address result        (rbp, result_off         * wordSize);
     const Address result_type   (rbp, result_type_off    * wordSize);
@@ -231,7 +231,7 @@ class StubGenerator: public StubCodeGenerator {
     const Address entry_point   (rbp, entry_point_off    * wordSize);
     const Address parameters    (rbp, parameters_off     * wordSize);
     const Address parameter_size(rbp, parameter_size_off * wordSize);
-
+    // 传参，放在调用方堆栈中，所以相对call_stub例程的栈基址为正数,可以理解为调用方在调用call_stub例程之前，会将传参都放在自己的堆栈中，这样call_stub例程中就可以直接基于栈基址进行偏移取用了。
     // same as in generate_catch_exception()!
     const Address thread        (rbp, thread_off         * wordSize);
 
@@ -241,13 +241,19 @@ class StubGenerator: public StubCodeGenerator {
     const Address r12_save(rbp, r12_off * wordSize);
     const Address rbx_save(rbp, rbx_off * wordSize);
 
-    // stub code
+    // stub code enter（）对应的方法如下，用来保存调用方栈基址，并将call_stub栈基址更新为当前栈顶地址，c语言编译器其实在调用方法前都会插入这件事，这里JVM相对于借用了这种思想。
+    // ---------------------------------------------
+    //|        void MacroAssembler::enter() {       |
+    //|            push(rbp);                       |
+    //|            mov(rbp, rsp);                   |
+    //|       }                                     |
+    // ---------------------------------------------
     __ enter();
     __ subptr(rsp, -rsp_after_call_off * wordSize);
 
-    // save register parameters
+    // save register parameters  保存寄存器参数
 #ifndef _WIN64
-    __ movptr(parameters,   c_rarg5); // parameters
+    __ movptr(parameters,   c_rarg5); // parameters  接下来计算并分配call_stub堆栈所需栈大小，先将参数数量放入c_rarg5寄存器。
     __ movptr(entry_point,  c_rarg4); // entry_point
 #endif
 

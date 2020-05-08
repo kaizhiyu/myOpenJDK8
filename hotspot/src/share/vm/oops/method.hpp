@@ -38,14 +38,14 @@
 #include "../utilities/accessFlags.hpp"
 #include "../utilities/growableArray.hpp"
 
-// A Method* represents a Java method.
-//
+// A Method* represents a Java method. Method*表示java方法
+// 内存分布（每行代表一个字宽），注意大多数应用加载数以千计的方法，因此保持这个结构小是有很大的帮助
 // Memory layout (each line represents a word). Note that most applications load thousands of methods,
 // so keeping the size of this structure small has a big impact on footprint.
 //
-// We put all oops and method_size first for better gc cache locality.
+// We put all oops and method_size first for better gc cache locality.  我们把所有的oops和方法大小放在前面，为了gc缓存定位
 //
-// The actual bytecodes are inlined after the end of the Method struct.
+// The actual bytecodes are inlined after the end of the Method struct. 方法结构的后面紧跟着实际的字节码
 //
 // There are bits in the access_flags telling whether inlined tables are present.
 // Note that accessing the line number and local variable tables is not performance critical at all.

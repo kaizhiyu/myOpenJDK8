@@ -470,8 +470,8 @@ void InterpreterMacroAssembler::dispatch_epilog(TosState state, int step) {
 void InterpreterMacroAssembler::dispatch_base(TosState state,
                                               address* table,
                                               bool verifyoop) {
-  verify_FPU(1, state);
-  if (VerifyActivationFrameSize) {
+  verify_FPU(1, state); //64位下是空实现
+  if (VerifyActivationFrameSize) { //校验栈帧size
     Label L;
     mov(rcx, rbp);
     subptr(rcx, rsp);
@@ -483,11 +483,11 @@ void InterpreterMacroAssembler::dispatch_base(TosState state,
     stop("broken stack frame");
     bind(L);
   }
-  if (verifyoop) {
+  if (verifyoop) { //如果栈顶缓存是对象，则校验对象
     verify_oop(rax, state);
   }
-  lea(rscratch1, ExternalAddress((address)table));
-  jmp(Address(rscratch1, rbx, Address::times_8));
+  lea(rscratch1, ExternalAddress((address)table)); // 将table的地址拷贝到rscratch1寄存器中，这时的table地址实际上是DispatchTable的二维数组_table属性的第一维数组的地址
+  jmp(Address(rscratch1, rbx, Address::times_8)); // 此时rbx是待执行的字节码，即跳转到对应字节码的汇编指令上，DispatchTable的二维数组_table属性的第二维就是字节码，即在rscratch1地址上偏移rbx*8个字节就可以找到对应的字节码指令实现了
 }
 
 void InterpreterMacroAssembler::dispatch_only(TosState state) {

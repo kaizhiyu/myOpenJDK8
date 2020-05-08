@@ -201,7 +201,8 @@ class AbstractAssembler : public ResourceObj  {
   friend class Label;
 
  protected:
-  CodeSection* _code_section;          // section within the code buffer
+  CodeSection* _code_section;          // section within the code buffer JVM所有的历程都在一段连续的内存中，我们可以将这段内存想像成一根直线，当JVM刚启动时，这跟线长度为0，没有生成任何例程，第一例程生成时，__pc()返回0，因为此时是从这根直线的零点位置开始，假设第一个例程占20字节，则当
+                                       // JVM生成第二个例程时，第二个例程执行start = __pc()时，将返回20(如果将第一个位置标记为0，则第二个位置为20；否则如果从1开始标记，则第二个位置为21)，因为第一个例程占用20字节
   OopRecorder* _oop_recorder;          // support for relocInfo::oop_type
 
  public:

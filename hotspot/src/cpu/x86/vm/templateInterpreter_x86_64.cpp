@@ -23,28 +23,28 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/macroAssembler.hpp"
-#include "interpreter/bytecodeHistogram.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterGenerator.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "interpreter/templateTable.hpp"
-#include "oops/arrayOop.hpp"
-#include "oops/methodData.hpp"
-#include "oops/method.hpp"
-#include "oops/oop.inline.hpp"
-#include "prims/jvmtiExport.hpp"
-#include "prims/jvmtiThreadState.hpp"
-#include "runtime/arguments.hpp"
-#include "runtime/deoptimization.hpp"
-#include "runtime/frame.inline.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/stubRoutines.hpp"
-#include "runtime/synchronizer.hpp"
-#include "runtime/timer.hpp"
-#include "runtime/vframeArray.hpp"
-#include "utilities/debug.hpp"
-#include "utilities/macros.hpp"
+#include "../asm/macroAssembler.hpp"
+#include "../interpreter/bytecodeHistogram.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterGenerator.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../interpreter/templateTable.hpp"
+#include "../oops/arrayOop.hpp"
+#include "../oops/methodData.hpp"
+#include "../oops/method.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../prims/jvmtiExport.hpp"
+#include "../prims/jvmtiThreadState.hpp"
+#include "../runtime/arguments.hpp"
+#include "../runtime/deoptimization.hpp"
+#include "../runtime/frame.inline.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/stubRoutines.hpp"
+#include "../runtime/synchronizer.hpp"
+#include "../runtime/timer.hpp"
+#include "../runtime/vframeArray.hpp"
+#include "../utilities/debug.hpp"
+#include "../utilities/macros.hpp"
 
 #define __ _masm->
 
@@ -1399,7 +1399,7 @@ address InterpreterGenerator::generate_native_entry(bool synchronized) {
 
 //
 // Generic interpreted method entry to (asm) interpreter
-//
+// （asm）解释器的泛型解释方法条目
 address InterpreterGenerator::generate_normal_entry(bool synchronized) {
   // determine code generation flags
   bool inc_counter  = UseCompiler || CountCompiledCalls;
@@ -1934,7 +1934,7 @@ address TemplateInterpreterGenerator::generate_earlyret_entry_for(TosState state
 
 //-----------------------------------------------------------------------------
 // Helper for vtos entry point generation
-
+// 如果此时栈顶缓存的值类型不是vtos，则将对应的值从栈顶缓存即rax中push到栈帧中
 void TemplateInterpreterGenerator::set_vtos_entry_points(Template* t,
                                                          address& bep,
                                                          address& cep,

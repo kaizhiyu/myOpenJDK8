@@ -56,10 +56,10 @@
 #endif
 
 //------------------------------VMReg------------------------------------------
-// The VM uses 'unwarped' stack slots; the compiler uses 'warped' stack slots.
-// Register numbers below VMRegImpl::stack0 are the same for both.  Register
+// The VM uses 'unwarped' stack slots; the compiler uses 'warped' stack slots.  VM使用“unwarped”堆栈槽；编译器使用“warped”堆栈槽。
+// Register numbers below VMRegImpl::stack0 are the same for both.  Register    VMRegImpl：：stack0下面的寄存器号对两者都是相同的。stack0以上的寄存器号要么被扭曲（在编译器中），要么被取消扭曲（在VM中）。
 // numbers above stack0 are either warped (in the compiler) or unwarped
-// (in the VM).  Unwarped numbers represent stack indices, offsets from
+// (in the VM).  Unwarped numbers represent stack indices, offsets from         未反转的数字表示堆栈索引，即当前堆栈指针的偏移量。当我们还不知道框架有多大时，编译过程中需要扭曲的数字。
 // the current stack pointer.  Warped numbers are required during compilation
 // when we do not yet know how big the frame will be.
 
@@ -79,7 +79,7 @@ private:
 
 
   static VMReg stack0;
-  // Names for registers
+  // Names for registers  寄存器名字
   static const char *regName[];
   static const int register_count;
 

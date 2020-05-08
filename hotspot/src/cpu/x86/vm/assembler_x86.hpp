@@ -145,11 +145,11 @@ REGISTER_DECLARATION(Register, r15_thread, r15); // callee-saved
 REGISTER_DECLARATION(Register, rbp_mh_SP_save, rbp);
 
 // Address is an abstraction used to represent a memory location
-// using any of the amd64 addressing modes with one object.
+// using any of the amd64 addressing modes with one object.      Address是一个抽象，用于使用任何一种amd64寻址模式和一个对象来表示内存位置。
 //
 // Note: A register location is represented via a Register, not
-//       via an address for efficiency & simplicity reasons.
-
+//       via an address for efficiency & simplicity reasons.  寄存器位置是通过寄存器来表示的，而不是通过地址来表示，这是为了提高效率和简单性。
+// 诸如3(%ebp)这种标记方法，属于汇编语言，C/C++需要对汇编语言进行抽象，使用C++类来表示一个堆栈位置，汇编语言通过寄存器和偏移量唯一定位一个堆栈内存，因此，需要在C++类中将寄存器和偏移量分别抽象成两个变量，这样就可以直接使用该类进行堆栈寻址了。
 class ArrayAddress;
 
 class Address VALUE_OBJ_CLASS_SPEC {
@@ -179,8 +179,8 @@ class Address VALUE_OBJ_CLASS_SPEC {
   }
 
  private:
-  Register         _base;
-  Register         _index;
+  Register         _base;   //表示一个物理寄存器，寄存器的作用是标记基址，因此命名为_base  8(%ebp) -> Address position(rbp, 8)
+  Register         _index;  // 表示偏移量，是个整型数
   ScaleFactor      _scale;
   int              _disp;
   RelocationHolder _rspec;

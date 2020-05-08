@@ -23,10 +23,10 @@
  */
 
 #include "precompiled.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterGenerator.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "interpreter/templateTable.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterGenerator.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../interpreter/templateTable.hpp"
 
 #ifndef CC_INTERP
 
@@ -53,7 +53,7 @@ void TemplateInterpreter::initialize() {
     if (PrintInterpreter) print();
   }
 
-  // initialize dispatch table
+  // initialize dispatch table  初始化分发表  关注正常情况下_active_table = _normal_table;即可，那_normal_table是如何初始化的了？答案在TemplateInterpreterGenerator::generate_all()方法调用的set_entry_points_for_all_bytes()方法的实现中
   _active_table = _normal_table;
 }
 
@@ -480,21 +480,24 @@ void TemplateInterpreterGenerator::set_wide_entry_point(Template* t, address& we
   assert(t->tos_in() == vtos, "only vtos tos_in supported for wide instructions");
   wep = __ pc(); generate_and_dispatch(t);
 }
-
-
+// InterpreterMacroAssembler::dispatch_next开始执行第一个字节码的汇编指令，那么是如何跳转到下一个字节码指令了？
+// 答案在set_entry_points_for_all_bytes()方法调用的TemplateInterpreterGenerator::set_short_entry_points方法实现里，该方法用来实际生成_normal_table中各个字节码的调用入口地址
 void TemplateInterpreterGenerator::set_short_entry_points(Template* t, address& bep, address& cep, address& sep, address& aep, address& iep, address& lep, address& fep, address& dep, address& vep) {
-  assert(t->is_valid(), "template must exist");
+  assert(t->is_valid(), "template must exist");  // bep，cep，sep等分别对应不同栈顶缓存（即rax寄存器中的）值类型下的同一个字节码的调用入口地址，bep对应btos,cep对应ctos，依次类推
   switch (t->tos_in()) {
     case btos:
     case ctos:
     case stos:
-      ShouldNotReachHere();  // btos/ctos/stos should use itos.
-      break;
+      ShouldNotReachHere();  // btos/ctos/stos should use itos. 上述四种对应的变量类型byte，char，short在JVM中都会转化成int处理，所以实际的指令的tos_in不可能有上述四种类型.
+          break;
+    // 以atos为例说明，如果字节码指令本身要求在指令执行前栈顶缓存的值是atos类型的，当执行到此指令时，
+    // 如果栈顶缓存的值类型是vtos，即没有缓存任何值，则需要执行pop(atos)，从当前栈帧pop一个atos类型的变量到rax中以满足指令执行前的栈顶缓存值类型。如果栈顶缓存的值类型就是vtos，则直接执行该字节码对应的指令。
     case atos: vep = __ pc(); __ pop(atos); aep = __ pc(); generate_and_dispatch(t); break;
     case itos: vep = __ pc(); __ pop(itos); iep = __ pc(); generate_and_dispatch(t); break;
     case ltos: vep = __ pc(); __ pop(ltos); lep = __ pc(); generate_and_dispatch(t); break;
     case ftos: vep = __ pc(); __ pop(ftos); fep = __ pc(); generate_and_dispatch(t); break;
     case dtos: vep = __ pc(); __ pop(dtos); dep = __ pc(); generate_and_dispatch(t); break;
+    // 如果字节码指令本身要求在指令执行前栈顶缓存的值是vtos类型的，即不需要缓存任何值，那么如果此时栈顶缓存值类型不是vtos，比如是itos则需要将栈顶缓存的值push到栈帧中，push完成栈顶缓存的值类型就变成vtos
     case vtos: set_vtos_entry_points(t, bep, cep, sep, aep, iep, lep, fep, dep, vep);     break;
     default  : ShouldNotReachHere();                                                 break;
   }
@@ -514,7 +517,9 @@ void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState t
   __ verify_FPU(1, t->tos_in());
 #endif // !PRODUCT
   int step;
+  // 如果不是dispatch类型的指令，一般只有跳转性质的如方法返回的ret指令属于dispatch类型的
   if (!t->does_dispatch()) {
+    // 计算指令的宽度，指令宽度是指指令本身占用的一个字节加上指令参数的字节数，即跳过这个宽度就可以读取下一个字节码指令了
     step = t->is_wide() ? Bytecodes::wide_length_for(t->bytecode()) : Bytecodes::length_for(t->bytecode());
     if (tos_out == ilgl) tos_out = t->tos_out();
     // compute bytecode size
@@ -526,7 +531,7 @@ void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState t
     }
     __ dispatch_prolog(tos_out, step);
   }
-  // generate template
+  // generate template 生成该字节码对应的汇编指令
   t->generate(_masm);
   // advance
   if (t->does_dispatch()) {
@@ -536,6 +541,9 @@ void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState t
 #endif // ASSERT
   } else {
     // dispatch to next bytecode
+    // 跳转到下一个字节码指令，这里需要注意的是dispatch_epilog对应的汇编指令会写入到该字节码对应的汇编指令中注意这里是将tos_out传递下去了，
+    // 即实际执行dispatch_next时的state是上一个指令执行完后的栈顶缓存的值类型，即当前栈顶缓存的值类型，
+    // 跳转下一个字节码指令实现时会选择在当前栈顶缓存值类型对应的汇编指令实现至此整个字节码执行以及栈顶缓存的实现就串联起来了
     __ dispatch_epilog(tos_out, step);
   }
 }
@@ -612,7 +620,7 @@ static inline void copy_table(address* from, address* to, int size) {
 void TemplateInterpreter::notice_safepoints() {
   if (!_notice_safepoints) {
     // switch to safepoint dispatch table
-    _notice_safepoints = true;
+    _notice_safepoints = true; // 当达到安全点后，_active_table会被改成_safept_table
     copy_table((address*)&_safept_table, (address*)&_active_table, sizeof(_active_table) / sizeof(address));
   }
 }

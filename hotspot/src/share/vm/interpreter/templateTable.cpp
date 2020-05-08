@@ -59,7 +59,7 @@ void Template::generate(InterpreterMacroAssembler* masm) {
   // parameter passing
   TemplateTable::_desc = this;
   TemplateTable::_masm = masm;
-  // code generation
+  // code generation 代码生成
   _gen(_arg);
   masm->flush();
 }

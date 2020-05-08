@@ -31,7 +31,7 @@
 class VMRegImpl;
 typedef VMRegImpl* VMReg;
 
-// Use Register as shortcut
+// Use Register as shortcut  使用Register作为快捷方式
 class RegisterImpl;
 typedef RegisterImpl* Register;
 
@@ -68,7 +68,7 @@ class RegisterImpl: public AbstractRegisterImpl {
   const char* name() const;
 };
 
-// The integer registers of the ia32/amd64 architecture
+// The integer registers of the ia32/amd64 architecture ia32/amd64架构的内部寄存器
 
 CONSTANT_REGISTER_DECLARATION(Register, noreg, (-1));
 

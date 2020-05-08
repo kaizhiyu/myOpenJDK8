@@ -71,7 +71,7 @@ class Template VALUE_OBJ_CLASS_SPEC {
   int       _flags;                              // describes interpreter template properties (bcp unknown)  用来描述字节码模板的属性，相关属性通过枚举Flags指定。
   TosState  _tos_in;                             // tos cache state before template execution  执行字节码指令前的栈顶值类型
   TosState  _tos_out;                            // tos cache state after  template execution  执行字节码指令后的栈顶值类型
-  generator _gen;                                // template code generator  generator是用来生成字节码模板的函数的别名，其函数定义是typedef void (*generator)(int arg);
+  generator _gen;                                // template code generator               generator是用来生成字节码模板的函数的别名，其函数定义是typedef void (*generator)(int arg);
   int       _arg;                                // argument for template code generator  用来生成字节码模板的参数
 
   void      initialize(int flags, TosState tos_in, TosState tos_out, generator gen, int arg);
@@ -361,9 +361,9 @@ class TemplateTable: AllStatic {
 #ifdef TARGET_ARCH_MODEL_x86_32
 # include "templateTable_x86_32.hpp"
 #endif
-#ifdef TARGET_ARCH_MODEL_x86_64
+//#ifdef TARGET_ARCH_MODEL_x86_64
 # include "templateTable_x86_64.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_MODEL_sparc
 # include "templateTable_sparc.hpp"
 #endif

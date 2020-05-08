@@ -29,7 +29,7 @@
 #include "../utilities/top.hpp"
 
 // Bytecodes specifies all bytecodes used in the VM and
-// provides utility functions to get bytecode attributes.
+// provides utility functions to get bytecode attributes.  字节码指定VM中使用的所有字节码，并提供实用程序函数来获取字节码属性。
 
 // NOTE: replicated in SA in vm/agent/sun/jvm/hotspot/interpreter/Bytecodes.java
 class Bytecodes: AllStatic {
