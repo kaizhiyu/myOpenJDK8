@@ -256,11 +256,12 @@ void TemplateInterpreterGenerator::generate_all() {
   }
 
   { CodeletMark cm(_masm, "invoke return entry points");
-    const TosState states[] = {itos, itos, itos, itos, ltos, ftos, dtos, atos, vtos};
+    const TosState states[] = {itos, itos, itos, itos, ltos, ftos, dtos, atos, vtos}; // btos/ztos/ctos/stos这四种栈顶值类型都会转换成int，所以states将其替换成itos
+    // 获取三个指令的指令长度
     const int invoke_length = Bytecodes::length_for(Bytecodes::_invokestatic);
     const int invokeinterface_length = Bytecodes::length_for(Bytecodes::_invokeinterface);
     const int invokedynamic_length = Bytecodes::length_for(Bytecodes::_invokedynamic);
-
+    // 逐一初始化_invoke_return_entry，_invokeinterface_return_entry，_invokedynamic_return_entry
     for (int i = 0; i < Interpreter::number_of_return_addrs; i++) {
       TosState state = states[i];
       Interpreter::_invoke_return_entry[i] = generate_return_entry_for(state, invoke_length, sizeof(u2));
@@ -413,14 +414,15 @@ address TemplateInterpreterGenerator::generate_error_exit(const char* msg) {
 
 
 //------------------------------------------------------------------------------------------------------------------------
-
+// set_entry_points_for_all_bytes方法给所有的字节码生成对应的汇编指令
 void TemplateInterpreterGenerator::set_entry_points_for_all_bytes() {
+  // 逐一遍历所有的字节码
   for (int i = 0; i < DispatchTable::length; i++) {
     Bytecodes::Code code = (Bytecodes::Code)i;
-    if (Bytecodes::is_defined(code)) {
-      set_entry_points(code);
+    if (Bytecodes::is_defined(code)) { // 如果定义了这个字节码
+      set_entry_points(code); // 生成对应字节码的汇编指令
     } else {
-      set_unimplemented(i);
+      set_unimplemented(i); // 将其标记成未实现
     }
   }
 }
@@ -459,16 +461,16 @@ void TemplateInterpreterGenerator::set_entry_points(Bytecodes::Code code) {
   address wep = _unimplemented_bytecode;
   // code for short & wide version of bytecode
   if (Bytecodes::is_defined(code)) {
-    Template* t = TemplateTable::template_for(code);
+    Template* t = TemplateTable::template_for(code); // 获取该字节码对应的Template
     assert(t->is_valid(), "just checking");
-    set_short_entry_points(t, bep, cep, sep, aep, iep, lep, fep, dep, vep);
+    set_short_entry_points(t, bep, cep, sep, aep, iep, lep, fep, dep, vep); // 生成汇编代码，最终调用Template::generate方法生成
   }
   if (Bytecodes::wide_is_defined(code)) {
-    Template* t = TemplateTable::template_for_wide(code);
+    Template* t = TemplateTable::template_for_wide(code); // 获取该字节码对应的Template
     assert(t->is_valid(), "just checking");
-    set_wide_entry_point(t, wep);
+    set_wide_entry_point(t, wep); // 生成汇编代码，最终调用Template::generate方法生成
   }
-  // set entry points
+  // set entry points  将生成的 entry points放入_normal_table中
   EntryPoint entry(bep, cep, sep, aep, iep, lep, fep, dep, vep);
   Interpreter::_normal_table.set_entry(code, entry);
   Interpreter::_wentry_point[code] = wep;
@@ -483,7 +485,7 @@ void TemplateInterpreterGenerator::set_wide_entry_point(Template* t, address& we
 // InterpreterMacroAssembler::dispatch_next开始执行第一个字节码的汇编指令，那么是如何跳转到下一个字节码指令了？
 // 答案在set_entry_points_for_all_bytes()方法调用的TemplateInterpreterGenerator::set_short_entry_points方法实现里，该方法用来实际生成_normal_table中各个字节码的调用入口地址
 void TemplateInterpreterGenerator::set_short_entry_points(Template* t, address& bep, address& cep, address& sep, address& aep, address& iep, address& lep, address& fep, address& dep, address& vep) {
-  assert(t->is_valid(), "template must exist");  // bep，cep，sep等分别对应不同栈顶缓存（即rax寄存器中的）值类型下的同一个字节码的调用入口地址，bep对应btos,cep对应ctos，依次类推
+  assert(t->is_valid(), "template must exist");  // bep，cep，sep等分别对应不同栈顶缓存（即rax寄存器中的）值类型下的同一个字节码的调用入口地址，bep对应btos, cep对应ctos，依次类推
   switch (t->tos_in()) {
     case btos:
     case ctos:
@@ -541,7 +543,7 @@ void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState t
 #endif // ASSERT
   } else {
     // dispatch to next bytecode
-    // 跳转到下一个字节码指令，这里需要注意的是dispatch_epilog对应的汇编指令会写入到该字节码对应的汇编指令中注意这里是将tos_out传递下去了，
+    // 跳转到下一个字节码指令，这里需要注意的是dispatch_epilog对应的汇编指令会写入到该字节码对应的汇编指令中  注意这里是将tos_out传递下去了，
     // 即实际执行dispatch_next时的state是上一个指令执行完后的栈顶缓存的值类型，即当前栈顶缓存的值类型，
     // 跳转下一个字节码指令实现时会选择在当前栈顶缓存值类型对应的汇编指令实现至此整个字节码执行以及栈顶缓存的实现就串联起来了
     __ dispatch_epilog(tos_out, step);

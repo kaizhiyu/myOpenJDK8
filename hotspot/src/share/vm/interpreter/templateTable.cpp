@@ -23,9 +23,9 @@
  */
 
 #include "precompiled.hpp"
-#include "gc_interface/collectedHeap.hpp"
-#include "interpreter/templateTable.hpp"
-#include "runtime/timer.hpp"
+#include "../gc_interface/collectedHeap.hpp"
+#include "../interpreter/templateTable.hpp"
+#include "../runtime/timer.hpp"
 
 
 #ifdef CC_INTERP
@@ -49,7 +49,7 @@ void Template::initialize(int flags, TosState tos_in, TosState tos_out, generato
 
 
 Bytecodes::Code Template::bytecode() const {
-  int i = this - TemplateTable::_template_table;
+  int i = this - TemplateTable::_template_table;  // 通过当前Template的地址在_template_table中的位置反算出对应的字节码
   if (i < 0 || i >= Bytecodes::number_of_codes) i = this - TemplateTable::_template_table_wide;
   return Bytecodes::cast(i);
 }
@@ -59,9 +59,9 @@ void Template::generate(InterpreterMacroAssembler* masm) {
   // parameter passing
   TemplateTable::_desc = this;
   TemplateTable::_masm = masm;
-  // code generation 代码生成
+  // code generation 代码生成  调用gen生成字节码模板
   _gen(_arg);
-  masm->flush();
+  masm->flush(); // 刷新指令缓存
 }
 
 
@@ -256,6 +256,9 @@ void TemplateTable::initialize() {
   const int  disp = 1 << Template::does_dispatch_bit;
   const int  clvm = 1 << Template::calls_vm_bit;
   const int  iswd = 1 << Template::wide_bit;
+  // nop等是TemplateTable的静态私有方法，in表示字节码执行前栈顶值的类型，out表示字节码执行后栈顶值的类型
+  // generator表示生成字节码方法的函数，argument表示生成字节码模板的参数
+  // 初始化_template_table数组和_template_table_wide中的Template元素
   //                                    interpr. templates
   // Java spec bytecodes                ubcp|disp|clvm|iswd  in    out   generator             argument
   def(Bytecodes::_nop                 , ____|____|____|____, vtos, vtos, nop                 ,  _           );

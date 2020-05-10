@@ -487,7 +487,7 @@ void InterpreterMacroAssembler::dispatch_base(TosState state,
     verify_oop(rax, state);
   }
   lea(rscratch1, ExternalAddress((address)table)); // 将table的地址拷贝到rscratch1寄存器中，这时的table地址实际上是DispatchTable的二维数组_table属性的第一维数组的地址
-  jmp(Address(rscratch1, rbx, Address::times_8)); // 此时rbx是待执行的字节码，即跳转到对应字节码的汇编指令上，DispatchTable的二维数组_table属性的第二维就是字节码，即在rscratch1地址上偏移rbx*8个字节就可以找到对应的字节码指令实现了
+  jmp(Address(rscratch1, rbx, Address::times_8));  // 此时rbx是待执行的字节码，即跳转到对应字节码的汇编指令上，DispatchTable的二维数组_table属性的第二维就是字节码，即在rscratch1地址上偏移rbx*8个字节就可以找到对应的字节码指令实现了
 }
 
 void InterpreterMacroAssembler::dispatch_only(TosState state) {
@@ -504,9 +504,11 @@ void InterpreterMacroAssembler::dispatch_only_noverify(TosState state) {
 
 
 void InterpreterMacroAssembler::dispatch_next(TosState state, int step) {
-  // load next bytecode (load before advancing r13 to prevent AGI)
+  // load next bytecode (load before advancing r13 to prevent AGI) 加载下一个字节码
+  // r13保存的就是方法的字节码的内存位置，step表示跳过的字节数，第一次调用时没有传step，step默认为0
+  // 读取第一个字节码到rbx中
   load_unsigned_byte(rbx, Address(r13, step));
-  // advance r13
+  // advance r13 将r13中的地址自增step
   increment(r13, step);
   dispatch_base(state, Interpreter::dispatch_table(state));
 }

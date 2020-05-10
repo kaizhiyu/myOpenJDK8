@@ -284,7 +284,7 @@ class AbstractInterpreter: AllStatic {
 
 //------------------------------------------------------------------------------------------------------------------------
 // The interpreter generator.
-
+//  AbstractInterpreterGenerator的定义位于同目录下的abstractInterpreterGenerator.hpp中，只有一个属性InterpreterMacroAssembler* _masm，即用来生成字节码的Assembler实例。
 class Template;
 class AbstractInterpreterGenerator: public StackObj {
  protected:

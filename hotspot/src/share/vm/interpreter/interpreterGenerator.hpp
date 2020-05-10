@@ -32,8 +32,8 @@
 
 // This file contains the platform-independent parts
 // of the interpreter generator.
-
-
+// InterpreterGenerator的定义在同目录下的interpreterGenerator.hpp中，表示一个解释器生成器。
+// 其实现跟Interpreter类似，只是一个统一的门面而已，通过宏决定其继承的子类是CppInterpreterGenerator或者TemplateInterpreterGenerator
 class InterpreterGenerator: public CC_INTERP_ONLY(CppInterpreterGenerator)
                                    NOT_CC_INTERP(TemplateInterpreterGenerator) {
 

@@ -524,8 +524,8 @@ void TemplateTable::iload() {
   }
 
   // Get the local value into tos
-  locals_index(rbx);
-  __ movl(rax, iaddress(rbx));
+  locals_index(rbx); // 将局部变量的slot索引号读取到rbx寄存器中
+  __ movl(rax, iaddress(rbx)); // 将指定slot索引号的局部变量读取到rax寄存器中
 }
 
 void TemplateTable::fast_iload2() {
@@ -666,11 +666,18 @@ void TemplateTable::daload() {
 }
 
 void TemplateTable::aaload() {
+  // 校验当前Template的itos与atos与指令配置是否相符
+  // aaload指令的栈顶是int类型的，表示待加载的数组索引，对应这里的itos
+  // aaload指令执行完成后栈顶的值是一个对象引用，表示读取的数组元素，对应这里的atos
   transition(itos, atos);
+  // pop_ptr表示把当前栈帧栈顶的值pop出来放到rdx中，因为操作数栈的栈顶在栈顶缓存下就是rax中的值
+  // 所以当前栈帧栈顶的值就是一个数组引用
   __ pop_ptr(rdx);
   // eax: index
   // rdx: array
+  // 根据数组引用，读取对应的数组长度，判断index是否在小于数组长度，如果否则抛出异常
   index_check(rdx, rax); // kills rbx
+  // 根据数组索引，数组引用计算目标元素的位置，然后加载特定内存位置的值到rax中
   __ load_heap_oop(rax, Address(rdx, rax,
                                 UseCompressedOops ? Address::times_4 : Address::times_8,
                                 arrayOopDesc::base_offset_in_bytes(T_OBJECT)));
@@ -957,57 +964,58 @@ void TemplateTable::dastore() {
 
 void TemplateTable::aastore() {
   Label is_null, ok_is_subtype, done;
+  // 校验当前Template的itos与atos与指令配置是否相符
   transition(vtos, vtos);
-  // stack: ..., array, index, value
+  // stack: ..., array, index, value 将栈顶的三个元素复制到寄存器中
   __ movptr(rax, at_tos());    // value
   __ movl(rcx, at_tos_p1()); // index
   __ movptr(rdx, at_tos_p2()); // array
-
+  // 获取指定索引的数组元素的内存位置
   Address element_address(rdx, rcx,
                           UseCompressedOops? Address::times_4 : Address::times_8,
                           arrayOopDesc::base_offset_in_bytes(T_OBJECT));
 
-  index_check(rdx, rcx);     // kills rbx
-  // do array store check - check for NULL value first
+  index_check(rdx, rcx);     // kills rbx  校验数组索引是否超过数组长度
+  // do array store check - check for NULL value first  rax中的值非空校验，校验失败跳转到is_null标签
   __ testptr(rax, rax);
   __ jcc(Assembler::zero, is_null);
 
-  // Move subklass into rbx
+  // Move subklass into rbx  获取rax中的对象的Klass，将其引用放到rbx中
   __ load_klass(rbx, rax);
-  // Move superklass into rax
+  // Move superklass into rax  将rdx中的数组对应的Klass的引用放到rax中
   __ load_klass(rax, rdx);
   __ movptr(rax, Address(rax,
-                         ObjArrayKlass::element_klass_offset()));
-  // Compress array + index*oopSize + 12 into a single register.  Frees rcx.
+                         ObjArrayKlass::element_klass_offset())); // 将数组klass的数组元素的klass的引用放到rax中
+  // Compress array + index*oopSize + 12 into a single register.  Frees rcx.  将element_address的内存地址放到rdx中
   __ lea(rdx, element_address);
 
-  // Generate subtype check.  Blows rcx, rdi
-  // Superklass in rax.  Subklass in rbx.
+  // Generate subtype check.  Blows rcx, rdi  检查value对应的klass，即rax中的klass引用，是否是数组元素klass即rax中的klass引用的子类型
+  // Superklass in rax.  Subklass in rbx.     如果检查通过则跳转到ok_is_subtype
   __ gen_subtype_check(rbx, ok_is_subtype);
 
   // Come here on failure
-  // object is at TOS
+  // object is at TOS     检查失败，抛出异常
   __ jump(ExternalAddress(Interpreter::_throw_ArrayStoreException_entry));
 
-  // Come here on success
+  // Come here on success 检查成功
   __ bind(ok_is_subtype);
 
-  // Get the value we will store
+  // Get the value we will store 将栈顶的值即目标value再次拷贝到rax中
   __ movptr(rax, at_tos());
-  // Now store using the appropriate barrier
+  // Now store using the appropriate barrier rdx中保存的是存入数组的内存位置，将rax中的值写入到对应的内存位置，会根据不同的BarrierSet类型执行不同操作
   do_oop_store(_masm, Address(rdx, 0), rax, _bs->kind(), true);
   __ jmp(done);
 
-  // Have a NULL in rax, rdx=array, ecx=index.  Store NULL at ary[idx]
+  // Have a NULL in rax, rdx=array, ecx=index.  Store NULL at ary[idx] 保存NULL到数组中
   __ bind(is_null);
   __ profile_null_seen(rbx);
 
   // Store a NULL
   do_oop_store(_masm, element_address, noreg, _bs->kind(), true);
 
-  // Pop stack arguments
+  // Pop stack arguments 操作结束
   __ bind(done);
-  __ addptr(rsp, 3 * Interpreter::stackElementSize);
+  __ addptr(rsp, 3 * Interpreter::stackElementSize); // 将rsp向高地址方向移动，即pop掉三个栈顶元素
 }
 
 void TemplateTable::bastore() {

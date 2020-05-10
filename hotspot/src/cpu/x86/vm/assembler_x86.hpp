@@ -438,8 +438,8 @@ class ArrayAddress VALUE_OBJ_CLASS_SPEC {
 const int FPUStateSizeInWords = NOT_LP64(27) LP64_ONLY( 512 / wordSize);
 
 // The Intel x86/Amd64 Assembler: Pure assembler doing NO optimizations on the instruction
-// level (e.g. mov rax, 0 is not translated into xor rax, rax!); i.e., what you write
-// is what you get. The Assembler is generating code into a CodeBuffer.
+// level (e.g. mov rax, 0 is not translated into xor rax, rax!); i.e., what you write  你写的是什么就是什么，不会有优化
+// is what you get. The Assembler is generating code into a CodeBuffer.  汇编器(Assembler)在CodeBuffer生成代码
 
 class Assembler : public AbstractAssembler  {
   friend class AbstractAssembler; // for the non-virtual hack

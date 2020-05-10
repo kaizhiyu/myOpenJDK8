@@ -56,7 +56,7 @@
 
 // A Template describes the properties of a code template for a given bytecode
 // and provides a generator to generate the code template.
-// 用来描述一个字节码模板的属性，并提供一个用来生成字节码模板的函数
+// 用来描述一个字节码模板的属性，并提供一个用来生成字节码模板的函数，模板表是通过调用汇编器接口完成本地机器码指令的生成
 class Template VALUE_OBJ_CLASS_SPEC {
  private:
   enum Flags {

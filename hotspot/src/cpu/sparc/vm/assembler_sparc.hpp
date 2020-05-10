@@ -25,7 +25,7 @@
 #ifndef CPU_SPARC_VM_ASSEMBLER_SPARC_HPP
 #define CPU_SPARC_VM_ASSEMBLER_SPARC_HPP
 
-#include "asm/register.hpp"
+#include "../asm/register.hpp"
 
 // The SPARC Assembler: Pure assembler doing NO optimizations on the instruction
 // level; i.e., what you write

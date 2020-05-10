@@ -504,7 +504,7 @@ void InterpreterMacroAssembler::dispatch_only_noverify(TosState state) {
 
 
 void InterpreterMacroAssembler::dispatch_next(TosState state, int step) {
-  // load next bytecode (load before advancing rsi to prevent AGI)
+  // load next bytecode (load before advancing rsi to prevent AGI)  获取下一条字节码的地址放入rbx寄存器
   load_unsigned_byte(rbx, Address(rsi, step));
   // advance rsi
   increment(rsi, step);

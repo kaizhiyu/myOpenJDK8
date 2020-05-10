@@ -182,7 +182,7 @@ void AbstractInterpreterGenerator::generate_all() {
 // Entry points
 
 AbstractInterpreter::MethodKind AbstractInterpreter::method_kind(methodHandle m) {
-  // Abstract method?
+  // Abstract method? 如果是抽象方法，直接返回abstract
   if (m->is_abstract()) return abstract;
 
   // Method handle primitive?

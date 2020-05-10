@@ -76,8 +76,6 @@ private:
     BAD_REG = -1
   };
 
-
-
   static VMReg stack0;
   // Names for registers  寄存器名字
   static const char *regName[];

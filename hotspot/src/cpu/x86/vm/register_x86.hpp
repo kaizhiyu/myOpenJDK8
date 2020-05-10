@@ -81,7 +81,7 @@ CONSTANT_REGISTER_DECLARATION(Register, rsp,    (4));
 CONSTANT_REGISTER_DECLARATION(Register, rbp,    (5));
 CONSTANT_REGISTER_DECLARATION(Register, rsi,    (6));
 CONSTANT_REGISTER_DECLARATION(Register, rdi,    (7));
-#ifdef AMD64
+//#ifdef AMD64
 CONSTANT_REGISTER_DECLARATION(Register, r8,     (8));
 CONSTANT_REGISTER_DECLARATION(Register, r9,     (9));
 CONSTANT_REGISTER_DECLARATION(Register, r10,   (10));
@@ -90,7 +90,7 @@ CONSTANT_REGISTER_DECLARATION(Register, r12,   (12));
 CONSTANT_REGISTER_DECLARATION(Register, r13,   (13));
 CONSTANT_REGISTER_DECLARATION(Register, r14,   (14));
 CONSTANT_REGISTER_DECLARATION(Register, r15,   (15));
-#endif // AMD64
+//#endif // AMD64
 
 // Use FloatRegister as shortcut
 class FloatRegisterImpl;

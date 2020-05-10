@@ -50,18 +50,20 @@
 // A JavaCallWrapper is constructed before each JavaCall and destructed after the call.
 // Its purpose is to allocate/deallocate a new handle block and to save/restore the last
 // Java fp/sp. A pointer to the JavaCallWrapper is stored on the stack.
-
+//  JavaCallWrapper的定义位于每次执行Java方法调用时都需要创建一个新的JavaCallWrapper实例，然后在方法调用结束销毁这个实例，
+//  通过JavaCallWrapper实例的创建和销毁来保存方法调用前当前线程的上一个栈帧，重新分配或者销毁一个handle block，保存和重置Java调用栈的fp/sp。
+//  JavaCallWrapper实例的指针保存在调用栈上。
 class JavaCallWrapper: StackObj {
   friend class VMStructs;
  private:
-  JavaThread*      _thread;                 // the thread to which this call belongs
-  JNIHandleBlock*  _handles;                // the saved handle block
-  Method*          _callee_method;          // to be able to collect arguments if entry frame is top frame
-  oop              _receiver;               // the receiver of the call (if a non-static call)
+  JavaThread*      _thread;                 // the thread to which this call belongs  关联的Java线程实例
+  JNIHandleBlock*  _handles;                // the saved handle block  实际保存JNI引用的内存块的指针
+  Method*          _callee_method;          // to be able to collect arguments if entry frame is top frame  准备调用的Java方法
+  oop              _receiver;               // the receiver of the call (if a non-static call)  oop 执行方法调用的接受对象实例
 
-  JavaFrameAnchor  _anchor;                 // last thread anchor state that we must restore
+  JavaFrameAnchor  _anchor;                 // last thread anchor state that we must restore  用于记录线程的执行状态，比如pc计数器
 
-  JavaValue*       _result;                 // result value
+  JavaValue*       _result;                 // result value 保存方法调用结果对象
 
  public:
   // Construction/destruction
