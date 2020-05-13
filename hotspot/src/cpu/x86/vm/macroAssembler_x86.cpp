@@ -2324,7 +2324,7 @@ void MacroAssembler::ic_call(address entry) {
 }
 
 // Implementation of call_VM versions
-
+// call_VM版本的实现
 void MacroAssembler::call_VM(Register oop_result,
                              address entry_point,
                              bool check_exceptions) {

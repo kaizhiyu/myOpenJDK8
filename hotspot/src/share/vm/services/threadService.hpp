@@ -562,7 +562,7 @@ class JavaThreadBlockedOnMonitorEnterState : public JavaThreadStatusChanger {
   }
 };
 
-// Change status to sleeping
+// Change status to sleeping JavaThreadSleepState通过构造和析构函数来统计线程休眠的次数和累计时间
 class JavaThreadSleepState : public JavaThreadStatusChanger {
  private:
   ThreadStatistics* _stat;

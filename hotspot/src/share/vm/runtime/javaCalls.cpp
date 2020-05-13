@@ -42,30 +42,30 @@
 #include "../runtime/thread.inline.hpp"
 
 // -----------------------------------------------------
-// Implementation of JavaCallWrapper
+// Implementation of JavaCallWrapper JavaCallWrapper的实现
 
 JavaCallWrapper::JavaCallWrapper(methodHandle callee_method, Handle receiver, JavaValue* result, TRAPS) {
   JavaThread* thread = (JavaThread *)THREAD;
   bool clear_pending_exception = true;
-
+  // 校验是否是Java线程
   guarantee(thread->is_Java_thread(), "crucial check - the VM thread cannot and must not escape to Java code");
   assert(!thread->owns_locks(), "must release all locks when leaving VM");
   guarantee(!thread->is_Compiler_thread(), "cannot make java calls from the compiler");
   _result   = result;
 
   // Allocate handle block for Java code. This must be done before we change thread_state to _thread_in_Java_or_stub,
-  // since it can potentially block.
+  // since it can potentially block.  分配一个新的JNIHandleBlock
   JNIHandleBlock* new_handles = JNIHandleBlock::allocate_block(thread);
 
   // After this, we are official in JavaCode. This needs to be done before we change any of the thread local
-  // info, since we cannot find oops before the new information is set up completely.
+  // info, since we cannot find oops before the new information is set up completely.  将当前线程的状态从_thread_in_vm转换成_thread_in_Java
   ThreadStateTransition::transition(thread, _thread_in_vm, _thread_in_Java);
 
   // Make sure that we handle asynchronous stops and suspends _before_ we clear all thread state
   // in JavaCallWrapper::JavaCallWrapper(). This way, we can decide if we need to do any pd actions
   // to prepare for stop/suspend (flush register windows on sparcs, cache sp, or other state).
   if (thread->has_special_runtime_exit_condition()) {
-    thread->handle_special_runtime_exit_condition();
+    thread->handle_special_runtime_exit_condition(); // 判断当前线程是否符合特殊的运行时退出条件，如果是则暂停或者终止执行
     if (HAS_PENDING_EXCEPTION) {
       clear_pending_exception = false;
     }
@@ -73,7 +73,7 @@ JavaCallWrapper::JavaCallWrapper(methodHandle callee_method, Handle receiver, Ja
 
 
   // Make sure to set the oop's after the thread transition - since we can block there. No one is GC'ing
-  // the JavaCallWrapper before the entry frame is on the stack.
+  // the JavaCallWrapper before the entry frame is on the stack.  确保在线程转换之后设置oop，因为我们可以在那里阻塞。在条目框架位于堆栈上之前，没有人在调用JavaCallWrapper。
   _callee_method = callee_method();
   _receiver = receiver();
 
@@ -82,15 +82,15 @@ JavaCallWrapper::JavaCallWrapper(methodHandle callee_method, Handle receiver, Ja
 #endif // CHECK_UNHANDLED_OOPS
 
   _thread       = (JavaThread *)thread;
-  _handles      = _thread->active_handles();    // save previous handle block & Java frame linkage
+  _handles      = _thread->active_handles();    // save previous handle block & Java frame linkage  保存当前线程的active_handles
 
   // For the profiler, the last_Java_frame information in thread must always be in
   // legal state. We have no last Java frame if last_Java_sp == NULL so
   // the valid transition is to clear _last_Java_sp and then reset the rest of
   // the (platform specific) state.
-
+  // 保存当前线程的执行状态
   _anchor.copy(_thread->frame_anchor());
-  _thread->frame_anchor()->clear();
+  _thread->frame_anchor()->clear(); // 清除当前线程的执行状态
 
   debug_only(_thread->inc_java_call_counter());
   _thread->set_active_handles(new_handles);     // install new handle block and reset Java frame linkage

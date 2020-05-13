@@ -576,11 +576,11 @@ JVM_ENTRY(void, JVM_MonitorNotifyAll(JNIEnv* env, jobject handle))
   ObjectSynchronizer::notifyall(obj, CHECK);
 JVM_END
 
-
+//  浅拷贝是指对象复制时只复制属性本身，深拷贝在浅拷贝的基础上还会复制引用类型属性所指向的对象，让对应的引用类型属性指向新的对象。
 JVM_ENTRY(jobject, JVM_Clone(JNIEnv* env, jobject handle))
   JVMWrapper("JVM_Clone");
-  Handle obj(THREAD, JNIHandles::resolve_non_null(handle));
-  const KlassHandle klass (THREAD, obj->klass());
+  Handle obj(THREAD, JNIHandles::resolve_non_null(handle)); // 获取待复制的对象oop
+  const KlassHandle klass (THREAD, obj->klass()); // 获取待复制的对象的klass
   JvmtiVMObjectAllocEventCollector oam;
 
 #ifdef ASSERT
@@ -595,7 +595,7 @@ JVM_ENTRY(jobject, JVM_Clone(JNIEnv* env, jobject handle))
 #endif
 
   // Check if class of obj supports the Cloneable interface.
-  // All arrays are considered to be cloneable (See JLS 20.1.5)
+  // All arrays are considered to be cloneable (See JLS 20.1.5) 判断这个类是否可以clone，数组对象默认都是可以clone的
   if (!klass->is_cloneable()) {
     ResourceMark rm(THREAD);
     THROW_MSG_0(vmSymbols::java_lang_CloneNotSupportedException(), klass->external_name());
@@ -605,10 +605,10 @@ JVM_ENTRY(jobject, JVM_Clone(JNIEnv* env, jobject handle))
   const int size = obj->size();
   oop new_obj_oop = NULL;
   if (obj->is_array()) {
-    const int length = ((arrayOop)obj())->length();
-    new_obj_oop = CollectedHeap::array_allocate(klass, size, length, CHECK_NULL);
+    const int length = ((arrayOop)obj())->length(); // 如果是数组
+    new_obj_oop = CollectedHeap::array_allocate(klass, size, length, CHECK_NULL); // 分配一个新的对象数组
   } else {
-    new_obj_oop = CollectedHeap::obj_allocate(klass, size, CHECK_NULL);
+    new_obj_oop = CollectedHeap::obj_allocate(klass, size, CHECK_NULL); // 两个条件要么都为true，要么都为false，即要么是普通Java对象，要么是Reference及其子类
   }
 
   // 4839641 (4840070): We must do an oop-atomic copy, because if another thread
@@ -2993,7 +2993,7 @@ JVM_ENTRY(void, JVM_StartThread(JNIEnv* env, jobject jthread))
       // JavaThread constructor. 检查该本地线程中是否包含OSThread，因为可能出现由于内存不足导致OSThread未创建成功的情况
       if (native_thread->osthread() != NULL) {
         // Note: the current thread is not being used within "prepare". 准备Java本地线程，链接Java线程 <-> C++线程
-        native_thread->prepare(jthread);
+        native_thread->prepare(jthread); // prepare方法主要设置线程优先级，将当前线程加入到维护的一个线程列表中，然后start方法，start调用os:start_thread方法
       }
     }
   }
@@ -3005,7 +3005,7 @@ JVM_ENTRY(void, JVM_StartThread(JNIEnv* env, jobject jthread))
   assert(native_thread != NULL, "Starting null thread?");
 
   if (native_thread->osthread() == NULL) {
-    // No one should hold a reference to the 'native_thread'.
+    // No one should hold a reference to the 'native_thread'.  没人应该持有一个本地线程的参考
     delete native_thread;
     if (JvmtiExport::should_post_resource_exhausted()) {
       JvmtiExport::post_resource_exhausted(
@@ -3059,11 +3059,11 @@ JVM_ENTRY(void, JVM_StopThread(JNIEnv* env, jobject jthread, jobject throwable))
   }
 JVM_END
 
-
+// 调用join方法的线程判断目标线程不存在了就会终止while循环，退出join方法。判断Java线程是否存活的本地方法isAlive的实现
 JVM_ENTRY(jboolean, JVM_IsThreadAlive(JNIEnv* env, jobject jthread))
   JVMWrapper("JVM_IsThreadAlive");
 
-  oop thread_oop = JNIHandles::resolve_non_null(jthread);
+  oop thread_oop = JNIHandles::resolve_non_null(jthread); // 从JNI引用中解析出对应的Thread实例oop
   return java_lang_Thread::is_alive(thread_oop);
 JVM_END
 
@@ -3133,10 +3133,10 @@ JVM_ENTRY(void, JVM_SetThreadPriority(JNIEnv* env, jobject jthread, jint prio))
   }
 JVM_END
 
-
+// yeild就是一个本地方法，用于让出当前线程的CPU时间片
 JVM_ENTRY(void, JVM_Yield(JNIEnv *env, jclass threadClass))
   JVMWrapper("JVM_Yield");
-  if (os::dont_yield()) return;
+  if (os::dont_yield()) return; // 如果操作系统不支持yeild则返回
 #ifndef USDT2
   HS_DTRACE_PROBE0(hotspot, thread__yield);
 #else /* USDT2 */
@@ -3159,7 +3159,7 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
     THROW_MSG(vmSymbols::java_lang_IllegalArgumentException(), "timeout value is negative");
   }
 
-  if (Thread::is_interrupted (THREAD, true) && !HAS_PENDING_EXCEPTION) {
+  if (Thread::is_interrupted (THREAD, true) && !HAS_PENDING_EXCEPTION) { // 已经被中断，抛异常
     THROW_MSG(vmSymbols::java_lang_InterruptedException(), "sleep interrupted");
   }
 
@@ -3184,10 +3184,11 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
     if (ConvertSleepToYield) {
       os::yield();
     } else {
-      ThreadState old_state = thread->osthread()->get_state();
-      thread->osthread()->set_state(SLEEPING);
-      os::sleep(thread, MinSleepInterval, false);
-      thread->osthread()->set_state(old_state);
+      // 可以看出其主要的过程为保存当前java线程对应的osthread状态，然后调用osthread的sleep方法，然后还原回去(如果有中断，处理中断后退出)
+      ThreadState old_state = thread->osthread()->get_state(); // 获取线程原来的状态
+      thread->osthread()->set_state(SLEEPING); // 设置状态为SLEEPING
+      os::sleep(thread, MinSleepInterval, false); // sleep
+      thread->osthread()->set_state(old_state); // 设置回原来的状态
     }
   } else {
     ThreadState old_state = thread->osthread()->get_state();
@@ -3305,21 +3306,21 @@ JVM_QUICK_ENTRY(jboolean, JVM_IsInterrupted(JNIEnv* env, jobject jthread, jboole
   JVMWrapper("JVM_IsInterrupted");
 
   // Ensure that the C++ Thread and OSThread structures aren't freed before we operate
-  oop java_thread = JNIHandles::resolve_non_null(jthread);
-  MutexLockerEx ml(thread->threadObj() == java_thread ? NULL : Threads_lock);
+  oop java_thread = JNIHandles::resolve_non_null(jthread); // 获取对应的Thread实例
+  MutexLockerEx ml(thread->threadObj() == java_thread ? NULL : Threads_lock); // 如果就是当前线程，则不需要获取锁，否则需要获取Threads_lock锁
   // We need to re-resolve the java_thread, since a GC might have happened during the
   // acquire of the lock
-  JavaThread* thr = java_lang_Thread::thread(JNIHandles::resolve_non_null(jthread));
+  JavaThread* thr = java_lang_Thread::thread(JNIHandles::resolve_non_null(jthread)); // 获取关联的JavaThread
   if (thr == NULL) {
     return JNI_FALSE;
   } else {
-    return (jboolean) Thread::is_interrupted(thr, clear_interrupted != 0);
+    return (jboolean) Thread::is_interrupted(thr, clear_interrupted != 0); // JavaThread不为空，判断其是否被中断，clear_interrupted默认为true，此处就是1
   }
 JVM_END
 
 
 // Return true iff the current thread has locked the object passed in
-
+// holdsLock是一个本地方法，用于判断当前线程是否持有某个对象的锁
 JVM_ENTRY(jboolean, JVM_HoldsLock(JNIEnv* env, jclass threadClass, jobject obj))
   JVMWrapper("JVM_HoldsLock");
   assert(THREAD->is_Java_thread(), "sanity check");

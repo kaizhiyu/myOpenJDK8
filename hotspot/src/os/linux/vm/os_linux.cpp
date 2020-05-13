@@ -811,7 +811,7 @@ static void *java_start(Thread *thread) {
   // initialize floating point control register  初始化浮点控制寄存器
   os::Linux::init_thread_fpu_state();
 
-  // handshaking with parent thread
+  // handshaking with parent thread  与父线程握手
   {
     MutexLockerEx ml(sync, Mutex::_no_safepoint_check_flag);
 
@@ -819,7 +819,7 @@ static void *java_start(Thread *thread) {
     osthread->set_state(INITIALIZED);
     sync->notify_all();
 
-    // wait until os::start_thread()
+    // wait until os::start_thread()  等待父线程调用os::start_thread()
     while (osthread->get_state() == INITIALIZED) {
       sync->wait(Mutex::_no_safepoint_check_flag);
     }
@@ -830,7 +830,10 @@ static void *java_start(Thread *thread) {
 
   return 0;
 }
-
+// OSThread的具体执行逻辑就是在调用pthread_create函数时传入的java_start函数，该函数会负责初始化OSThread，
+// 初始化完成将状态设置为INITIALIZED并唤醒startThread_lock上等待的负责创建OSThread的线程，然后继续等待直到OSThread的状态不再是INITIALIZED。
+// 这时创建OSThread的线程发现OSThread已经初始化完成就会退出OSThread的创建方法，然后进入启动OSThread执行的方法，该方法将状态置为RUNNABLE，
+// 并唤醒startThread_lock等待的线程。这时创建的子线程就会开始正常执行，调用JavaThread的run方法
 bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
   assert(thread->osthread() == NULL, "caller responsible");
 
@@ -1017,7 +1020,7 @@ void os::pd_start_thread(Thread* thread) {
   assert(osthread->get_state() != INITIALIZED, "just checking");
   Monitor* sync_with_child = osthread->startThread_lock();
   MutexLockerEx ml(sync_with_child, Mutex::_no_safepoint_check_flag);
-  sync_with_child->notify(); //通知子线程继续往下执行
+  sync_with_child->notify(); //通知子线程继续往下执行，这里就是唤醒刚才的那个执行java_start方法的线程  线程start方法就结束了，可以看出，java的线程实际上是依托与c语言创建的线程，java线程对象与c创建的线程之间维护了一个对应关系,然后线程的调度等都交由操作系统处理.
 }
 
 // Free Linux resources related to the OSThread
@@ -3773,13 +3776,13 @@ int os::sleep(Thread* thread, jlong millis, bool interruptible) {
     jlong prevtime = javaTimeNanos();
 
     for (;;) {
-      if (os::is_interrupted(thread, true)) {
+      if (os::is_interrupted(thread, true)) { // 如果线程已经被中断,返回
         return OS_INTRPT;
       }
 
       jlong newtime = javaTimeNanos();
 
-      if (newtime - prevtime < 0) {
+      if (newtime - prevtime < 0) { // 如果sleep时间已到,返回
         // time moving backwards, should only happen if no monotonic clock
         // not a guarantee() because JVM should not abort on kernel/glibc bugs
         assert(!Linux::supports_monotonic_clock(), "time moving backwards");
@@ -3797,13 +3800,13 @@ int os::sleep(Thread* thread, jlong millis, bool interruptible) {
         assert(thread->is_Java_thread(), "sanity check");
         JavaThread *jt = (JavaThread *) thread;
         ThreadBlockInVM tbivm(jt);
-        OSThreadWaitState osts(jt->osthread(), false /* not Object.wait() */);
+        OSThreadWaitState osts(jt->osthread(), false /* not Object.wait() */);  // 设置osthread状态为condition_wait(osthread->set_state(CONDVAR_WAIT);)
 
         jt->set_suspend_equivalent();
         // cleared by handle_special_suspend_equivalent_condition() or
         // java_suspend_self() via check_and_wait_while_suspended()
 
-        slp->park(millis);
+        slp->park(millis); // 这里才是真正进行睡眠,调用 pthread_cond_timedwait实现
 
         // were we externally suspended while we were waiting?
         jt->check_and_wait_while_suspended();
@@ -3875,7 +3878,7 @@ void os::infinite_sleep() {
 bool os::dont_yield() {
   return DontYieldALot;
 }
-
+// sched_yield()是Linux的API，会让出当前线程的CPU占有权，然后把线程放到调度队列的尾端，即优先调度其他的线程 给他们分配CPU时间片
 void os::yield() {
   sched_yield();
 }

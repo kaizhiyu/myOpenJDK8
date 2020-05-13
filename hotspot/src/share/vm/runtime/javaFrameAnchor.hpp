@@ -32,7 +32,7 @@
 // An object for encapsulating the machine/os dependent part of a JavaThread frame state
 //
 class JavaThread;
-
+// java帧锚点
 class JavaFrameAnchor VALUE_OBJ_CLASS_SPEC {
 // Too many friends...
 friend class CallNativeDirectNode;

@@ -768,9 +768,9 @@ long os::random() {
 void os::start_thread(Thread* thread) {
   // guard suspend/resume
   MutexLockerEx ml(thread->SR_lock(), Mutex::_no_safepoint_check_flag);
-  OSThread* osthread = thread->osthread();
-  osthread->set_state(RUNNABLE);
-  pd_start_thread(thread);
+  OSThread* osthread = thread->osthread(); // 唤醒在startThread_lock上等待的线程
+  osthread->set_state(RUNNABLE); // 设置当前osthread状态为RUNNABLE,然后进入pd_start_thread方法
+  pd_start_thread(thread); // 唤醒之前创建的在startThread_lock上等待的子线程，开始执行JavaThread的run方法
 }
 
 //---------------------------------------------------------------------------

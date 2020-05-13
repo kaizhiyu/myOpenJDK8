@@ -224,7 +224,7 @@ class Thread: public ThreadShadow {
   // One-element thread local free list
   JNIHandleBlock* _free_handle_block;
 
-  // Point to the last handle mark
+  // Point to the last handle mark  指向最新的handle mark
   HandleMark* _last_handle_mark;
 
   // The parity of the last strong_roots iteration in which this thread was
@@ -806,7 +806,7 @@ class JavaThread: public Thread {
  private:  // restore original namespace restriction
 #endif
 
-  JavaFrameAnchor _anchor;                       // Encapsulation of current java frame and it state
+  JavaFrameAnchor _anchor;                       // Encapsulation of current java frame and it state  当前java帧的封装及其状态
 
   ThreadFunction _entry_point;
 
@@ -1386,11 +1386,12 @@ class JavaThread: public Thread {
   JNIEnv* jni_environment()                      { return &_jni_environment; }
 
   static JavaThread* thread_from_jni_environment(JNIEnv* env) {
+    // 每个JavaThread都有一个单独的JNIEnv实例，此处是根据env的地址和其在JavaThread中的属性偏移量倒推出JavaThread的地址
     JavaThread *thread_from_jni_env = (JavaThread*)((intptr_t)env - in_bytes(jni_environment_offset()));
     // Only return NULL if thread is off the thread list; starting to
     // exit should not return NULL.
     if (thread_from_jni_env->is_terminated()) {
-       thread_from_jni_env->block_if_vm_exited();
+       thread_from_jni_env->block_if_vm_exited(); // 如果JVM正在退出的过程中，则阻塞当前线程
        return NULL;
     } else {
        return thread_from_jni_env;

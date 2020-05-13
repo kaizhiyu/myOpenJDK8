@@ -23,9 +23,9 @@
  */
 
 #include "precompiled.hpp"
-#include "gc_implementation/shared/suspendibleThreadSet.hpp"
-#include "runtime/mutexLocker.hpp"
-#include "runtime/thread.inline.hpp"
+#include "../gc_implementation/shared/suspendibleThreadSet.hpp"
+#include "../runtime/mutexLocker.hpp"
+#include "../runtime/thread.inline.hpp"
 
 uint   SuspendibleThreadSet::_nthreads          = 0;
 uint   SuspendibleThreadSet::_nthreads_stopped  = 0;

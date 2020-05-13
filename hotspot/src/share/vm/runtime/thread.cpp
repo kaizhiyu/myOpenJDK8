@@ -462,16 +462,16 @@ void Thread::start(Thread* thread) {
   trace("start", thread);
   // Start is different from resume in that its safety is guaranteed by context or
   // being called from a Java method synchronized on the Thread object.
-  if (!DisableStartThread) {
-    if (thread->is_Java_thread()) {
+  if (!DisableStartThread) { // DisableStartThread默认是false
+    if (thread->is_Java_thread()) { // 如果是java线程，设置线程状态
       // Initialize the thread state to RUNNABLE before starting this thread.
-      // Can not set it after the thread started because we do not know the
+      // Can not set it after the thread started because we do not know the    // 无法在线程启动后设置，因为我们不知道当时的确切线程状态。
       // exact thread state at that time. It could be in MONITOR_WAIT or
       // in SLEEPING or some other state.
       java_lang_Thread::set_thread_status(((JavaThread*)thread)->threadObj(),
                                           java_lang_Thread::RUNNABLE);
     }
-    os::start_thread(thread);
+    os::start_thread(thread);  // 启动原生线程
   }
 }
 
@@ -1029,18 +1029,21 @@ static Handle create_initial_thread_group(TRAPS) {
 }
 
 // Creates the initial Thread
+// main线程的优先级就是NormPriority，由该线程创建的子线程的优先级就默认是NormPriority
+// Java线程的优先级默认情况是继承自父线程的优先级，那么第一个创建的main线程的优先级是啥了？参考JVM启动过程中用于创建main线程的create_initial_thread方法的实现
 static oop create_initial_thread(Handle thread_group, JavaThread* thread, TRAPS) {
-  Klass* k = SystemDictionary::resolve_or_fail(vmSymbols::java_lang_Thread(), true, CHECK_NULL);
+  Klass* k = SystemDictionary::resolve_or_fail(vmSymbols::java_lang_Thread(), true, CHECK_NULL); // 加载并初始化java_lang_Thread类
   instanceKlassHandle klass (THREAD, k);
-  instanceHandle thread_oop = klass->allocate_instance_handle(CHECK_NULL);
+  instanceHandle thread_oop = klass->allocate_instance_handle(CHECK_NULL); // 分配一个instanceHandle
 
-  java_lang_Thread::set_thread(thread_oop(), thread);
-  java_lang_Thread::set_priority(thread_oop(), NormPriority);
-  thread->set_threadObj(thread_oop());
-
+  java_lang_Thread::set_thread(thread_oop(), thread); // Thread实例oop保存关联的JavaThread
+  java_lang_Thread::set_priority(thread_oop(), NormPriority); // 设置线程优先级为NormPriority
+  thread->set_threadObj(thread_oop()); // JavaThread保存关联的Thread实例oop
+  // 初始化一个字符串main
   Handle string = java_lang_String::create_from_str("main", CHECK_NULL);
 
   JavaValue result(T_VOID);
+  // 调用Thread的构造方法，创建的Thread实例保存在thread_oop中
   JavaCalls::call_special(&result, thread_oop,
                                    klass,
                                    vmSymbols::object_initializer_name(),
@@ -1421,7 +1424,7 @@ void WatcherThread::print_on(outputStream* st) const {
 // ======= JavaThread ========
 
 // A JavaThread is a normal Java thread
-
+// 一个JavaThread是一个普通的java线程
 void JavaThread::initialize() {
   // Initialize fields
 
@@ -1562,7 +1565,7 @@ void JavaThread::block_if_vm_exited() {
 
 // Remove this ifdef when C1 is ported to the compiler interface.
 static void compiler_thread_entry(JavaThread* thread, TRAPS);
-
+// Thread的构造方法就是初始化Thread的各属性
 JavaThread::JavaThread(ThreadFunction entry_point, size_t stack_sz) :
   Thread()
 #if INCLUDE_ALL_GCS
@@ -1573,14 +1576,17 @@ JavaThread::JavaThread(ThreadFunction entry_point, size_t stack_sz) :
   if (TraceThreadEvents) {
     tty->print_cr("creating thread %p", this);
   }
-  initialize(); // 初始化实例变量
+  initialize(); // 初始化实例变量  初始化JavaThread自有的各种属性
   _jni_attach_state = _not_attaching_via_jni;
-  set_entry_point(entry_point); // 设置Java执行线程入口，最终会调用
+  set_entry_point(entry_point); // 设置Java执行线程入口，最终会调用, entry_point就是执行的run方法
   // Create the native thread itself.
   // %note runtime_23
   os::ThreadType thr_type = os::java_thread;
+  // 是否编译线程，编译线程也是JavaThread，但是对应的os::ThreadType类型不同
   thr_type = entry_point == &compiler_thread_entry ? os::compiler_thread :
                                                      os::java_thread;
+  // 创建一个原生线程，底层通过pthread_create创建，创建成功后将其设置到Thread的_osthread属性中，然后等待其初始化完成
+  // 初始化结束后在startThread_lock上等待被唤醒,如果内存不足导致创建失败，则该属性为NULL
   os::create_thread(this, thr_type, stack_sz); // 调用系统库创建线程
   // The _osthread may be NULL here because we ran out of memory (too many threads active).
   // We need to throw and OutOfMemoryError - however we cannot do this here because the caller
@@ -1633,9 +1639,9 @@ JavaThread::~JavaThread() {
 }
 
 
-// The first routine called by a new Java thread
+// The first routine called by a new Java thread  新Java线程调用的第一个例程
 void JavaThread::run() {
-  // initialize thread-local alloc buffer related fields
+  // initialize thread-local alloc buffer related fields  // 初始化线程本地分配缓冲区相关字段
   this->initialize_tlab();
 
   // used to test validitity of stack trace backs
@@ -1688,7 +1694,7 @@ void JavaThread::thread_main_inner() {
 
   // Execute thread entry point unless this thread has a pending exception
   // or has been stopped before starting.
-  // Note: Due to JVM_StopThread we can have pending exceptions already!
+  // Note: Due to JVM_StopThread we can have pending exceptions already!  如果没有待处理异常且没有被中止
   if (!this->has_pending_exception() &&
       !java_lang_Thread::is_stillborn(this->threadObj())) {
     {
@@ -1696,36 +1702,36 @@ void JavaThread::thread_main_inner() {
       this->set_native_thread_name(this->get_thread_name());
     }
     HandleMark hm(this);
-    this->entry_point()(this, this);
+    this->entry_point()(this, this); // 执行entry_point函数，就是执行Thread的run方法
   }
 
   DTRACE_THREAD_PROBE(stop, this);
-
+  // run方法执行完成，准备退出线程
   this->exit(false);
-  delete this;
+  delete this; // 释放JavaThread对应的内存
 }
 
-
+// prepare是线程启动时调用的，ensure_join是线程退出时调用的
 static void ensure_join(JavaThread* thread) {
   // We do not need to grap the Threads_lock, since we are operating on ourself.
   Handle threadObj(thread, thread->threadObj());
   assert(threadObj.not_null(), "java thread object must exist");
-  ObjectLocker lock(threadObj, thread);
+  ObjectLocker lock(threadObj, thread);  // 创建ObjectLocker
   // Ignore pending exception (ThreadDeath), since we are exiting anyway
-  thread->clear_pending_exception();
+  thread->clear_pending_exception(); // 清除待处理异常，因为线程准备退出了
   // Thread is exiting. So set thread_status field in  java.lang.Thread class to TERMINATED.
-  java_lang_Thread::set_thread_status(threadObj(), java_lang_Thread::TERMINATED);
+  java_lang_Thread::set_thread_status(threadObj(), java_lang_Thread::TERMINATED); // 设置线程状态为TERMINATED
   // Clear the native thread instance - this makes isAlive return false and allows the join()
   // to complete once we've done the notify_all below
-  java_lang_Thread::set_thread(threadObj(), NULL);
-  lock.notify_all(thread);
+  java_lang_Thread::set_thread(threadObj(), NULL); // 将eetop属性置为NULL，这样is_alive方法就会返回false
+  lock.notify_all(thread);  // 唤醒所有在该Thread实例关联的重量级锁上等待的线程
   // Ignore pending exception (ThreadDeath), since we are exiting anyway
-  thread->clear_pending_exception();
+  thread->clear_pending_exception(); // 清除待处理异常
 }
 
 
 // For any new cleanup additions, please check to see if they need to be applied to
-// cleanup_failed_attach_current_thread as well.
+// cleanup_failed_attach_current_thread as well.  Java线程退出的时候会在JavaThread::exit方法中调用ObjectLocker的notify_all方法，唤醒所有在该Thread实例关联的重量级锁上等待的线程，即调用join方法的线程
 void JavaThread::exit(bool destroy_vm, ExitType exit_type) {
   assert(this == JavaThread::current(),  "thread consistency check");
 
@@ -3015,21 +3021,21 @@ void JavaThread::prepare(jobject jni_thread, ThreadPriority prio) {
                     JNIHandles::resolve_non_null(jni_thread));
   assert(InstanceKlass::cast(thread_oop->klass())->is_linked(),
     "must be initialized");
-  set_threadObj(thread_oop());
-  java_lang_Thread::set_thread(thread_oop(), this);
+  set_threadObj(thread_oop()); // 保存关联的Java Thread实例
+  java_lang_Thread::set_thread(thread_oop(), this); // 设置Java Thread实例的eetop属性，保存当前JavaThread指针
 
   if (prio == NoPriority) {
-    prio = java_lang_Thread::priority(thread_oop());
+    prio = java_lang_Thread::priority(thread_oop()); // 获取priority属性
     assert(prio != NoPriority, "A valid priority should be present");
   }
 
   // Push the Java priority down to the native thread; needs Threads_lock
-  Thread::set_priority(this, prio);
+  Thread::set_priority(this, prio); // 将Java线程优先级映射成原生线程优先级，然后设置原生线程的优先级
 
   prepare_ext();
 
-  // Add the new thread to the Threads list and set it in motion.
-  // We must have threads lock in order to call Threads::add.
+  // Add the new thread to the Threads list and set it in motion.  将新线程添加到线程列表并将其设置为运动。
+  // We must have threads lock in order to call Threads::add.      为了调用threads::add，我们必须有threads锁。
   // It is crucial that we do not block before the thread is
   // added to the Threads list for if a GC happens, then the java_thread oop
   // will not be visited by GC.
@@ -4077,8 +4083,8 @@ void Threads::add(JavaThread* p, bool force_daemon) {
 
   // See the comment for this method in thread.hpp for its purpose and
   // why it is called here.
-  p->initialize_queues();
-  p->set_next(_thread_list);
+  p->initialize_queues();  // 初始化GC相关的队列
+  p->set_next(_thread_list); // 插入到thread_list链表中
   _thread_list = p;
   _number_of_threads++;
   oop threadObj = p->threadObj();
@@ -4086,11 +4092,11 @@ void Threads::add(JavaThread* p, bool force_daemon) {
   // Bootstrapping problem: threadObj can be null for initial
   // JavaThread (or for threads attached via JNI)
   if ((!force_daemon) && (threadObj == NULL || !java_lang_Thread::is_daemon(threadObj))) {
-    _number_of_non_daemon_threads++;
+    _number_of_non_daemon_threads++; // 非daemon线程计数加1
     daemon = false;
   }
 
-  ThreadService::add_thread(p, daemon);
+  ThreadService::add_thread(p, daemon); // ThreadService维护的相关计数加1
 
   // Possible GC point.
   Events::log(p, "Thread added: " INTPTR_FORMAT, p);

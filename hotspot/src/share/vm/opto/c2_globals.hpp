@@ -25,10 +25,10 @@
 #ifndef SHARE_VM_OPTO_C2_GLOBALS_HPP
 #define SHARE_VM_OPTO_C2_GLOBALS_HPP
 
-#include "runtime/globals.hpp"
-#ifdef TARGET_ARCH_x86
-# include "c2_globals_x86.hpp"
-#endif
+#include "../runtime/globals.hpp"
+//#ifdef TARGET_ARCH_x86
+# include "../c2_globals_x86.hpp"
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "c2_globals_sparc.hpp"
 #endif
@@ -38,9 +38,9 @@
 #ifdef TARGET_ARCH_ppc
 # include "c2_globals_ppc.hpp"
 #endif
-#ifdef TARGET_OS_FAMILY_linux
-# include "c2_globals_linux.hpp"
-#endif
+//#ifdef TARGET_OS_FAMILY_linux
+# include "../c2_globals_linux.hpp"
+//#endif
 #ifdef TARGET_OS_FAMILY_solaris
 # include "c2_globals_solaris.hpp"
 #endif

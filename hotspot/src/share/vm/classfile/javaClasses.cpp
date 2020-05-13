@@ -939,7 +939,7 @@ void java_lang_Thread::compute_offsets() {
  vmSymbols::long_signature());
 }
 
-
+// 在调用ObjectLocker的notify_all方法前会将该属性置为NULL
 JavaThread* java_lang_Thread::thread(oop java_thread) {
   return (JavaThread*)java_thread->address_field(_eetop_offset);
 }
@@ -990,7 +990,7 @@ void java_lang_Thread::set_stillborn(oop java_thread) {
 
 
 bool java_lang_Thread::is_alive(oop java_thread) {
-  JavaThread* thr = java_lang_Thread::thread(java_thread);
+  JavaThread* thr = java_lang_Thread::thread(java_thread); // 获取关联的JavaThread，如果为NULL表示该线程已经退出
   return (thr != NULL);
 }
 

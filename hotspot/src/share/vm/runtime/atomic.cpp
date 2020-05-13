@@ -22,7 +22,7 @@
  *
  */
 
-#include "../precompiled.hpp"
+#include "precompiled.hpp"
 #include "../runtime/atomic.hpp"
 //#ifdef TARGET_OS_FAMILY_linux
 # include "os_linux.inline.hpp"
@@ -40,7 +40,7 @@
 # include "os_bsd.inline.hpp"
 #endif
 
-#include "runtime/atomic.inline.hpp"
+#include "../runtime/atomic.inline.hpp"
 
 jbyte Atomic::cmpxchg(jbyte exchange_value, volatile jbyte* dest, jbyte compare_value) {
   assert(sizeof(jbyte) == 1, "assumption.");

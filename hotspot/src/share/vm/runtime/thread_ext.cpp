@@ -23,8 +23,8 @@
  */
 
 #include "precompiled.hpp"
-#include "runtime/thread.hpp"
-#include "runtime/thread_ext.hpp"
+#include "../runtime/thread.hpp"
+#include "../runtime/thread_ext.hpp"
 
 void JavaThread::prepare_ext() {
 }

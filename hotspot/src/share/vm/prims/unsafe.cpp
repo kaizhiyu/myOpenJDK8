@@ -23,24 +23,24 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/vmSymbols.hpp"
-#include "utilities/macros.hpp"
+#include "../classfile/vmSymbols.hpp"
+#include "../utilities/macros.hpp"
 #if INCLUDE_ALL_GCS
-#include "gc_implementation/g1/g1SATBCardTableModRefBS.hpp"
+#include "../gc_implementation/g1/g1SATBCardTableModRefBS.hpp"
 #endif // INCLUDE_ALL_GCS
-#include "memory/allocation.inline.hpp"
-#include "prims/jni.h"
-#include "prims/jvm.h"
-#include "runtime/globals.hpp"
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/prefetch.inline.hpp"
-#include "runtime/orderAccess.inline.hpp"
-#include "runtime/reflection.hpp"
-#include "runtime/synchronizer.hpp"
-#include "services/threadService.hpp"
-#include "trace/tracing.hpp"
-#include "utilities/copy.hpp"
-#include "utilities/dtrace.hpp"
+#include "../memory/allocation.inline.hpp"
+#include "../prims/jni.h"
+#include "../prims/jvm.h"
+#include "../runtime/globals.hpp"
+#include "../runtime/interfaceSupport.hpp"
+#include "../runtime/prefetch.inline.hpp"
+#include "../runtime/orderAccess.inline.hpp"
+#include "../runtime/reflection.hpp"
+#include "../runtime/synchronizer.hpp"
+#include "../services/threadService.hpp"
+#include "../trace/tracing.hpp"
+#include "../utilities/copy.hpp"
+#include "../utilities/dtrace.hpp"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 

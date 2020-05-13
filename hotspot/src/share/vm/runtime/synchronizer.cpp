@@ -23,26 +23,26 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/vmSymbols.hpp"
-#include "memory/resourceArea.hpp"
-#include "oops/markOop.hpp"
-#include "oops/oop.inline.hpp"
-#include "runtime/biasedLocking.hpp"
-#include "runtime/handles.inline.hpp"
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/mutexLocker.hpp"
-#include "runtime/objectMonitor.hpp"
-#include "runtime/objectMonitor.inline.hpp"
-#include "runtime/osThread.hpp"
-#include "runtime/stubRoutines.hpp"
-#include "runtime/synchronizer.hpp"
-#include "runtime/thread.inline.hpp"
-#include "utilities/dtrace.hpp"
-#include "utilities/events.hpp"
-#include "utilities/preserveException.hpp"
-#ifdef TARGET_OS_FAMILY_linux
+#include "../classfile/vmSymbols.hpp"
+#include "../memory/resourceArea.hpp"
+#include "../oops/markOop.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../runtime/biasedLocking.hpp"
+#include "../runtime/handles.inline.hpp"
+#include "../runtime/interfaceSupport.hpp"
+#include "../runtime/mutexLocker.hpp"
+#include "../runtime/objectMonitor.hpp"
+#include "../runtime/objectMonitor.inline.hpp"
+#include "../runtime/osThread.hpp"
+#include "../runtime/stubRoutines.hpp"
+#include "../runtime/synchronizer.hpp"
+#include "../runtime/thread.inline.hpp"
+#include "../utilities/dtrace.hpp"
+#include "../utilities/events.hpp"
+#include "../utilities/preserveException.hpp"
+//#ifdef TARGET_OS_FAMILY_linux
 # include "os_linux.inline.hpp"
-#endif
+//#endif
 #ifdef TARGET_OS_FAMILY_solaris
 # include "os_solaris.inline.hpp"
 #endif
@@ -153,9 +153,9 @@ ObjectMonitor * ObjectSynchronizer::gBlockList = NULL ;
 ObjectMonitor * volatile ObjectSynchronizer::gFreeList  = NULL ;
 ObjectMonitor * volatile ObjectSynchronizer::gOmInUseList  = NULL ;
 int ObjectSynchronizer::gOmInUseCount = 0;
-static volatile intptr_t ListLock = 0 ;      // protects global monitor free-list cache
-static volatile int MonitorFreeCount  = 0 ;      // # on gFreeList
-static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation
+static volatile intptr_t ListLock = 0 ;          // protects global monitor free-list cache  操作gFreeList的锁
+static volatile int MonitorFreeCount  = 0 ;      // # on gFreeList  gFreeList中包含的元素的个数
+static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation  已经创建的ObjectMonitor的总数
 #define CHAINMARKER (cast_to_oop<intptr_t>(-1))
 
 // -----------------------------------------------------------------------------
@@ -601,7 +601,7 @@ static inline intptr_t get_next_hash(Thread * Self, oop obj) {
 }
 //
 intptr_t ObjectSynchronizer::FastHashCode (Thread * Self, oop obj) {
-  if (UseBiasedLocking) {
+  if (UseBiasedLocking) { // UseBiasedLocking表示是否启用偏向锁
     // NOTE: many places throughout the JVM do not expect a safepoint
     // to be taken here, in particular most operations on perm gen
     // objects. However, we only ever bias Java instances and all of

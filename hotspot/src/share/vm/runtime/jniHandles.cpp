@@ -263,7 +263,7 @@ JNIHandleBlock* JNIHandleBlock::allocate_block(Thread* thread)  {
   // Check the thread-local free list for a block so we don't
   // have to acquire a mutex.
   if (thread != NULL && thread->free_handle_block() != NULL) {
-    block = thread->free_handle_block();  // 直接使用当前线程的空闲的_free_handle_block
+    block = thread->free_handle_block();         // 直接使用当前线程的空闲的_free_handle_block
     thread->set_free_handle_block(block->_next); // 将block的下一个block置为_free_handle_block
   }
   else {
