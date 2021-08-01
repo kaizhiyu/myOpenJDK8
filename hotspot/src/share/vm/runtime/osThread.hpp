@@ -128,7 +128,7 @@ class OSThread: public CHeapObj<mtThread> {
 };
 
 
-// Utility class for use with condition variables:
+// Utility class for use with condition variables: 用于条件变量的实用程序类
 class OSThreadWaitState : public StackObj {
   OSThread*   _osthread;
   ThreadState _old_state;
@@ -148,7 +148,7 @@ class OSThreadWaitState : public StackObj {
 };
 
 
-// Utility class for use with contended monitors:
+// Utility class for use with contended monitors: 用于争用监视器的实用程序类
 class OSThreadContendState : public StackObj {
   OSThread*   _osthread;
   ThreadState _old_state;

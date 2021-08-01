@@ -113,7 +113,7 @@ void InterpreterRuntime::set_bcp_and_mdp(address bcp, JavaThread *thread) {
 
 
 IRT_ENTRY(void, InterpreterRuntime::ldc(JavaThread* thread, bool wide))
-  // access constant pool
+  // access constant pool 访问运行时常量池
   ConstantPool* pool = method(thread)->constants();
   int index = wide ? get_index_u2(thread, Bytecodes::_ldc_w) : get_index_u1(thread, Bytecodes::_ldc);
   constantTag tag = pool->tag_at(index);
@@ -146,15 +146,15 @@ IRT_END
 
 //------------------------------------------------------------------------------------------------------------------------
 // Allocation
-
+// InterpreterRuntime::_new就是慢速分配的实现
 IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool, int index))
   Klass* k_oop = pool->klass_at(index, CHECK);
   instanceKlassHandle klass (THREAD, k_oop);
 
-  // Make sure we are not instantiating an abstract klass
+  // Make sure we are not instantiating an abstract klass 确保我们没有实例化抽象的klass
   klass->check_valid_for_instantiation(true, CHECK);
 
-  // Make sure klass is initialized
+  // Make sure klass is initialized 确保klass已初始化
   klass->initialize(CHECK);
 
   // At this point the class may not be fully initialized
@@ -172,7 +172,7 @@ IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool,
   //       If we have a breakpoint, then we don't rewrite
   //       because the _breakpoint bytecode would be lost.
   oop obj = klass->allocate_instance(CHECK);
-  thread->set_vm_result(obj);
+  thread->set_vm_result(obj); // 将结果放到当前线程的_vm_result属性中，该属性专门用来传递解释器执行方法调用的结果
 IRT_END
 
 
@@ -600,7 +600,7 @@ IRT_END
 // InterpreterRuntime::monitorenter用于获取轻量级锁或者重量级锁，获取轻量级锁成功后会将目标对象的对象头改成BasicLock指针，
 // 获取重量级锁成功后会将目标对象的对象头改成ObjectMonitor指针，BasicLock和ObjectMonitor本身会保存目标对象原来的无锁状态下的对象头
 //%note monitor_1
-IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, BasicObjectLock* elem))
+IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, BasicObjectLock* elem)) // BasicObjectLock类型的elem对象包含一个BasicLock类型_lock对象和一个指向Object对象的指针_obj;
 #ifdef ASSERT
   thread->last_frame().interpreter_frame_verify_monitor(elem);
 #endif

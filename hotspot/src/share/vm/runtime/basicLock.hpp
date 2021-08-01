@@ -64,7 +64,7 @@ class BasicLock VALUE_OBJ_CLASS_SPEC { // BasicLock主要用于保存对象的�
 class BasicObjectLock VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
  private:
-  BasicLock _lock;                                    // the lock, must be double word aligned
+  BasicLock _lock;                                    // the lock, must be double word aligned BasicLock类型_lock对象主要用来保存_obj指向Object对象的对象头数据
   oop       _obj;                                     // object holds the lock;
 
  public:

@@ -24,17 +24,17 @@
  */
 
 #include "precompiled.hpp"
-#include "asm/assembler.inline.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "memory/allocation.inline.hpp"
-#include "memory/universe.inline.hpp"
-#include "oops/method.hpp"
-#include "oops/oop.inline.hpp"
-#include "runtime/handles.inline.hpp"
-#include "runtime/icache.hpp"
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/signature.hpp"
+#include "../asm/assembler.inline.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../memory/allocation.inline.hpp"
+#include "../memory/universe.inline.hpp"
+#include "../oops/method.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../runtime/handles.inline.hpp"
+#include "../runtime/icache.hpp"
+#include "../runtime/interfaceSupport.hpp"
+#include "../runtime/signature.hpp"
 
 #define __ _masm->
 

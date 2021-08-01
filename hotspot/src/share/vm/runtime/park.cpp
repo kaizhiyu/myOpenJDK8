@@ -23,7 +23,7 @@
  */
 
 #include "precompiled.hpp"
-#include "runtime/thread.hpp"
+#include "../runtime/thread.hpp"
 
 
 
@@ -37,16 +37,16 @@
 // push-pop implementation.   (push-one and pop-all)
 //
 // Caveat: Allocate() and Release() may be called from threads
-// other than the thread associated with the Event!
+// other than the thread associated with the Event!   警告：Allocate() 和 Release() 可以从与事件关联的线程以外的线程调用！
 // If we need to call Allocate() when running as the thread in
-// question then look for the PD calls to initialize native TLS.
+// question then look for the PD calls to initialize native TLS.  如果我们需要在作为有问题的线程运行时调用Allocate()，则查找 PD 调用以初始化本机 TLS
 // Native TLS (Win32/Linux/Solaris) can only be initialized or
 // accessed by the associated thread.
 // See also pd_initialize().
 //
-// Note that we could defer associating a ParkEvent with a thread
-// until the 1st time the thread calls park().  unpark() calls to
-// an unprovisioned thread would be ignored.  The first park() call
+// Note that we could defer associating a ParkEvent with a thread    请注意，我们可以将 ParkEvent 与线程关联推迟到线程第一次调用 park() 时
+// until the 1st time the thread calls park().  unpark() calls to    对未设置线程的 unpark() 调用将被忽略
+// an unprovisioned thread would be ignored.  The first park() call  线程的第一个 park() 调用将分配并关联 ParkEvent 并立即返回
 // for a thread would allocate and associate a ParkEvent and return
 // immediately.
 
@@ -128,9 +128,9 @@ Parker * Parker::Allocate (JavaThread * t) {
   Parker * p ;
 
   // Start by trying to recycle an existing but unassociated
-  // Parker from the global free list.
+  // Parker from the global free list.   首先尝试从全局没使用列表中回收一个现有但没有关联的 Parker
   // 8028280: using concurrent free list without memory management can leak
-  // pretty badly it turns out.
+  // pretty badly it turns out.  在没有内存管理的情况下使用并发空闲列表会导致非常严重的泄漏
   Thread::SpinAcquire(&ListLock, "ParkerFreeListAllocate");
   {
     p = FreeList;

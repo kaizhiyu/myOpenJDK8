@@ -315,7 +315,7 @@ bool ObjectMonitor::try_enter(Thread* THREAD) {
 }
 // enter方法用于获取某个ObjectMonitor对应的重量级锁，为了尽可能减少对系统互斥量的使用，减少锁抢占的性能损耗，
 // ObjectMonitor多次调用TrySpin方法让当前线程自旋抢占锁，进入EnterI方法前会调用一次，进入EnterI后会调用一次，
-// 然后park和TrySpin在一个for循环中先后执行，直到成功获取锁为止。
+// 然后park和TrySpin在一个for循环中先后执行，直到成功获取锁为止。 当锁膨胀完成并返回对应的monitor时，并不表示该线程竞争到了锁，真正的锁竞争发生在ObjectMonitor::enter方法中
 void ATTR ObjectMonitor::enter(TRAPS) {
   // The following code is ordered to check the most common cases first
   // and to reduce RTS->RTO cache line upgrades on SPARC and IA32 processors.
@@ -337,12 +337,12 @@ void ATTR ObjectMonitor::enter(TRAPS) {
      return ;
   }
 
-  if (Self->is_lock_owned ((address)cur)) { // 轻量级锁膨胀成重量级锁时，将owner设置为lock属性
+  if (Self->is_lock_owned ((address)cur)) { // 轻量级锁膨胀成重量级锁时，将owner设置为lock属性   如果之前的_owner指向的地址在当前线程中，这种描述有点拗口，换一种说法：之前_owner指向的BasicLock在当前线程栈上，说明当前线程是第一次进入该monitor，设置_recursions为1，_owner为当前线程，该线程成功获得锁并返回
     assert (_recursions == 0, "internal state error");
     _recursions = 1 ;  // 正常轻量级膨胀成重量级锁时，之前已经获取轻量级锁的线程不需要二次调用enter方法  此时再调用enter方法说明是锁嵌套情形，将_recursions置为1
     // Commute owner from a thread-specific on-stack BasicLockObject address to
     // a full-fledged "Thread *".
-    _owner = Self ; // 将owner置为当前线程
+    _owner = Self ;     // 将owner置为当前线程
     OwnerIsThread = 1 ; // 表明当前线程是获取轻量级锁的
     return ;
   }
@@ -480,7 +480,7 @@ void ATTR ObjectMonitor::enter(TRAPS) {
 
 // Caveat: TryLock() is not necessarily serializing if it returns failure. 警告：如果TryLock（）返回失败，则它不一定序列化。
 // Callers must compensate as needed.                                      呼叫者必须根据需要进行补偿。
-
+// 其本质就是通过CAS设置monitor的_owner字段为当前线程，如果CAS成功，则表示该线程获取了锁，跳出自旋操作，执行同步代码，否则继续被挂起
 int ObjectMonitor::TryLock (Thread * Self) {
    for (;;) {
       void * own = _owner ;
@@ -957,7 +957,7 @@ void ObjectMonitor::UnlinkAfterAcquire (Thread * Self, ObjectWaiter * SelfNode)
 
 void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
    Thread * Self = THREAD ;
-   if (THREAD != _owner) {
+   if (THREAD != _owner) { // 如果是重量级锁的释放，monitor中的_owner指向当前线程，即THREAD == _owner
      if (THREAD->is_lock_owned((address) _owner)) {
        // Transmute _owner from a BasicLock pointer to a Thread address.
        // We don't need to hold _mutex for this transition.
@@ -1098,7 +1098,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       }
 
       guarantee (_owner == THREAD, "invariant") ;
-
+      // 根据不同的策略（由QMode指定），从cxq或EntryList中获取头节点，通过ObjectMonitor::ExitEpilog方法唤醒该节点封装的线程，唤醒操作最终由unpark完成
       ObjectWaiter * w = NULL ;
       int QMode = Knob_QMode ;
 

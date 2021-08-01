@@ -359,7 +359,7 @@ int InstanceMirrorKlass::instance_size(KlassHandle k) {
 }
 
 instanceOop InstanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) {
-  // Query before forming handle.
+  // Query before forming handle. 形成句柄前的查询
   int size = instance_size(k);
   KlassHandle h_k(THREAD, this);
   instanceOop i = (instanceOop)CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);

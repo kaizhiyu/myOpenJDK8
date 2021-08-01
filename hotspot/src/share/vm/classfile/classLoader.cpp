@@ -1230,7 +1230,7 @@ void ClassLoader::initialize() {
     }
   }
 
-  // lookup zip library entry points
+  // lookup zip library entry points 加载读写zip文件的动态链接库
   load_zip_library();
 #if INCLUDE_CDS
   // initialize search path
@@ -1238,9 +1238,9 @@ void ClassLoader::initialize() {
     _shared_paths_misc_info = SharedClassUtil::allocate_shared_paths_misc_info();
   }
 #endif
-  setup_bootstrap_search_path();
-  if (LazyBootClassLoader) {
-    // set up meta index which makes boot classpath initialization lazier
+  setup_bootstrap_search_path(); // 设置加载核心jar包的搜索路径，从系统参数Arguments中获取
+  if (LazyBootClassLoader) { // 如果是惰性启动加载，即启动时不加载rt.jar等文件
+    // set up meta index which makes boot classpath initialization lazier 设置meta_index_path，设置完成后会触发对meta_index_path下文件的解析
     setup_bootstrap_meta_index();
   }
 }

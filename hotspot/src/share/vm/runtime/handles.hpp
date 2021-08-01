@@ -172,9 +172,9 @@ DEF_HANDLE(typeArray        , is_typeArray        )
 DEF_METADATA_HANDLE(method, Method)
 DEF_METADATA_HANDLE(constantPool, ConstantPool)
 
-// Writing this class explicitly, since DEF_METADATA_HANDLE(klass) doesn't
+// Writing this class explicitly, since DEF_METADATA_HANDLE(klass) doesn't  显式编写这个类，因为DEF_METADATA_HANDLE(klass)不需要提供必须的 Klass* <-> Klass* 转换
 // provide the necessary Klass* <-> Klass* conversions. This Klass
-// could be removed when we don't have the Klass* typedef anymore.
+// could be removed when we don't have the Klass* typedef anymore. 当我们不再有 Klass* 类型定义时，这个Klass可以被移除。
 class KlassHandle : public StackObj {
   Klass* _value;
  protected:

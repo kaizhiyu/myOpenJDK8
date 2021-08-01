@@ -815,10 +815,10 @@ void InstanceKlass::initialize_super_interfaces(instanceKlassHandle this_oop, TR
     }
   }
 }
-
+// 类初始化的入口
 void InstanceKlass::initialize_impl(instanceKlassHandle this_oop, TRAPS) {
-  // Make sure klass is linked (verified) before initialization
-  // A class could already be verified, since it has been reflected upon.
+  // Make sure klass is linked (verified) before initialization 在初始化之前，确保已链接（验证）klass
+  // A class could already be verified, since it has been reflected upon. 类已经可以被验证了，因为它已经被反射了
   this_oop->link_class(CHECK);
 
   DTRACE_CLASSINIT_PROBE(required, InstanceKlass::cast(this_oop()), -1);
@@ -833,7 +833,7 @@ void InstanceKlass::initialize_impl(instanceKlassHandle this_oop, TRAPS) {
 
     Thread *self = THREAD; // it's passed the current thread
 
-    // Step 2
+    // Step 2 如果正在初始化则等待初始化完成
     // If we were to use wait() instead of waitInterruptibly() then
     // we might end up throwing IE from link/symbol resolution sites
     // that aren't expected to throw.  This would wreak havoc.  See 6320309.
@@ -871,13 +871,13 @@ void InstanceKlass::initialize_impl(instanceKlassHandle this_oop, TRAPS) {
       }
     }
 
-    // Step 6
+    // Step 6 设置状态，初始化进行中
     this_oop->set_init_state(being_initialized);
     this_oop->set_init_thread(self);
   }
 
-  // Step 7
-  Klass* super_klass = this_oop->super();
+  // Step 7 如果不是一个接口而是一个类则需要初始化它的父类
+  Klass* super_klass = this_oop->super(); // 获取父类
   if (super_klass != NULL && !this_oop->is_interface() && super_klass->should_be_initialized()) {
     super_klass->initialize(THREAD);
 
@@ -894,8 +894,8 @@ void InstanceKlass::initialize_impl(instanceKlassHandle this_oop, TRAPS) {
     }
   }
 
-  // Recursively initialize any superinterfaces that declare default methods
-  // Only need to recurse if has_default_methods which includes declaring and
+  // Recursively initialize any superinterfaces that declare default methods  递归初始化声明默认方法的任何超级接口
+  // Only need to recurse if has_default_methods which includes declaring and 只有在有默认方法时才需要递归，包括声明和继承默认方法
   // inheriting default methods
   if (this_oop->has_default_methods()) {
     this_oop->initialize_super_interfaces(this_oop, CHECK);
@@ -914,7 +914,7 @@ void InstanceKlass::initialize_impl(instanceKlassHandle this_oop, TRAPS) {
                              jt->get_thread_stat()->perf_recursion_counts_addr(),
                              jt->get_thread_stat()->perf_timers_addr(),
                              PerfClassTraceTime::CLASS_CLINIT);
-    this_oop->call_class_initializer(THREAD);
+    this_oop->call_class_initializer(THREAD); // 执行静态方法
   }
 
   // Step 9
@@ -1196,7 +1196,7 @@ void InstanceKlass::call_class_initializer_impl(instanceKlassHandle this_oop, TR
   if (ReplayCompiles &&
       (ReplaySuppressInitializers == 1 ||
        ReplaySuppressInitializers >= 2 && this_oop->class_loader() != NULL)) {
-    // Hide the existence of the initializer for the purpose of replaying the compile
+    // Hide the existence of the initializer for the purpose of replaying the compile 隐藏初始值设定项的存在以重放编译
     return;
   }
 
@@ -1210,7 +1210,7 @@ void InstanceKlass::call_class_initializer_impl(instanceKlassHandle this_oop, TR
   if (h_method() != NULL) {
     JavaCallArguments args; // No arguments
     JavaValue result(T_VOID);
-    JavaCalls::call(&result, h_method, &args, CHECK); // Static call (no args)
+    JavaCalls::call(&result, h_method, &args, CHECK); // Static call (no args) 静态调用(无参数)
   }
 }
 

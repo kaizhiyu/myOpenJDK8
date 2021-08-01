@@ -29,7 +29,7 @@
 #include "../oops/symbol.hpp"
 #include "../utilities/hashtable.hpp"
 
-// The symbol table holds all Symbol*s and corresponding interned strings.  符号表保存所有符号*和相应的内部字符串。
+// The symbol table holds all Symbol*s and corresponding interned strings.  符号表保存所有符号和相应的内部字符串。
 // Symbol*s and literal strings should be canonicalized.  符号和文字字符串应该规范化。
 //
 // The interned strings are created lazily. 内部字符串是延迟加载（或者是懒加载）
@@ -43,7 +43,7 @@ class BoolObjectClosure;
 class outputStream;
 
 
-// Class to hold a newly created or referenced Symbol* temporarily in scope.  类在作用域中临时保存新创建或引用的symbol*。
+// Class to hold a newly created or referenced Symbol* temporarily in scope.  类在作用域中临时保存新创建或引用的symbol。
 // new_symbol() and lookup() will create a Symbol* if not already in the      new_symbol（）和lookup（）将创建一个symbol*如果符号表中没有，则添加到符号的引用计数中。
 // symbol table and add to the symbol's reference count.
 // probe() and lookup_only() will increment the refcount if symbol is found.  如果找到符号，probe（）和lookup_only（）将增加refcount。
@@ -73,7 +73,7 @@ class TempNewSymbol : public StackObj {
   // Sneaky conversion function  潜行转换函数
   operator Symbol*()                             { return _temp; }
 };
-
+// 符号表中的符号都只是原始字符串形式的描述符，并未涉及符号解析以及解析结果的保存
 class SymbolTable : public RehashableHashtable<Symbol*, mtSymbol> {
   friend class VMStructs;
   friend class ClassFileParser;
@@ -89,7 +89,7 @@ private:
   static int _symbols_removed;
   static int _symbols_counted;
 
-  Symbol* allocate_symbol(const u1* name, int len, bool c_heap, TRAPS); // Assumes no characters larger than 0x7F
+  Symbol* allocate_symbol(const u1* name, int len, bool c_heap, TRAPS); // Assumes no characters larger than 0x7F 假定没有大于0x7F的字符
 
   // Adding elements
   Symbol* basic_add(int index, u1* name, int len, unsigned int hashValue,
@@ -259,7 +259,7 @@ private:
   // The string table
   static StringTable* _the_table;
 
-  // Set if one bucket is out of balance due to hash algorithm deficiency
+  // Set if one bucket is out of balance due to hash algorithm deficiency 如果一个 bucket 由于哈希算法的缺陷而失去平衡，则设置
   static bool _needs_rehashing;
 
   // Claimed high water mark for parallel chunked scanning

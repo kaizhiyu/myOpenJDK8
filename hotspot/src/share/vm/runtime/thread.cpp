@@ -1582,11 +1582,11 @@ JavaThread::JavaThread(ThreadFunction entry_point, size_t stack_sz) :
   // Create the native thread itself.
   // %note runtime_23
   os::ThreadType thr_type = os::java_thread;
-  // 是否编译线程，编译线程也是JavaThread，但是对应的os::ThreadType类型不同
+  // 是否编译线程，编译线程也是 JavaThread，但是对应的 os::ThreadType 类型不同
   thr_type = entry_point == &compiler_thread_entry ? os::compiler_thread :
                                                      os::java_thread;
-  // 创建一个原生线程，底层通过pthread_create创建，创建成功后将其设置到Thread的_osthread属性中，然后等待其初始化完成
-  // 初始化结束后在startThread_lock上等待被唤醒,如果内存不足导致创建失败，则该属性为NULL
+  // 创建一个原生线程，底层通过 pthread_create 创建，创建成功后将其设置到 Thread 的 _osthread 属性中，然后等待其初始化完成
+  // 初始化结束后在 startThread_lock 上等待被唤醒,如果内存不足导致创建失败，则该属性为NULL
   os::create_thread(this, thr_type, stack_sz); // 调用系统库创建线程
   // The _osthread may be NULL here because we ran out of memory (too many threads active).
   // We need to throw and OutOfMemoryError - however we cannot do this here because the caller

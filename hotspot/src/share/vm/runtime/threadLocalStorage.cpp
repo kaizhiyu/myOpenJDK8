@@ -23,11 +23,11 @@
  */
 
 #include "precompiled.hpp"
-#include "runtime/thread.inline.hpp"
-#include "runtime/threadLocalStorage.hpp"
-#ifdef TARGET_OS_FAMILY_linux
+#include "../runtime/thread.inline.hpp"
+#include "../runtime/threadLocalStorage.hpp"
+//#ifdef TARGET_OS_FAMILY_linux
 # include "os_linux.inline.hpp"
-#endif
+//#endif
 #ifdef TARGET_OS_FAMILY_solaris
 # include "os_solaris.inline.hpp"
 #endif

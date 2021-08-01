@@ -93,7 +93,7 @@ inline jlong addr_to_java(void* p) {
 
 
 // Note: The VM's obj_field and related accessors use byte-scaled
-// ("unscaled") offsets, just as the unsafe methods do.
+// ("unscaled") offsets, just as the unsafe methods do.  注意：VM的obj_字段和相关访问器使用字节缩放（“unscaled”）偏移量，就像不安全的方法一样。
 
 // However, the method Unsafe.fieldOffset explicitly declines to
 // guarantee this.  The field offset values manipulated by the Java user

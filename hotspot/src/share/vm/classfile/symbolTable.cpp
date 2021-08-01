@@ -224,21 +224,21 @@ unsigned int SymbolTable::hash_symbol(const char* s, int len) {
 // symboltable is used during compilation (VM_thread) The lock free
 // synchronization is simplified by the fact that we do not delete
 // entries in the symbol table during normal execution (only during
-// safepoints).
+// safepoints). 我们在拿 SymbolTable_lock 的时候注意不要被挡住。否则，系统可能会死锁，因为symboltable是在编译期间使用的（VM_thread），无锁同步由于在正常执行期间（仅在安全点期间）不删除symbol表中的条目而得到简化
 
 Symbol* SymbolTable::lookup(const char* name, int len, TRAPS) {
-  unsigned int hashValue = hash_symbol(name, len);
-  int index = the_table()->hash_to_index(hashValue);
-
+  unsigned int hashValue = hash_symbol(name, len); // 计算hash值
+  int index = the_table()->hash_to_index(hashValue); // 计算hash槽的位置
+  // 去指定位置的hash槽中查找是否存在目标Symbol
   Symbol* s = the_table()->lookup(index, name, len, hashValue);
 
-  // Found
+  // Found 如果存在则返回
   if (s != NULL) return s;
 
-  // Grab SymbolTable_lock first.
+  // Grab SymbolTable_lock first. 如果不存在则需要获取锁SymbolTable_lock，并创建一个新的
   MutexLocker ml(SymbolTable_lock, THREAD);
 
-  // Otherwise, add to symbol to table
+  // Otherwise, add to symbol to table 会调用 allocate_symbol 在内存中创建一个新的 Symbol，然后以此构建一个新的 HashtableEntry 实例，将其添加到 HashTable 中
   return the_table()->basic_add(index, (u1*)name, len, hashValue, true, CHECK_NULL);
 }
 
@@ -273,7 +273,7 @@ Symbol* SymbolTable::lookup(const Symbol* sym, int begin, int end, TRAPS) {
   }
   // Make sure there is no safepoint in the code above since name can't move.
   // We can't include the code in No_Safepoint_Verifier because of the
-  // ResourceMark.
+  // ResourceMark. 确保上面的代码中没有safepoint，因为name不能移动。由于资源标记，我们无法将代码包含在 No_Safepoint_Verifier 中
 
   // Grab SymbolTable_lock first.
   MutexLocker ml(SymbolTable_lock, THREAD);
@@ -392,7 +392,7 @@ Symbol* SymbolTable::basic_add(int index_arg, u1 *name, int len,
   No_Safepoint_Verifier nsv;
 
   // Check if the symbol table has been rehashed, if so, need to recalculate
-  // the hash value and index.
+  // the hash value and index. 检查符号表是否已被重设，如果是，需要重新计算哈希值和索引
   unsigned int hashValue;
   int index;
   if (use_alternate_hashcode()) {
@@ -655,7 +655,7 @@ oop StringTable::lookup(int index, jchar* name,
       }
     }
   }
-  // If the bucket size is too deep check if this hash code is insufficient.
+  // If the bucket size is too deep check if this hash code is insufficient. 如果bucket大小太深，请检查此哈希代码是否不足
   if (count >= rehash_count && !needs_rehashing()) {
     _needs_rehashing = check_rehash_table(count);
   }
@@ -762,7 +762,7 @@ oop StringTable::intern(Handle string_or_null, jchar* name,
 #endif
 
   // Grab the StringTable_lock before getting the_table() because it could
-  // change at safepoint.
+  // change at safepoint. 在得到 the_table() 先获取 StringTable_lock，因为它可能在safepoint发生变化
   oop added_or_found;
   {
     MutexLocker ml(StringTable_lock, THREAD);

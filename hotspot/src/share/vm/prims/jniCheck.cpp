@@ -23,23 +23,23 @@
  */
 
 #include "precompiled.hpp"
-#include "classfile/systemDictionary.hpp"
-#include "classfile/vmSymbols.hpp"
-#include "memory/guardedMemory.hpp"
-#include "oops/instanceKlass.hpp"
-#include "oops/oop.inline.hpp"
-#include "oops/symbol.hpp"
-#include "prims/jni.h"
-#include "prims/jniCheck.hpp"
-#include "prims/jvm_misc.hpp"
-#include "runtime/fieldDescriptor.hpp"
-#include "runtime/handles.hpp"
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/jfieldIDWorkaround.hpp"
-#include "runtime/thread.inline.hpp"
-#ifdef TARGET_ARCH_x86
+#include "../classfile/systemDictionary.hpp"
+#include "../classfile/vmSymbols.hpp"
+#include "../memory/guardedMemory.hpp"
+#include "../oops/instanceKlass.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../oops/symbol.hpp"
+#include "../prims/jni.h"
+#include "../prims/jniCheck.hpp"
+#include "../prims/jvm_misc.hpp"
+#include "../runtime/fieldDescriptor.hpp"
+#include "../runtime/handles.hpp"
+#include "../runtime/interfaceSupport.hpp"
+#include "../runtime/jfieldIDWorkaround.hpp"
+#include "../runtime/thread.inline.hpp"
+//#ifdef TARGET_ARCH_x86
 # include "jniTypes_x86.hpp"
-#endif
+//#endif
 #ifdef TARGET_ARCH_sparc
 # include "jniTypes_sparc.hpp"
 #endif

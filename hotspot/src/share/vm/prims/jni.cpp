@@ -1364,7 +1364,7 @@ static void jni_invoke_nonstatic(JNIEnv *env, JavaValue* result, jobject receive
   methodHandle method(THREAD, selected_method);
 
   // Create object to hold arguments for the JavaCall, and associate it with
-  // the jni parser
+  // the jni parser 创建对象来保存JavaCall的参数，并将其与jni解析器相关联
   ResourceMark rm(THREAD);
   JavaCallArguments java_args(number_of_parameters);
   args->set_java_argument_object(&java_args);
@@ -1373,7 +1373,7 @@ static void jni_invoke_nonstatic(JNIEnv *env, JavaValue* result, jobject receive
   assert(!method->is_static(), "method should not be static");
   args->push_receiver(h_recv); // Push jobject handle
 
-  // Fill out JavaCallArguments object
+  // Fill out JavaCallArguments object 填写JavaCallArguments对象
   args->iterate( Fingerprinter(method).fingerprint() );
   // Initialize result type
   result->set_type(args->get_ret_type());

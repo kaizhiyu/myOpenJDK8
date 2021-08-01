@@ -197,7 +197,7 @@ class Ticks;
   do_klass(Long_klass,                                  java_lang_Long,                            Pre                 ) \
   /*end*/
 
-
+// SystemDictionary相当于类加载的一个统一入口，同时提供查找已加载的类和加载新的类的服务
 class SystemDictionary : AllStatic {
   friend class VMStructs;
   friend class SystemDictionaryHandles;
@@ -570,11 +570,11 @@ public:
 
   // hashtable sizes for system dictionary to allow growth
   // prime numbers for system dictionary size  系统字典的哈希表大小，以允许系统字典大小的增长素数
-  static int                     _sdgeneration;
+  static int                     _sdgeneration; // int变量，保存已加载类的HashMap的容量
   static const int               _primelist[_prime_array_size];
 
   // Hashtable holding loaded classes.         持有已加载类的哈希表
-  static Dictionary*            _dictionary;
+  static Dictionary*            _dictionary; // Dictionary类指针，实际保存已加载类的HashMap
 
   // Hashtable holding placeholders for classes being loaded.  包含正在加载的类的占位符的哈希表
   static PlaceholderTable*       _placeholders;

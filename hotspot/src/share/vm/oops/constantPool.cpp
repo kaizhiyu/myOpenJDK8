@@ -187,45 +187,45 @@ int ConstantPool::cp_to_object_index(int cp_index) {
 }
 
 Klass* ConstantPool::klass_at_impl(constantPoolHandle this_oop, int which, TRAPS) {
-  // A resolved constantPool entry will contain a Klass*, otherwise a Symbol*.
+  // A resolved constantPool entry will contain a Klass*, otherwise a Symbol*. 已解析的constantPool条目将包含Klass，否则将包含符号
   // It is not safe to rely on the tag bit's here, since we don't have a lock, and the entry and
-  // tag is not updated atomicly.
+  // tag is not updated atomicly. 在这里依赖标签位是不安全的，因为我们没有锁，并且条目和标签不会自动更新
 
-  CPSlot entry = this_oop->slot_at(which);
+  CPSlot entry = this_oop->slot_at(which); // 获取指定位置的数据项，判断其是否已解析
   if (entry.is_resolved()) {
-    assert(entry.get_klass()->is_klass(), "must be");
-    // Already resolved - return entry.
+    assert(entry.get_klass()->is_klass(), "must be"); // 如果已解析但是不是Klass类型则抛出异常
+    // Already resolved - return entry. 返回解析结果
     return entry.get_klass();
   }
 
   // Acquire lock on constant oop while doing update. After we get the lock, we check if another object
-  // already has updated the object
+  // already has updated the object 判断调用方线程是否是Java线程，不能是本地的C++线程
   assert(THREAD->is_Java_thread(), "must be a Java thread");
   bool do_resolve = false;
   bool in_error = false;
 
   // Create a handle for the mirror. This will preserve the resolved class
-  // until the loader_data is registered.
+  // until the loader_data is registered. 用于创建目标类Class即InstanceMirrorKlass实例的Handle
   Handle mirror_handle;
 
   Symbol* name = NULL;
   Handle       loader;
-  {  MonitorLockerEx ml(this_oop->lock());
-
+  {  MonitorLockerEx ml(this_oop->lock()); // 获取常量池的锁
+    // 进一步校验，如果未解析
     if (this_oop->tag_at(which).is_unresolved_klass()) {
-      if (this_oop->tag_at(which).is_unresolved_klass_in_error()) {
+      if (this_oop->tag_at(which).is_unresolved_klass_in_error()) { // 如果是因为解析异常导致未解析，则将in_error置为true
         in_error = true;
       } else {
-        do_resolve = true;
-        name   = this_oop->unresolved_klass_at(which);
-        loader = Handle(THREAD, this_oop->pool_holder()->class_loader());
+        do_resolve = true; // 准备开始解析
+        name   = this_oop->unresolved_klass_at(which); // 获取完整类名
+        loader = Handle(THREAD, this_oop->pool_holder()->class_loader()); // 根据当前常量池所属的Klass实例获取加载该Klass实例的类加载器
       }
     }
   } // unlocking constantPool
 
 
   // The original attempt to resolve this constant pool entry failed so find the
-  // original error and throw it again (JVMS 5.4.3).
+  // original error and throw it again (JVMS 5.4.3). 解析失败抛出异常
   if (in_error) {
     Symbol* error = SystemDictionary::find_resolution_error(this_oop, which);
     guarantee(error != (Symbol*)NULL, "tag mismatch with resolution error table");
@@ -236,14 +236,14 @@ Klass* ConstantPool::klass_at_impl(constantPoolHandle this_oop, int which, TRAPS
   }
 
   if (do_resolve) {
-    // this_oop must be unlocked during resolve_or_fail
+    // this_oop must be unlocked during resolve_or_fail 执行resolve_or_fail时常量池必须处于非锁定状态
     oop protection_domain = this_oop->pool_holder()->protection_domain();
     Handle h_prot (THREAD, protection_domain);
-    Klass* k_oop = SystemDictionary::resolve_or_fail(name, loader, h_prot, true, THREAD);
+    Klass* k_oop = SystemDictionary::resolve_or_fail(name, loader, h_prot, true, THREAD); // 通过SystemDictionary调用类加载器Oop解析目标类
     KlassHandle k;
     if (!HAS_PENDING_EXCEPTION) {
-      k = KlassHandle(THREAD, k_oop);
-      // preserve the resolved klass.
+      k = KlassHandle(THREAD, k_oop); // 如果解析成功
+      // preserve the resolved klass.  初始化mirror_handle
       mirror_handle = Handle(THREAD, k_oop->java_mirror());
       // Do access check for klasses
       verify_constant_pool_resolve(this_oop, k, THREAD);
@@ -259,7 +259,7 @@ Klass* ConstantPool::klass_at_impl(constantPoolHandle this_oop, int which, TRAPS
       {
         MonitorLockerEx ml(this_oop->lock());
 
-        // some other thread has beaten us and has resolved the class.
+        // some other thread has beaten us and has resolved the class.  别的线程打败了我们，解决了这个问题
         if (this_oop->tag_at(which).is_klass()) {
           CLEAR_PENDING_EXCEPTION;
           entry = this_oop->resolved_klass_at(which);
@@ -311,8 +311,8 @@ Klass* ConstantPool::klass_at_impl(constantPoolHandle this_oop, int which, TRAPS
           }
         }
       }
-      if (k() != this_oop->pool_holder()) {
-        // only print something if the classes are different
+      if (k() != this_oop->pool_holder()) { // 如果待加载类不是当前常量池所属的类
+        // only print something if the classes are different 只有在类不同的情况下才打印
         if (source_file != NULL) {
           tty->print("RESOLVE %s %s %s:%d\n",
                      this_oop->pool_holder()->external_name(),
@@ -620,9 +620,9 @@ void ConstantPool::save_and_throw_exception(constantPoolHandle this_oop, int whi
 }
 
 
-// Called to resolve constants in the constant pool and return an oop.
-// Some constant pool entries cache their resolved oop. This is also
-// called to create oops from constants to use in arguments for invokedynamic
+// Called to resolve constants in the constant pool and return an oop. 调用以解析常量池中的常量并返回oop
+// Some constant pool entries cache their resolved oop. This is also   一些常量池条目缓存其解析的oop
+// called to create oops from constants to use in arguments for invokedynamic  调用它也是为了从常量创建oop，以便在invokedynamic的参数中使用
 oop ConstantPool::resolve_constant_at_impl(constantPoolHandle this_oop, int index, int cache_index, TRAPS) {
   oop result_oop = NULL;
   Handle throw_exception;

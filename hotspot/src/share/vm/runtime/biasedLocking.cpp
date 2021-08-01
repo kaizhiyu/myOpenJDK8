@@ -533,9 +533,9 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
   // efficiently enough that we should not cause these revocations to
   // update the heuristics because doing so may cause unwanted bulk
   // revocations (which are expensive) to occur.
-  markOop mark = obj->mark();
-  if (mark->is_biased_anonymously() && !attempt_rebias) {
-    // We are probably trying to revoke the bias of this object due to
+  markOop mark = obj->mark(); // 通过 markOop mark = obj->mark() 获取对象的markOop数据mark，即对象头的Mark Word
+  if (mark->is_biased_anonymously() && !attempt_rebias) { // 判断mark是否为可偏向状态，即mark的偏向锁标志位为 1，锁标志位为 01
+      // We are probably trying to revoke the bias of this object due to
     // an identity hash code computation. Try to revoke the bias
     // without a safepoint. This is possible if we can successfully
     // compare-and-exchange an unbiased header into the mark word of

@@ -23,10 +23,10 @@
  */
 
 #include "precompiled.hpp"
-#include "gc_interface/allocTracer.hpp"
-#include "trace/tracing.hpp"
-#include "runtime/handles.hpp"
-#include "utilities/globalDefinitions.hpp"
+#include "../gc_interface/allocTracer.hpp"
+#include "../trace/tracing.hpp"
+#include "../runtime/handles.hpp"
+#include "../utilities/globalDefinitions.hpp"
 
 void AllocTracer::send_allocation_outside_tlab_event(KlassHandle klass, size_t alloc_size) {
   EventAllocObjectOutsideTLAB event;

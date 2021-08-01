@@ -113,7 +113,7 @@ void CollectedHeap::post_allocation_setup_array(KlassHandle klass,
 HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t size, TRAPS) {
 
   // Clear unhandled oops for memory allocation.  Memory allocation might
-  // not take out a lock if from tlab, so clear here.
+  // not take out a lock if from tlab, so clear here. 清除内存分配的未处理OOP。内存分配可能不会从tlab中取出锁，请在此清除
   CHECK_UNHANDLED_OOPS_ONLY(THREAD->clear_unhandled_oops();)
 
   if (HAS_PENDING_EXCEPTION) {

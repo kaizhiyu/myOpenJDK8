@@ -1263,7 +1263,7 @@ instanceKlassHandle SystemDictionary::load_shared_class(instanceKlassHandle ik,
 
 instanceKlassHandle SystemDictionary::load_instance_class(Symbol* class_name, Handle class_loader, TRAPS) {
   instanceKlassHandle nh = instanceKlassHandle(); // null Handle
-  if (class_loader.is_null()) {
+  if (class_loader.is_null()) { // 如果class_loader为空，即Java类加载器无法加载该类了
     // Search the shared system dictionary for classes preloaded into the
     // shared spaces.  在共享系统字典中搜索预加载到共享空间中的类
     instanceKlassHandle k;

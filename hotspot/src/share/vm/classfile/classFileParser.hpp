@@ -58,7 +58,7 @@ class ClassFileParser VALUE_OBJ_CLASS_SPEC {
   bool _has_vanilla_constructor;
   int _max_bootstrap_specifier_index;  // detects BSS values
 
-  // class attributes parsed before the instance klass is created:
+  // class attributes parsed before the instance klass is created: 在创建实例klass之前解析的类属性
   bool       _synthetic_flag;
   int        _sde_length;
   char*      _sde_buffer;
@@ -67,7 +67,7 @@ class ClassFileParser VALUE_OBJ_CLASS_SPEC {
 
   // Metadata created before the instance klass is created.  Must be deallocated
   // if not transferred to the InstanceKlass upon successful class loading
-  // in which case these pointers have been set to NULL.
+  // in which case these pointers have been set to NULL. 在创建实例klass之前创建的元数据。如果在成功加载类时没有传输到InstanceKlass，则必须取消分配，在这种情况下，这些指针被设置为NULL
   instanceKlassHandle _super_klass;
   ConstantPool*    _cp;
   Array<u2>*       _fields;
@@ -80,7 +80,7 @@ class ClassFileParser VALUE_OBJ_CLASS_SPEC {
   AnnotationArray* _type_annotations;
   Array<AnnotationArray*>* _fields_annotations;
   Array<AnnotationArray*>* _fields_type_annotations;
-  InstanceKlass*   _klass;  // InstanceKlass once created.
+  InstanceKlass*   _klass;  // InstanceKlass once created. InstanceKlass 一旦创建
 
   void set_class_synthetic_flag(bool x)        { _synthetic_flag = x; }
   void set_class_sourcefile_index(u2 x)        { _sourcefile_index = x; }
@@ -106,7 +106,7 @@ class ClassFileParser VALUE_OBJ_CLASS_SPEC {
   void apply_parsed_class_metadata(instanceKlassHandle k, int fields_count, TRAPS);
   void clear_class_metadata() {
     // metadata created before the instance klass is created.  Must be
-    // deallocated if classfile parsing returns an error.
+    // deallocated if classfile parsing returns an error. 在创建实例klass之前创建的元数据。如果类文件解析返回错误，则必须取消分配
     _cp = NULL;
     _fields = NULL;
     _methods = NULL;

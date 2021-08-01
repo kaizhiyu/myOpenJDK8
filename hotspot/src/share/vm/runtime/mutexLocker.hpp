@@ -237,7 +237,7 @@ class MutexLockerEx: public StackObj {
 
 // A MonitorLockerEx is like a MutexLockerEx above, except it takes
 // a possibly null Monitor, and allows wait/notify as well which are
-// delegated to the underlying Monitor.
+// delegated to the underlying Monitor. MonitorLockerEx 与上面的 MutexLockerEx 类似，只是它接受一个可能为空的监视器，并允许将等待/通知委派给底层监视器
 
 class MonitorLockerEx: public MutexLockerEx {
  private:

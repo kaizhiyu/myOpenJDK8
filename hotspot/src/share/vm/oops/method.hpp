@@ -101,9 +101,9 @@ class Method : public Metadata {
  private:
   ConstMethod*      _constMethod;                // Method read-only data.  ConstMethod指针，该类定义constMethod.hpp中，用于表示方法的不可变的部分，如方法ID，方法的字节码大小，方法名在常量池中的索引等，注意其中_constMethod_size的单位为字宽，_code_size的单位是字节
                                                  // 方法的各属性 字节码 压缩的代码行号表 本地变量表 异常表 异常检查表 方法参数 方法签名 方法注解
-  MethodData*       _method_data;                // MethodData指针，该类在methodData.hpp中定义，用于表示一个方法在执行期间收集的相关信息，如方法的调用次数，在C1编译期间代码循环和阻塞的次数，Profile收集的方法性能相关的数据等。
-  MethodCounters*   _method_counters;            // MethodCounters指针，该类在methodCounters.hpp中定义，用于记录方法调用次数，方法抛出异常的次数，方法断点的个数，主要用于基于调用频率的热点方法的跟踪统计。
-  AccessFlags       _access_flags;               // Access flags  AccessFlags类，表示方法的访问控制标识
+  MethodData*       _method_data;                // MethodData指针，该类在methodData.hpp中定义，用于表示一个方法在执行期间收集的相关信息，如方法的调用次数，在C1编译期间代码循环和阻塞的次数，Profile 收集的方法性能相关的数据等。
+  MethodCounters*   _method_counters;            // MethodCounters 指针，该类在 methodCounters.hpp 中定义，用于记录方法调用次数，方法抛出异常的次数，方法断点的个数，主要用于基于调用频率的热点方法的跟踪统计。
+  AccessFlags       _access_flags;               // Access flags  AccessFlags 类，表示方法的访问控制标识
   int               _vtable_index;               // vtable index of this method (see VtableIndexFlag)  该方法在vtable表中的索引
                                                  // note: can have vtables with >2**16 elements (because of inheritance)
 #ifdef CC_INTERP

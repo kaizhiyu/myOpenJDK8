@@ -815,7 +815,7 @@ static void *java_start(Thread *thread) {
   {
     MutexLockerEx ml(sync, Mutex::_no_safepoint_check_flag);
 
-    // notify parent thread
+    // notify parent thread 通知父线程
     osthread->set_state(INITIALIZED);
     sync->notify_all();
 
@@ -830,10 +830,10 @@ static void *java_start(Thread *thread) {
 
   return 0;
 }
-// OSThread的具体执行逻辑就是在调用pthread_create函数时传入的java_start函数，该函数会负责初始化OSThread，
-// 初始化完成将状态设置为INITIALIZED并唤醒startThread_lock上等待的负责创建OSThread的线程，然后继续等待直到OSThread的状态不再是INITIALIZED。
-// 这时创建OSThread的线程发现OSThread已经初始化完成就会退出OSThread的创建方法，然后进入启动OSThread执行的方法，该方法将状态置为RUNNABLE，
-// 并唤醒startThread_lock等待的线程。这时创建的子线程就会开始正常执行，调用JavaThread的run方法
+// OSThread 的具体执行逻辑就是在调用 pthread_create 函数时传入的 java_start 函数，该函数会负责初始化 OSThread ，
+// 初始化完成将状态设置为 INITIALIZED 并唤醒 startThread_lock 上等待的负责创建 OSThread 的线程，然后继续等待直到 OSThread 的状态不再是 INITIALIZED。
+// 这时创建 OSThread 的线程发现 OSThread 已经初始化完成就会退出 OSThread 的创建方法，然后进入启动 OSThread 执行的方法，该方法将状态置为 RUNNABLE，
+// 并唤醒 startThread_lock 等待的线程。这时创建的子线程就会开始正常执行，调用 JavaThread 的 run 方法
 bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
   assert(thread->osthread() == NULL, "caller responsible");
 
@@ -865,7 +865,7 @@ bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
       switch (thr_type) {
       case os::java_thread:
         // Java threads use ThreadStackSize which default value can be
-        // changed with the flag -Xss  Java线程使用ThreadStackSize，默认值可以用-Xss标志更改
+        // changed with the flag -Xss  Java 线程使用 ThreadStackSize，默认值可以用-Xss标志更改
         assert (JavaThread::stack_size_at_create() > 0, "this should be set");
         stack_size = JavaThread::stack_size_at_create();
         break;
@@ -896,15 +896,15 @@ bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
   ThreadState state;
 
   {
-    // Serialize thread creation if we are running with fixed stack LinuxThreads  如果使用固定堆栈LinuxThreads运行，则序列化线程创建
+    // Serialize thread creation if we are running with fixed stack LinuxThreads  如果使用固定堆栈 LinuxThreads 运行，则序列化线程创建
     bool lock = os::Linux::is_LinuxThreads() && !os::Linux::is_floating_stack();
     if (lock) {
       os::Linux::createThread_lock()->lock_without_safepoint_check();
     }
 
     pthread_t tid;
-    int ret = pthread_create(&tid, &attr, (void* (*)(void*)) java_start, thread); // 调用系统库创建线程，java_start为本地Java线程执行入口
-
+    int ret = pthread_create(&tid, &attr, (void* (*)(void*)) java_start, thread); // 调用系统库创建线程，java_start 为本地 Java 线程执行入口
+    // 语句中的 java_start 是 JavaThread 的 routing 函数。这个函数中会等待一个信号量，在获得信号量后，它会调用 JavaThread 对应的 java.lang.Thread 对象的 run() 方法。而这个信号量是通过 Thread::start(native_thread) 这个函数发送的
     pthread_attr_destroy(&attr);
 
     if (ret != 0) {
@@ -918,7 +918,7 @@ bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
       return false;
     }
 
-    // Store pthread info into the OSThread 将pthread信息存储到OSThread中
+    // Store pthread info into the OSThread 将 pthread 信息存储到 OSThread 中
     osthread->set_pthread_id(tid);
 
     // Wait until child thread is either initialized or aborted  等待子线程初始化或中止
@@ -1020,7 +1020,7 @@ void os::pd_start_thread(Thread* thread) {
   assert(osthread->get_state() != INITIALIZED, "just checking");
   Monitor* sync_with_child = osthread->startThread_lock();
   MutexLockerEx ml(sync_with_child, Mutex::_no_safepoint_check_flag);
-  sync_with_child->notify(); //通知子线程继续往下执行，这里就是唤醒刚才的那个执行java_start方法的线程  线程start方法就结束了，可以看出，java的线程实际上是依托与c语言创建的线程，java线程对象与c创建的线程之间维护了一个对应关系,然后线程的调度等都交由操作系统处理.
+  sync_with_child->notify(); // 通知子线程继续往下执行，这里就是唤醒刚才的那个执行java_start方法的线程  线程start方法就结束了，可以看出，java的线程实际上是依托与c语言创建的线程，java线程对象与c创建的线程之间维护了一个对应关系,然后线程的调度等都交由操作系统处理.
 }
 
 // Free Linux resources related to the OSThread
@@ -5743,15 +5743,15 @@ void os::PlatformEvent::unpark() {
   // thread to block. This has the benefit of forcing a spurious return
   // from the first park() call after an unpark() call which will help
   // shake out uses of park() and unpark() without condition variables.
-
+  // 交换指令XCHG是两个寄存器，寄存器和内存变量之间内容的交换指令，两个操作数的数据类型要相同，可以是一个字节，也可以四一个字，也可以是双字
   if (Atomic::xchg(1, &_Event) >= 0) return;
 
   // Wait for the thread associated with the event to vacate
   int status = pthread_mutex_lock(_mutex);
   assert_status(status == 0, status, "mutex_lock");
-  int AnyWaiters = _nParked;
+  int AnyWaiters = _nParked;  // _nParked 只有两个值，1或者0，用来记录park的线程数
   assert(AnyWaiters == 0 || AnyWaiters == 1, "invariant");
-  if (AnyWaiters != 0 && WorkAroundNPTLTimedWaitHang) {
+  if (AnyWaiters != 0 && WorkAroundNPTLTimedWaitHang) { // WorkAroundNPTLTimedWaitHang默认是true
     AnyWaiters = 0;
     pthread_cond_signal(_cond);
   }
@@ -5862,14 +5862,14 @@ static void unpackTime(timespec* absTime, bool isAbsolute, jlong time) {
 }
 
 void Parker::park(bool isAbsolute, jlong time) {
-  // Ideally we'd do something useful while spinning, such
+  // Ideally we'd do something useful while spinning, such   理想情况下，我们会在旋转时做一些有用的事情
   // as calling unpackTime().
 
   // Optional fast-path check:
-  // Return immediately if a permit is available.
+  // Return immediately if a permit is available.  如果允许可用的话，立刻返回
   // We depend on Atomic::xchg() having full barrier semantics
   // since we are doing a lock-free update to _counter.
-  if (Atomic::xchg(0, &_counter) > 0) return;
+  if (Atomic::xchg(0, &_counter) > 0) return; // xchg实际上是执行一个汇编指令xchg，作用是将_counter的值替换为0，如果此时_counter>0，那么park函数立即返回。
 
   Thread* thread = Thread::current();
   assert(thread->is_Java_thread(), "Must be JavaThread");
@@ -5969,7 +5969,7 @@ void Parker::unpark() {
   s = _counter;
   _counter = 1;
   if (s < 1) {
-    // thread might be parked
+    // thread might be parked  线程也许中断
     if (_cur_index != -1) {
       // thread is definitely parked
       if (WorkAroundNPTLTimedWaitHang) {

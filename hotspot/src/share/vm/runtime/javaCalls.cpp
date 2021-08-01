@@ -299,8 +299,8 @@ void JavaCalls::call_static(JavaValue* result, KlassHandle klass, Symbol* name, 
 
 
 void JavaCalls::call(JavaValue* result, methodHandle method, JavaCallArguments* args, TRAPS) {
-  // Check if we need to wrap a potential OS exception handler around thread
-  // This is used for e.g. Win32 structured exception handlers
+  // Check if we need to wrap a potential OS exception handler around thread 检查是否需要在线程周围包装一个潜在的操作系统异常处理程序
+  // This is used for e.g. Win32 structured exception handlers 例如，用于Win32结构化异常处理程序
   assert(THREAD->is_Java_thread(), "only JavaThreads can make JavaCalls");
   // Need to wrap each and everytime, since there might be native code down the
   // stack that has installed its own exception handlers
@@ -308,7 +308,7 @@ void JavaCalls::call(JavaValue* result, methodHandle method, JavaCallArguments* 
 }
 
 void JavaCalls::call_helper(JavaValue* result, methodHandle* m, JavaCallArguments* args, TRAPS) {
-  // During dumping, Java execution environment is not fully initialized. Also, Java execution
+  // During dumping, Java execution environment is not fully initialized. Also, Java execution 在转储期间，Java执行环境没有完全初始化。而且，Java执行可能会在类元数据中引起不希望的副作用
   // may cause undesirable side-effects in the class metadata.
   assert(!DumpSharedSpaces, "must not execute Java bytecodes when dumping");
 

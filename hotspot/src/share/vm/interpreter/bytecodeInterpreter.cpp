@@ -23,28 +23,28 @@
  */
 
 // no precompiled headers
-#include "classfile/vmSymbols.hpp"
-#include "gc_interface/collectedHeap.hpp"
-#include "interpreter/bytecodeHistogram.hpp"
-#include "interpreter/bytecodeInterpreter.hpp"
-#include "interpreter/bytecodeInterpreter.inline.hpp"
-#include "interpreter/bytecodeInterpreterProfiling.hpp"
-#include "interpreter/interpreter.hpp"
-#include "interpreter/interpreterRuntime.hpp"
-#include "memory/resourceArea.hpp"
-#include "oops/methodCounters.hpp"
-#include "oops/objArrayKlass.hpp"
-#include "oops/oop.inline.hpp"
-#include "prims/jvmtiExport.hpp"
-#include "prims/jvmtiThreadState.hpp"
-#include "runtime/biasedLocking.hpp"
-#include "runtime/frame.inline.hpp"
-#include "runtime/handles.inline.hpp"
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/orderAccess.inline.hpp"
-#include "runtime/sharedRuntime.hpp"
-#include "runtime/threadCritical.hpp"
-#include "utilities/exceptions.hpp"
+#include "../classfile/vmSymbols.hpp"
+#include "../gc_interface/collectedHeap.hpp"
+#include "../interpreter/bytecodeHistogram.hpp"
+#include "../interpreter/bytecodeInterpreter.hpp"
+#include "../interpreter/bytecodeInterpreter.inline.hpp"
+#include "../interpreter/bytecodeInterpreterProfiling.hpp"
+#include "../interpreter/interpreter.hpp"
+#include "../interpreter/interpreterRuntime.hpp"
+#include "../memory/resourceArea.hpp"
+#include "../oops/methodCounters.hpp"
+#include "../oops/objArrayKlass.hpp"
+#include "../oops/oop.inline.hpp"
+#include "../prims/jvmtiExport.hpp"
+#include "../prims/jvmtiThreadState.hpp"
+#include "../runtime/biasedLocking.hpp"
+#include "../runtime/frame.inline.hpp"
+#include "../runtime/handles.inline.hpp"
+#include "../runtime/interfaceSupport.hpp"
+#include "../runtime/orderAccess.inline.hpp"
+#include "../runtime/sharedRuntime.hpp"
+#include "../runtime/threadCritical.hpp"
+#include "../utilities/exceptions.hpp"
 
 // no precompiled headers
 #ifdef CC_INTERP
@@ -445,13 +445,13 @@
  * The runWithChecks is used if JVMTI is enabled.
  *
  */
-#if defined(VM_JVMTI)
+//#if defined(VM_JVMTI)
 void
 BytecodeInterpreter::runWithChecks(interpreterState istate) {
-#else
-void
-BytecodeInterpreter::run(interpreterState istate) {
-#endif
+//#else
+//void
+//BytecodeInterpreter::run(interpreterState istate) {
+//#endif
 
   // In order to simplify some tests based on switches set at runtime
   // we invoke the interpreter a single time after switches are enabled

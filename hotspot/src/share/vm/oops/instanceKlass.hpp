@@ -40,8 +40,8 @@
 #include "../utilities/macros.hpp"
 #include "../trace/traceMacros.hpp"
 
-// An InstanceKlass is the VM level representation of a Java class.
-// It contains all information needed for at class at execution runtime.
+// An InstanceKlass is the VM level representation of a Java class.         InstanceKlass是Java类的VM级表示
+// It contains all information needed for at class at execution runtime.    它包含在类的执行运行时所需的所有信息
 
 //  InstanceKlass layout:
 //    [C++ vtbl pointer           ] Klass
@@ -219,8 +219,8 @@ class InstanceKlass: public Klass {
   // Constant pool index to the utf8 entry for the name of source file
   // containing this klass, 0 if not specified.
   u2              _source_file_name_index;
-  u2              _static_oop_field_count;// number of static oop fields in this klass
-  u2              _java_fields_count;    // The number of declared Java fields
+  u2              _static_oop_field_count;// number of static oop fields in this klass 此klass中的静态oop字段数
+  u2              _java_fields_count;    // The number of declared Java fields         声明的Java字段数
   int             _nonstatic_oop_map_size;// size in words of nonstatic oop map blocks 非静态oop映射块的字大小
 
 
@@ -276,7 +276,7 @@ class InstanceKlass: public Klass {
   Array<Method*>* _default_methods;
   // Interface (Klass*s) this class declares locally to implement.  接口 此类在本地声明以实现
   Array<Klass*>* _local_interfaces;
-  // Interface (Klass*s) this class implements transitively.
+  // Interface (Klass*s) this class implements transitively. 接口 此类可传递地实现
   Array<Klass*>* _transitive_interfaces;
   // Int array containing the original order of method in the class file (for JVMTI).
   Array<int>*     _method_ordering;
@@ -938,7 +938,7 @@ class InstanceKlass: public Klass {
     }
   }
 
-  // Use this to return the size of an instance in heap words:
+  // Use this to return the size of an instance in heap words: 使用此选项以堆字形式返回实例的大小
   int size_helper() const {
     return layout_helper_to_size_helper(layout_helper());
   }

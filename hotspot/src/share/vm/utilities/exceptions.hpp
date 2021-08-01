@@ -55,7 +55,7 @@ class JavaCallArguments;
 
 // The ThreadShadow class is a helper class to access the _pending_exception
 // field of the Thread class w/o having access to the Thread's interface (for
-// include hierachy reasons).
+// include hierachy reasons). ThreadShadow 类是一个 helper 类，用于访问 Thread 类的 _pending_exception 字段，不具有访问线程接口的权限（出于 include 层次结构的原因）
 
 class ThreadShadow: public CHeapObj<mtThread> {
   friend class VMStructs;
@@ -166,8 +166,8 @@ class Exceptions {
 };
 
 
-// The THREAD & TRAPS macros facilitate the declaration of functions that throw exceptions.
-// Convention: Use the TRAPS macro as the last argument of such a function; e.g.:
+// The THREAD & TRAPS macros facilitate the declaration of functions that throw exceptions. THREAD&TRAPS宏有助于声明抛出异常的函数
+// Convention: Use the TRAPS macro as the last argument of such a function; e.g.: 约定：使用TRAPS宏作为此类函数的最后一个参数
 //
 // int this_function_may_trap(int x, float y, TRAPS)
 

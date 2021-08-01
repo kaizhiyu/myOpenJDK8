@@ -1386,7 +1386,7 @@ class JavaThread: public Thread {
   JNIEnv* jni_environment()                      { return &_jni_environment; }
 
   static JavaThread* thread_from_jni_environment(JNIEnv* env) {
-    // 每个JavaThread都有一个单独的JNIEnv实例，此处是根据env的地址和其在JavaThread中的属性偏移量倒推出JavaThread的地址
+    // 每个 JavaThread 都有一个单独的 JNIEnv 实例，此处是根据 env 的地址和其在 JavaThread 中的属性偏移量倒推出 JavaThread 的地址
     JavaThread *thread_from_jni_env = (JavaThread*)((intptr_t)env - in_bytes(jni_environment_offset()));
     // Only return NULL if thread is off the thread list; starting to
     // exit should not return NULL.

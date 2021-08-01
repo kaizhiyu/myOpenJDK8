@@ -336,7 +336,7 @@ class PlatformParker : public CHeapObj<mtInternal> {
     };
     int _cur_index;  // which cond is in use: -1, 0, 1
     pthread_mutex_t _mutex [1] ;
-    pthread_cond_t  _cond  [2] ; // one for relative times and one for abs.
+    pthread_cond_t  _cond  [2] ; // one for relative times and one for abs.  其中一个是相对时间，一个是绝对时间
 
   public:       // TODO-FIXME: make dtor private
     ~PlatformParker() { guarantee (0, "invariant") ; }

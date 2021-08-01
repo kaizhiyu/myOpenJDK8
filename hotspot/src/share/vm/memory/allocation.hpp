@@ -133,10 +133,10 @@ class AllocatedObj {
 
 
 /*
- * Memory types
+ * Memory types 内存类型
  */
 enum MemoryType {
-  // Memory type by sub systems. It occupies lower byte.
+  // Memory type by sub systems. It occupies lower byte. 按子系统列出的内存类型。它占用较低的字节
   mtJavaHeap          = 0x00,  // Java heap
   mtClass             = 0x01,  // memory class for Java classes
   mtThread            = 0x02,  // memory for thread objects
@@ -304,7 +304,7 @@ class MetaspaceObj {
   void operator delete(void* p) { ShouldNotCallThis(); }
 };
 
-// Base class for classes that constitute name spaces.
+// Base class for classes that constitute name spaces. 构成名称空间的类的基类
 
 class AllStatic {
  public:
@@ -314,7 +314,7 @@ class AllStatic {
 
 
 //------------------------------Chunk------------------------------------------
-// Linked list of raw memory chunks  表示一个空白的内存块。Chunk继承自CHeapObj
+// Linked list of raw memory chunks  表示一个空白的内存块。Chunk 继承自 CHeapObj
 class Chunk: CHeapObj<mtChunk> {
   friend class VMStructs;
 

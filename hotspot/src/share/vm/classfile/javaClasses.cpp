@@ -579,12 +579,12 @@ void java_lang_Class::create_mirror(KlassHandle k, Handle class_loader,
   int computed_modifiers = k->compute_modifier_flags(CHECK);
   k->set_modifier_flags(computed_modifiers);
   // Class_klass has to be loaded because it is used to allocate
-  // the mirror.  必须加载Class_klass，因为它用于分配镜像。
+  // the mirror.  必须加载Class_klass，因为它用于分配镜像，也就是Class instanceKlass 这个以及完成加载了
   if (SystemDictionary::Class_klass_loaded()) {
     // Allocate mirror (java.lang.Class instance) 分配镜像(java.lang.Class实例)
     Handle mirror = InstanceMirrorKlass::cast(SystemDictionary::Class_klass())->allocate_instance(k, CHECK);
 
-    // Setup indirection from mirror->klass
+    // Setup indirection from mirror->klass 从 mirror->klass 设置间接寻址
     if (!k.is_null()) {
       java_lang_Class::set_klass(mirror(), k());
     }
@@ -594,7 +594,7 @@ void java_lang_Class::create_mirror(KlassHandle k, Handle class_loader,
 
     java_lang_Class::set_static_oop_field_count(mirror(), mk->compute_static_oop_field_count(mirror()));
 
-    // It might also have a component mirror.  This mirror must already exist.
+    // It might also have a component mirror.  This mirror must already exist. 它可能还有一个组件镜像。此镜像必须已存在
     if (k->oop_is_array()) {
       Handle comp_mirror;
       if (k->oop_is_typeArray()) {
@@ -625,7 +625,7 @@ void java_lang_Class::create_mirror(KlassHandle k, Handle class_loader,
       }
     }
 
-    // set the classLoader field in the java_lang_Class instance
+    // set the classLoader field in the java_lang_Class instance  在 java_lang_Class 实例中设置classLoader字段
     assert(class_loader() == k->class_loader(), "should be same");
     set_class_loader(mirror(), class_loader());
 

@@ -42,8 +42,8 @@
 class vtableEntry;
 
 class klassVtable : public ResourceObj {
-  KlassHandle  _klass;            // my klass  该vtable所属的klass
-  int          _tableOffset;      // offset of start of vtable data within klass  vtable在klass实例内存中的偏移量
+  KlassHandle  _klass;            // my klass  该 vtable 所属的 klass
+  int          _tableOffset;      // offset of start of vtable data within klass  vtable 在 klass 实例内存中的偏移量
   int          _length;           // length of vtable (number of entries)  vtable的长度，即vtableEntry的条数，因为一个vtableEntry实例只包含一个Method*，其大小等于字段，所以vtable的长度跟vtable以字宽为单位的内存大小相同
 #ifndef PRODUCT
   int          _verify_count;     // to make verify faster  用于记录vtable是否已经校验并初始化完成

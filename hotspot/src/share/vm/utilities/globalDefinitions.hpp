@@ -140,7 +140,7 @@ const int SerializePageShiftCount = 4;
 const int SerializePageShiftCount = 3;
 #endif
 
-// An opaque struct of heap-word width, so that HeapWord* can be a generic
+// An opaque struct of heap-word width, so that HeapWord* can be a generic 堆字宽度的不透明结构，因此HeapWord*可以作为堆的通用指针
 // pointer into the heap.  We require that object sizes be measured in
 // units of heap words, so that that
 //   HeapWord* hw;

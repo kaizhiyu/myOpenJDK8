@@ -2983,7 +2983,7 @@ JVM_ENTRY(void, JVM_StartThread(JNIEnv* env, jobject jthread))
       // size_t (an unsigned type), so avoid passing negative values which would
       // result in really large stacks.
       size_t sz = size > 0 ? (size_t) size : 0;
-      native_thread = new JavaThread(&thread_entry, sz);  //创建C++级别的本地线程，&thread_entry为线程run方法执行入口
+      native_thread = new JavaThread(&thread_entry, sz);  // 创建C++级别的本地线程，&thread_entry为线程run方法执行入口
 
       // At this point it may be possible that no osthread was created for the
       // JavaThread due to lack of memory. Check for this situation and throw
@@ -3016,7 +3016,7 @@ JVM_ENTRY(void, JVM_StartThread(JNIEnv* env, jobject jthread))
               "unable to create new native thread");
   }
 
-  Thread::start(native_thread);  //启动Java本地线程
+  Thread::start(native_thread);  // 启动Java本地线程
 
 JVM_END
 

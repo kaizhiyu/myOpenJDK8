@@ -60,7 +60,7 @@
 class SymbolHashMap;
 
 class CPSlot VALUE_OBJ_CLASS_SPEC {
-  intptr_t _ptr;  // 解析结果Klass或者Symbol的地址，如果未解析则地址是0，可以将该地址转换成Klass或者Symbol类的指针，定义了对应的转换方法（get_symbol和get_klass方法）和判断该数据项是否已经解析的方法（is_resolved和is_unresolved方法）。
+  intptr_t _ptr;  // 解析结果 Klass 或者 Symbol 的地址，如果未解析则地址是0，可以将该地址转换成 Klass 或者 Symbol 类的指针，定义了对应的转换方法（get_symbol和get_klass方法）和判断该数据项是否已经解析的方法（is_resolved和is_unresolved方法）。
  public:
   CPSlot(intptr_t ptr): _ptr(ptr) {}
   CPSlot(Klass* ptr): _ptr((intptr_t)ptr) {}
@@ -79,11 +79,11 @@ class CPSlot VALUE_OBJ_CLASS_SPEC {
     return (Klass*)_ptr;
   }
 };
-
+// 常量池的每项数据都通过类CPSlot表示
 class KlassSizeStats;
-class ConstantPool : public Metadata {
+class ConstantPool : public Metadata { // 用于表示class文件中的常量池，每个Klass都有对应的ConstantPool，两者是一一对应的. 常量池的数据大部分是在class文件解析的时候写入的，可以安全访问；但是CONSTANT_Class_info类型的常量数据是在这个类被解析时修改，这时只能通过解析状态判断这条数据是否修改完成
   friend class VMStructs;
-  friend class BytecodeInterpreter;  // Directly extracts an oop in the pool for fast instanceof/checkcast
+  friend class BytecodeInterpreter;  // Directly extracts an oop in the pool for fast instanceof/checkcast 直接在池中提取 oop 以用于快速 instanceof/checkcast
   friend class Universe;             // For null constructor
  private:
   Array<u1>*           _tags;        // the tag array describing the constant pool's contents 单字节数组指针，描述常量池所有数据的类型的tag数组，每个tag用一个单字节表示
@@ -123,11 +123,11 @@ class ConstantPool : public Metadata {
   void set_flags(int f)                        { _flags = f; }
 
  private:
-  intptr_t* base() const { return (intptr_t*) (((char*) this) + sizeof(ConstantPool)); }
+  intptr_t* base() const { return (intptr_t*) (((char*) this) + sizeof(ConstantPool)); } // 为什么这般运算呢，this -> 指向的是真实的 constantPool 首地址，但是对象欠保存了一些元数据，需要过滤，也就是 sizeof(ConstantPool)
 
   CPSlot slot_at(int which) {
     assert(is_within_bounds(which), "index out of bounds");
-    // Uses volatile because the klass slot changes without a lock.
+    // Uses volatile because the klass slot changes without a lock. 使用volatile，因为 klass 插槽 在没有锁的情况下更改
     volatile intptr_t adr = (intptr_t)OrderAccess::load_ptr_acquire(obj_at_addr_raw(which));
     assert(adr != 0 || which == 0, "cp entry for klass should not be zero");
     return CPSlot(adr);
@@ -364,7 +364,7 @@ class ConstantPool : public Metadata {
   // This method should only be used with a cpool lock or during parsing or gc 此方法只能与cpool锁一起使用，或者在解析或gc期间使用
   Symbol* unresolved_klass_at(int which) {     // Temporary until actual use
     Symbol* s = CPSlot((Symbol*)OrderAccess::load_ptr_acquire(obj_at_addr_raw(which))).get_symbol();
-    // check that the klass is still unresolved.
+    // check that the klass is still unresolved. 检查是否仍然没有解决问题
     assert(tag_at(which).is_unresolved_klass(), "Corrupted constant pool");
     return s;
   }
@@ -413,14 +413,14 @@ class ConstantPool : public Metadata {
   oop uncached_string_at(int which, TRAPS);
 
   // A "pseudo-string" is an non-string oop that has found is way into
-  // a String entry.
+  // a String entry. “伪字符串”是一个非字符串oop，它已经找到了进入字符串条目的方法。
   // Under EnableInvokeDynamic this can happen if the user patches a live
   // object into a CONSTANT_String entry of an anonymous class.
   // Method oops internally created for method handles may also
   // use pseudo-strings to link themselves to related metaobjects.
 
   bool is_pseudo_string_at(int which) {
-    // A pseudo string is a string that doesn't have a symbol in the cpSlot
+    // A pseudo string is a string that doesn't have a symbol in the cpSlot 伪字符串是在cpSlot中没有符号的字符串
     return unresolved_string_at(which) == NULL;
   }
 
@@ -814,7 +814,7 @@ class ConstantPool : public Metadata {
   static void verify_constant_pool_resolve(constantPoolHandle this_oop, KlassHandle klass, TRAPS);
 
   // Implementation of methods that needs an exposed 'this' pointer, in order to
-  // handle GC while executing the method
+  // handle GC while executing the method 需要公开的this指针的方法的实现，以便在执行方法时处理GC
   static Klass* klass_at_impl(constantPoolHandle this_oop, int which, TRAPS);
   static oop string_at_impl(constantPoolHandle this_oop, int which, int obj_index, TRAPS);
 
